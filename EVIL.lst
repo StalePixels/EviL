@@ -1,0 +1,12 @@
+evil.c
+TMP/evil_banked.o
+esxcuss/clear.c
+esxcuss/cleareol.c
+esxcuss/getc.c
+esxcuss/goto.c
+esxcuss/newline.c
+esxcuss/putc.c
+esxcuss/puts.c
+esxcuss/revoff.c
+esxcuss/revon.c
+esxcuss/textmode.asm
