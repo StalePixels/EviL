@@ -1,7 +1,11 @@
 /*
- * based on qe © 2019 David Given
- * This library is distributable under the terms of the 2-clause BSD license.
+ * EVIL, for Spectrum Next, by D. Rimron-Soutter
+ *
+ * BEGAN AS:   QE © 2019 David Given
+ * This library is distributable under the terms of the .
  * See COPYING.cpmish in the distribution root directory for more information.
+ *
+ */ * See COPYING.cpmish in the distribution root directory for more information.
  */
 
 #include <stdio.h>

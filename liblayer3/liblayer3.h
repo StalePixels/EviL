@@ -2,11 +2,10 @@
  * liblayer3 for Spectrum Next, by D. Rimron-Soutter
  *
  * BEGAN AS:   original libcuss © 2019 David Given
- * This library is distributable under the terms of the .
+ * This library is distributable under the terms of the 2-clause BSD license.
  * See COPYING.cpmish in the distribution root directory for more information.
  *
  */
-
 #ifndef LIBLAYER3_H
 #define LIBLAYER3_H
 
