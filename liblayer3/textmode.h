@@ -2,8 +2,8 @@
 // Created by D Rimron-Soutter on 07/10/2020.
 //
 
-#ifndef CPMISH_TEXTMODE_H
-#define CPMISH_TEXTMODE_H
+#ifndef EVIL_TEXTMODE_H
+#define EVIL_TEXTMODE_H
 
 #define TEXTMODE_ULA_BEHIND             0x00
 #define TEXTMODE_ULA_FRONT              0x01
@@ -28,4 +28,4 @@ extern struct __tiles tiles[256];   //
 
 extern unsigned char font[];
 
-#endif //CPMISH_TEXTMODE_H
+#endif //EVIL_TEXTMODE_H

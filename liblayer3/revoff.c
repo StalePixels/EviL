@@ -3,14 +3,15 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  */
 
-#include "libcuss.h"
+#include "liblayer3.h"
 
-void con_revon(void)
+void con_revoff(void)
 {
-    screencolour = TEXTMODE_REVERSE_COLOUR;
-	#if defined LIBCUSS_REVON
-		cpm_printstring0(LIBCUSS_REVON);
+    screencolour = TEXTMODE_DEFAULT_COLOUR;
+	#if defined LIBLAYER3_REVOFF
+		cpm_printstring0(LIBLAYER3_REVOFF);
 	#endif
 }
+
 
 

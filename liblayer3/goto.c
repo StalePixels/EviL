@@ -3,13 +3,12 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  */
 
-#include "libcuss.h"
+#include <stdio.h>
+#include "liblayer3.h"
 
-void con_newline(void)
+void con_goto(uint16_t x, uint16_t y)
 {
-    if (screeny >= SCREENHEIGHT)
-            return;
-
-    screenx = 0;
-    screeny++;
+	screenx = x;
+	screeny = y;
 }
+

@@ -2,8 +2,8 @@
 // Created by D Rimron-Soutter on 07/10/2020.
 //
 
-#ifndef CPMISH_EVIL_BANKED_H
-#define CPMISH_EVIL_BANKED_H
+#ifndef EVIL_BANKED_H
+#define EVIL_BANKED_H
 
 extern uint16_t screenx;
 extern uint16_t screeny;
@@ -15,4 +15,4 @@ void banked_help();
 void banked_exit();
 void banked_beep();
 
-#endif //CPMISH_EVIL_BANKED_H
+#endif //EVIL_BANKED_H

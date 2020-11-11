@@ -3,7 +3,7 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  */
 
-#include "libcuss.h"
+#include "liblayer3.h"
 
 uint16_t screencolour = TEXTMODE_DEFAULT_COLOUR;
 

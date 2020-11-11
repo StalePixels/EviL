@@ -18,8 +18,8 @@
 #include <compress/zx7.h>
 
 #include "evil_banked.h"
-#include "esxcuss/libcuss.h"
-#include "esxcuss/textmode.h"
+#include "liblayer3/liblayer3.h"
+#include "liblayer3/textmode.h"
 
 extern void at_exit();
 
@@ -121,7 +121,7 @@ void banked_help() {
     uint16_t oldx = screenx;
     uint16_t oldy = screeny;
     screenx = 14;   screeny = 13;
-    con_puts("QE, a VI adjacent, by David Given, part of his CPMISH");
+    con_puts("EVIL, a VI adjacent, by David Given, part of his CPMISH");
     screenx = 18;   screeny = 14;
     con_puts(    "NextZXOS port D. Rimron-Soutter, Stale Pixels");
     screenx = 27;   screeny = 15;

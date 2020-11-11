@@ -3,12 +3,14 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  */
 
-#include <stdio.h>
-#include "libcuss.h"
+#include "liblayer3.h"
 
-void con_goto(uint16_t x, uint16_t y)
+void con_revon(void)
 {
-	screenx = x;
-	screeny = y;
+    screencolour = TEXTMODE_REVERSE_COLOUR;
+	#if defined LIBLAYER3_REVON
+		cpm_printstring0(LIBLAYER3_REVON);
+	#endif
 }
+
 

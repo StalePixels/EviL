@@ -10,7 +10,7 @@
 #include <errno.h>
 
 #include <input.h>
-#include "libcuss.h"
+#include "liblayer3.h"
 
 static uint8_t last_key = 0;
 static uint8_t next_key = 0;

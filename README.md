@@ -23,7 +23,7 @@ The licence documents for the entire of the original repository are here too, to
 make it easier for you, the reader, to find.
 
 Bugfixes against this QE itself should be made to the parent repository,
-bugfixes for the NextZXOS shim version of libcuss (the ESXCUSS folder) are welcome
+bugfixes for the NextZXOS shim version of libcuss (the liblayer3 folder) are welcome
 here.
 
 Building is handled via the Makefile - not part of the usual C/PMish way of doing

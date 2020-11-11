@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>
-#include "libcuss.h"
+#include "liblayer3.h"
 
 void con_clear_to_eol(void)
 {

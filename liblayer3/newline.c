@@ -3,15 +3,13 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  */
 
-#include "libcuss.h"
+#include "liblayer3.h"
 
-void con_revoff(void)
+void con_newline(void)
 {
-    screencolour = TEXTMODE_DEFAULT_COLOUR;
-	#if defined LIBCUSS_REVOFF
-		cpm_printstring0(LIBCUSS_REVOFF);
-	#endif
+    if (screeny >= SCREENHEIGHT)
+            return;
+
+    screenx = 0;
+    screeny++;
 }
-
-
-

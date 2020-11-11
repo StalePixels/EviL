@@ -21,7 +21,7 @@
 #include <arch/zxn/esxdos.h>
 #include <errno.h>
 
-#include "esxcuss/libcuss.h"
+#include "liblayer3/liblayer3.h"
 #include "evil_banked.h"
 
 
@@ -455,7 +455,7 @@ error:
 
 bool save_file(void)
 {
-    const char tempfcb[] = "QETEMP.$$$";
+    const char tempfcb[] = "EVILTEMP.$$$";
 
     errno = 0;
     file_handle = esxdos_f_open(file_name, ESX_MODE_OPEN_CREAT_NOEXIST);
@@ -503,7 +503,7 @@ file_exists:
 	return true;
 
 tempfile:
-    strcpy(message_buffer, "Cannot create QETEMP.$$$ file - it may exist (errno:");
+    strcpy(message_buffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
@@ -511,7 +511,7 @@ tempfile:
 	return false;
 
 commit:
-    strcpy(message_buffer, "Cannot commit file; your data may be in QETEMP.$$$ (errno:");
+    strcpy(message_buffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
@@ -913,7 +913,7 @@ void enter_change_mode(uint16_t count)
 }
 
 const char normal_keys[] =
-	LIBCUSS_KEY_LEFT LIBCUSS_KEY_DOWN LIBCUSS_KEY_UP LIBCUSS_KEY_RIGHT
+	LIBLAYER3_KEY_LEFT LIBLAYER3_KEY_DOWN LIBLAYER3_KEY_UP LIBLAYER3_KEY_RIGHT
 	"^$hjklbwiAGxJOorR:\022dZc";
 
 command_t* const normal_cbs[] =
