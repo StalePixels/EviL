@@ -1190,10 +1190,11 @@ void main(int argc, const char* argv[])
     }
 
 	command_count = 0;
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
 	for (;;)
 	{
-		const char* cmdp = 0;
-		uint16_t length;
+		const char* cmdp = 0
 		unsigned c;
 
 		recompute_screen_position();
@@ -1243,6 +1244,7 @@ void main(int argc, const char* argv[])
 			command_count = 0;
 		}
 	}
+#pragma clang diagnostic pop
     exit(0);
 }
 
