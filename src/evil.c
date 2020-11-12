@@ -24,8 +24,11 @@
 #include <arch/zxn/esxdos.h>
 #include <errno.h>
 
+#include "common/memory.h"
 #include "liblayer3/liblayer3.h"
+
 #include "BANK_system/system.h"
+
 
 
 #define PAGE_INIT               94 /*47*/
@@ -78,13 +81,6 @@ char message_buffer[128];
 extern void colon(uint16_t count);
 extern void goto_line(uint16_t lineno);
 
-#include "common/memory.h"
-/* ======================================================================= */
-/*                                 BANKED CODE                             */
-/* ======================================================================= */
-void banked(void *fn) {
-	_far(BANK_SYSTEM, fn);
-}
 
 /* ======================================================================= */
 /*                                SCREEN DRAWING                           */
@@ -390,7 +386,7 @@ bool really_save_file(const char* fcb)
         itoa(errno, message_buffer + strlen(message_buffer), 10);
         strcat(message_buffer, ")");
         print_status(message_buffer);
-        banked(system_beep);
+        _far(BANK_SYSTEM,system_beep);
         return false;
     }
 
@@ -471,7 +467,7 @@ bool save_file(void)
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
-    banked(system_beep);
+    _far(BANK_SYSTEM,system_beep);
 
     return false;
 
@@ -503,7 +499,7 @@ tempfile:
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
-    banked(system_beep);
+    _far(BANK_SYSTEM,system_beep);
 	return false;
 
 commit:
@@ -511,7 +507,7 @@ commit:
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
-    banked(system_beep);
+    _far(BANK_SYSTEM,system_beep);
 	return false;
 }
 
@@ -1154,7 +1150,7 @@ void main(int argc, const char* argv[])
     /*
      * Initalise the hardware
      */
-    banked(system_init);
+    _far(BANK_SYSTEM,system_init);
 
     l3_clear();
 
@@ -1179,7 +1175,7 @@ void main(int argc, const char* argv[])
 
 
     if(!file_name) {
-        banked(system_splash);
+        _far(BANK_SYSTEM,system_splash);
     }
 
 	command_count = 0;
@@ -1245,7 +1241,7 @@ void at_exit() {
     /*
      * Shutdown gracefully
      */
-    banked(system_exit);
+    _far(BANK_SYSTEM,system_exit);
 
     /*
      * Restore original paging configuration
