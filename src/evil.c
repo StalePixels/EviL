@@ -1194,8 +1194,8 @@ void main(int argc, const char* argv[])
 #pragma ide diagnostic ignored "EndlessLoop"
 	for (;;)
 	{
-		const char* cmdp = 0
-		unsigned c;
+		const char* cmdp = 0;
+		unsigned int c;
 
 		recompute_screen_position();
 
