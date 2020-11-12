@@ -31,12 +31,11 @@
 #define PAGE_INIT               94 /*47*/
 #define PAGE_INIT0              94
 #define PAGE_INIT1              95
-extern unsigned char _z_page_table[];
 
 #define WIDTH SCREENWIDTH
 #define HEIGHT (SCREENHEIGHT-1)
 
-uint8_t top_page, btm_page, orig_mmu6, orig_mmu7, file_handle;
+uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, file_handle;
 
 const char* file_name = 0;
 
@@ -68,7 +67,7 @@ struct bindings
 
 const struct bindings* bindings;
 
-extern const struct bindings delete_bindings;
+extern const struct bindings deleteBindings;
 extern const struct bindings zed_bindings;
 extern const struct bindings change_bindings;
 
@@ -79,18 +78,12 @@ char message_buffer[128];
 extern void colon(uint16_t count);
 extern void goto_line(uint16_t lineno);
 
-
+#include "common/memory.h"
 /* ======================================================================= */
 /*                                 BANKED CODE                             */
 /* ======================================================================= */
 void banked(void *fn) {
-    ZXN_WRITE_MMU6(_z_page_table[PAGE_INIT0]);
-    ZXN_WRITE_MMU7(_z_page_table[PAGE_INIT1]);
-
-    fn();
-
-    ZXN_WRITE_MMU6(_z_page_table[btm_page]);
-    ZXN_WRITE_MMU7(_z_page_table[top_page]);
+	_far(BANK_SYSTEM, fn);
 }
 
 /* ======================================================================= */
@@ -899,7 +892,7 @@ void redraw_screen(uint16_t count)
 
 void enter_delete_mode(uint16_t count)
 {
-	bindings = &delete_bindings;
+	bindings = &deleteBindings;
 	command_count = count;
 }
 
@@ -964,7 +957,7 @@ command_t* const delete_cbs[] =
 	delete_rest_of_line,
 };
 
-const struct bindings delete_bindings =
+const struct bindings deleteBindings =
 {
 	"Delete",
 	delete_keys,
@@ -1155,8 +1148,8 @@ void main(int argc, const char* argv[])
     /*
      * Store original paging configuration
      */
-    orig_mmu6 = ZXN_READ_REG(REG_MMU0 + 6);
-    orig_mmu7 = ZXN_READ_REG(REG_MMU0 + 7);
+    OriginalMMU6 = ZXN_READ_REG(REG_MMU0 + 6);
+    OriginalMMU7 = ZXN_READ_REG(REG_MMU0 + 7);
 
     /*
      * Initalise the hardware
@@ -1257,7 +1250,7 @@ void at_exit() {
     /*
      * Restore original paging configuration
      */
-    ZXN_WRITE_MMU6(orig_mmu6);
-    ZXN_WRITE_MMU7(orig_mmu7);
+    ZXN_WRITE_MMU6(OriginalMMU6);
+    ZXN_WRITE_MMU7(OriginalMMU7);
     intrinsic_ei();
 }

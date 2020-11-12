@@ -29,7 +29,7 @@ unsigned char orig_cpu_speed;
 static unsigned char bankedShadowTilemap[sizeof(tilemap)];
 static unsigned char bankedShadowTiles[sizeof(tiles)];
 
-extern uint8_t orig_mmu6, orig_mmu7, top_page, btm_page, file_handle;
+extern uint8_t OriginalMMU6, OriginalMMU7, top_page, btm_page, file_handle;
 
 uint8_t tilemap_background[16] = {
         0xE3,0x01,     // Transparent
