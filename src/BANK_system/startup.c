@@ -17,9 +17,9 @@
 #include <input.h>
 #include <compress/zx7.h>
 
-#include "evil_banked.h"
-#include "liblayer3/liblayer3.h"
-#include "liblayer3/textmode.h"
+#include "system.h"
+#include "../liblayer3/liblayer3.h"
+#include "../liblayer3/textmode.h"
 
 extern void at_exit();
 
@@ -48,17 +48,17 @@ uint8_t tilemap_foreground[32] = {            // 0xE3 = 277
         0x6D,0x01, 0xED,0x01, 0x7D,0x01, 0xFD,0x01, 0x77,0x01, 0xEE,0x01, 0x7F,0x01, 0xFF,0x01  // (bright)
 };
 
-void bankedTextmodeBackup() {
+void system_textmode_save() {
     memcpy(bankedShadowTiles,   tiles, sizeof(tiles));
     memcpy(bankedShadowTilemap,   tilemap, sizeof(tilemap));
 }
 
-void bankedTextmodeRestore() {
+void system_textmode_restore() {
     memcpy(tiles, bankedShadowTiles, sizeof(tiles));
     memcpy(tilemap, bankedShadowTilemap, sizeof(tilemap));
 }
 
-void banked_init() {
+void system_init() {
     // Store CPU speed
     orig_cpu_speed = ZXN_READ_REG(REG_TURBO_MODE);
 
@@ -73,7 +73,7 @@ void banked_init() {
     btm_page = esx_ide_bank_alloc(0);
 
     // We're going to trash this area for the Editor canvas, so let's back it up so we can restore it
-    bankedTextmodeBackup();
+    system_textmode_save();
 
     // Load Cinema.ch8 font, taken from https://damieng.com/typography/zx-origins/cinema
     dzx7_standard(((unsigned int *)font), ((unsigned char *)0x5D00));
@@ -114,26 +114,25 @@ void banked_init() {
     ZXN_NEXTREG(0x6b, /*0b11001000*/ 0xC8);                     // enable tilemap, 80x32 mode, 1bit palette
 
     zx_cls(PAPER_MAGENTA|BRIGHT);
-
 }
 
-void banked_help() {
+void system_splash() {
     uint16_t oldx = screenx;
     uint16_t oldy = screeny;
     screenx = 14;   screeny = 13;
-    con_puts("EVIL, a VI adjacent, by David Given, part of his CPMISH");
+    l3_puts("EVIL, a VI adjacent, by David Given, part of his CPMISH");
     screenx = 18;   screeny = 14;
-    con_puts(    "NextZXOS port D. Rimron-Soutter, Stale Pixels");
+    l3_puts(    "NextZXOS port D. Rimron-Soutter, Stale Pixels");
     screenx = 27;   screeny = 15;
-    con_puts(            "Cinema font by Damien Guard");
+    l3_puts(            "Cinema font by Damien Guard");
     screenx = 26;   screeny = 17;
-    con_puts(            "Version 11h2 - Build 20201013");
+    l3_puts(            "Version 11h2 - Build 20201013");
     screenx = 17;   screeny = 19;
-    con_puts(   "Here by accident?  Hold CAPS SHIFT and press ZZ");
+    l3_puts(   "Here by accident?  Hold CAPS SHIFT and press ZZ");
     screenx = oldx; screeny = oldy;
 }
 
-void banked_beep() {
+void system_beep() {
     zx_border(INK_RED);
     ZXN_NEXTREG(REG_TURBO_MODE, 0);
     printf("\x07");
@@ -144,7 +143,7 @@ void banked_beep() {
     zx_border(INK_BLACK);
 }
 
-void banked_exit() {
+void system_exit() {
     zx_cls(PAPER_WHITE);
     zx_border(INK_WHITE);
     // Files
@@ -158,7 +157,7 @@ void banked_exit() {
     ZXN_NEXTREG(0x6b, 0);                                    // disable tilemap
 
     // Restore Textmode tiles
-    bankedTextmodeRestore();
+    system_textmode_restore();
 
     // Finally, restore the original CPU speed
     ZXN_NEXTREGA(REG_TURBO_MODE, orig_cpu_speed);

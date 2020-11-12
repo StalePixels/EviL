@@ -6,10 +6,12 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  *
  */
-#include <string.h>
+
 #include "liblayer3.h"
-void con_clear(void)
+
+void l3_revon(void)
 {
-    memset(tilemap, 0, sizeof(tilemap));
-    screenx = screeny = 0;
+    screencolour = TEXTMODE_REVERSE_COLOUR;
 }
+
+

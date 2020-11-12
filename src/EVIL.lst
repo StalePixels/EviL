@@ -1,5 +1,5 @@
 evil.c
-TMP/evil_banked.o
+../TMP/BANK_system.o
 liblayer3/clear.c
 liblayer3/cleareol.c
 liblayer3/getc.c

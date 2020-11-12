@@ -49,17 +49,16 @@ dirs:
 	$(MKDIR) $(BUILD_DIR)
 	$(MKDIR) $(TMP_DIR)
 
-
 bank_47:
 	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
 		--codesegBANK_47 --constsegBANK_47 \
 		--datasegBANK_47 --bsssegBANK_47   \
-		evil_banked.c -o$(TMP_DIR)/evil_banked.o
+		@src/BANK_system/system.lst -o$(TMP_DIR)/BANK_system.o
 
 banks: dirs deps bank_47
 
 assemble: banks
-	$(CC) $(CCFLAGS) $(LDFLAGS) @$(NAME).lst -o$(NAME) -create-app \
+	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) -create-app \
 		-subtype=dotn $(CZFLAGS)
 	$(MV) $(NAME) $(BUILD_DIR)/$(NAME)
 

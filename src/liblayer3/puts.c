@@ -9,14 +9,14 @@
 
 #include "liblayer3.h"
 
-void con_puts(const char* s)
+void l3_puts(const char* s)
 {
 	for (;;)
 	{
 		uint16_t c = *s++;
 		if (!c)
 			break;
-		con_putc(c);
+		l3_putc(c);
 	}
 }
 

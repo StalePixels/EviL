@@ -8,12 +8,9 @@
  */
 #include "liblayer3.h"
 
-void con_revoff(void)
+void l3_revoff(void)
 {
     screencolour = TEXTMODE_DEFAULT_COLOUR;
-	#if defined LIBLAYER3_REVOFF
-		cpm_printstring0(LIBLAYER3_REVOFF);
-	#endif
 }
 
 

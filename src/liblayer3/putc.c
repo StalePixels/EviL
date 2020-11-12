@@ -11,14 +11,14 @@
 
 uint16_t screencolour = TEXTMODE_DEFAULT_COLOUR;
 
-void con_putc(uint16_t c)
+void l3_putc(uint16_t c)
 {
     if (screeny >= SCREENHEIGHT)
             return;
 
     if (c < 32)
     {
-            con_putc('^');
+            l3_putc('^');
             c += '@';
     }
 

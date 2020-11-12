@@ -6,13 +6,22 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  *
  */
+#include <stdio.h>
 #include "liblayer3.h"
 
-void con_newline(void)
+void l3_clear_to_eol(void)
 {
     if (screeny >= SCREENHEIGHT)
             return;
 
-    screenx = 0;
-    screeny++;
+    uint16_t i = SCREENWIDTH - screenx;
+    if ((i != 0) && (screeny == (SCREENHEIGHT-1)))
+        i--;
+
+    while (i--) {
+        tilemap[screeny][SCREENWIDTH-i-1].tile = ' ';
+    }
+
+    l3_goto(screenx, screeny);
 }
+

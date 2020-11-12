@@ -9,19 +9,9 @@
 #include <stdio.h>
 #include "liblayer3.h"
 
-void con_clear_to_eol(void)
+void l3_goto(uint16_t x, uint16_t y)
 {
-    if (screeny >= SCREENHEIGHT)
-            return;
-
-    uint16_t i = SCREENWIDTH - screenx;
-    if ((i != 0) && (screeny == (SCREENHEIGHT-1)))
-        i--;
-
-    while (i--) {
-        tilemap[screeny][SCREENWIDTH-i-1].tile = ' ';
-    }
-
-    con_goto(screenx, screeny);
+	screenx = x;
+	screeny = y;
 }
 

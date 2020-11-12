@@ -21,7 +21,7 @@ static uint8_t next_key = 0;
 #define FRAME_FLASH             27
 static uint8_t cursor_frame_counter =    FRAME_FLASH;
 
-void con_cursor() {
+void l3_cursor() {
     cursor_frame_counter--;
     WAIT_FOR_SCANLINE(239);
     if(cursor_frame_counter==0) {
@@ -36,18 +36,18 @@ int8_t chrcmpi(unsigned char a, unsigned char b) {
     return a==b;
 }
 
-uint8_t con_getc(void)
+uint8_t l3_getc(void)
 {
     // Stop holding the previous key
     while(chrcmpi(next_key, last_key)) {
         next_key = in_inkey();
-        con_cursor();
+        l3_cursor();
     }
 
     // Now wait for a new key
     while(!next_key) {
         next_key = in_inkey();
-        con_cursor();
+        l3_cursor();
     }
 
     // Remember they key so we don't repeat it

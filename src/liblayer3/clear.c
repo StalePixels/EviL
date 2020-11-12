@@ -6,12 +6,10 @@
  * See COPYING.cpmish in the distribution root directory for more information.
  *
  */
-#include <stdio.h>
+#include <string.h>
 #include "liblayer3.h"
-
-void con_goto(uint16_t x, uint16_t y)
+void l3_clear(void)
 {
-	screenx = x;
-	screeny = y;
+    memset(tilemap, 0, sizeof(tilemap));
+    screenx = screeny = 0;
 }
-

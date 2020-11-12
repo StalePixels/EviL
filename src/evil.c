@@ -5,7 +5,6 @@
  * This library is distributable under the terms of the .
  * See COPYING.cpmish in the distribution root directory for more information.
  *
- */ * See COPYING.cpmish in the distribution root directory for more information.
  */
 
 #include <stdio.h>
@@ -26,7 +25,7 @@
 #include <errno.h>
 
 #include "liblayer3/liblayer3.h"
-#include "evil_banked.h"
+#include "BANK_system/system.h"
 
 
 #define PAGE_INIT               94 /*47*/
@@ -73,7 +72,7 @@ extern const struct bindings delete_bindings;
 extern const struct bindings zed_bindings;
 extern const struct bindings change_bindings;
 
-char buffer[128];// ((char*)cpm_default_dma)
+char buffer[128];
 char message_buffer[128];
 #define cpm_default_dma     (uint8_t*)buffer
 
@@ -98,15 +97,15 @@ void banked(void *fn) {
 /*                                SCREEN DRAWING                           */
 /* ======================================================================= */
 
-void con_puti(int i)
+void l3_puti(int i)
 {
 	itoa(i, buffer, 10);
-	con_puts(buffer);
+	l3_puts(buffer);
 }
 
 void goto_status_line(void)
 {
-	con_goto(0, HEIGHT);
+	l3_goto(0, HEIGHT);
 }
 
 void set_status_line(const char* message)
@@ -116,23 +115,23 @@ void set_status_line(const char* message)
 	uint8_t oldx = screenx, oldy = screeny;
 
 	goto_status_line();
-	con_revon();
+	l3_revon();
 	for (;;)
 	{
 		uint16_t c = *message++;
 		if (!c)
 			break;
-		con_putc(c);
+		l3_putc(c);
 		length++;
 	}
-	con_revoff();
+	l3_revoff();
 	while (length < status_line_length)
 	{
-		con_putc(' ');
+		l3_putc(' ');
 		length++;
 	}
 	status_line_length = length;
-	con_goto(oldx, oldy);
+	l3_goto(oldx, oldy);
 }
 
 /* ======================================================================= */
@@ -194,31 +193,31 @@ uint8_t* draw_line(uint8_t* startp)
 		if (inp == buffer_end)
 		{
 			if (xo == 0)
-				con_puts("~");
-			con_clear_to_eol();
-			con_newline();
+				l3_puts("~");
+			l3_clear_to_eol();
+			l3_newline();
 			break;
 		}
 
 		c = *inp++;
 		if (c == '\n')
 		{
-			con_clear_to_eol();
-            con_newline();
+			l3_clear_to_eol();
+            l3_newline();
 			break;
 		}
 		else if (c == '\t')
 		{
 			do
 			{
-				con_putc(' ');
+				l3_putc(' ');
 				xo++;
 			}
 			while (xo & 7);
 		}
 		else
 		{
-			con_putc(c);
+			l3_putc(c);
 			xo++;
 		}
 	}
@@ -262,7 +261,7 @@ void adjust_scroll_position(void)
 		first_line = line_start;
 	}
 
-	con_goto(0, 0);
+	l3_goto(0, 0);
 	render_screen(first_line);
 }
 
@@ -301,7 +300,7 @@ void recompute_screen_position(void)
 	}
 
 	length = compute_length(current_line, gap_start, NULL);
-	con_goto(length % WIDTH, current_line_y + (length / WIDTH));
+	l3_goto(length % WIDTH, current_line_y + (length / WIDTH));
 }
 
 void redraw_current_line(void)
@@ -310,7 +309,7 @@ void redraw_current_line(void)
     uint8_t oldheight;
 
 	oldheight = display_height[current_line_y];
-	con_goto(0, current_line_y);
+	l3_goto(0, current_line_y);
 	nextp = draw_line(current_line);
 	if (oldheight != display_height[current_line_y])
 		render_screen(nextp);
@@ -398,7 +397,7 @@ bool really_save_file(const char* fcb)
         itoa(errno, message_buffer + strlen(message_buffer), 10);
         strcat(message_buffer, ")");
         print_status(message_buffer);
-        banked(banked_beep);
+        banked(system_beep);
         return false;
     }
 
@@ -479,7 +478,7 @@ bool save_file(void)
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
-    banked(banked_beep);
+    banked(system_beep);
 
     return false;
 
@@ -511,7 +510,7 @@ tempfile:
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
-    banked(banked_beep);
+    banked(system_beep);
 	return false;
 
 commit:
@@ -519,14 +518,14 @@ commit:
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
-    banked(banked_beep);
+    banked(system_beep);
 	return false;
 }
 
 void quit(void)
 {
-    con_clear();
-	con_puts("Goodbye!");
+    l3_clear();
+	l3_puts("Goodbye!");
 	exit(0);
 }
 
@@ -656,7 +655,7 @@ void insert_newline(void)
 	if (gap_start != gap_end)
 	{
 		*gap_start++ = '\n';
-		con_goto(0, current_line_y);
+		l3_goto(0, current_line_y);
 		current_line = draw_line(current_line);
 		current_line_y = screeny;
 		display_height[current_line_y] = 0;
@@ -672,7 +671,7 @@ void insert_mode(bool replacing)
 		uint16_t oldheight;
 		uint8_t* nextp;
 		uint16_t length;
-		uint16_t c = con_getc();
+		uint16_t c = l3_getc();
 		if (c == 0x07)             // EDIT
 			break;
 
@@ -822,7 +821,7 @@ void join(uint16_t count)
 			*ptr = ' ';
 	}
 
-	con_goto(0, current_line_y);
+	l3_goto(0, current_line_y);
 	render_screen(current_line);
 	dirty = true;
 }
@@ -836,7 +835,7 @@ void open_above(uint16_t count)
 	*--gap_end = '\n';
 
 	recompute_screen_position();
-	con_goto(0, current_line_y);
+	l3_goto(0, current_line_y);
 	render_screen(current_line);
 	recompute_screen_position();
 
@@ -851,7 +850,7 @@ void open_below(uint16_t count)
 
 void replace_char(uint16_t count)
 {
-	uint16_t c = con_getc();
+	uint16_t c = l3_getc();
 
 	if (gap_end == buffer_end)
 		return;
@@ -894,7 +893,7 @@ void zed_force_quit(uint16_t count)
 
 void redraw_screen(uint16_t count)
 {
-	con_clear();
+	l3_clear();
 	render_screen(first_line);
 }
 
@@ -1008,8 +1007,8 @@ void print_colon_status(const char* s)
 {
     uint8_t oldx = screenx, oldy = screeny;
     screeny = HEIGHT - 1; screenx = 0;
-    con_clear_to_eol();
-    con_puts(s);
+    l3_clear_to_eol();
+    l3_puts(s);
     screenx = oldx; screeny = oldy;
 }
 
@@ -1043,23 +1042,23 @@ void colon(uint16_t count)
 		char* w = buffer;
 		char* arg = 0;
 		goto_status_line();
-        con_clear_to_eol();
-		con_putc(':');
+        l3_clear_to_eol();
+		l3_putc(':');
 
 		for(;;) {
-            c = con_getc();
+            c = l3_getc();
             if(c==0x0D)                         // enter
                 break;
 
             if(c==0x0C && screenx>1) {          // backspace
                 *w = 0;
                 --screenx;
-                con_putc(' ');
+                l3_putc(' ');
                 --screenx;
                 --w;
             }
             else if(c>31) {
-                con_putc(c);
+                l3_putc(c);
                 *w = c;
                 w++;
             }
@@ -1141,7 +1140,7 @@ void colon(uint16_t count)
 	}
     cleanup:
 
-	con_clear();
+	l3_clear();
 	print_status = set_status_line;
 	render_screen(first_line);
 }
@@ -1162,9 +1161,9 @@ void main(int argc, const char* argv[])
     /*
      * Initalise the hardware
      */
-    banked(banked_init);
+    banked(system_init);
 
-    con_clear();
+    l3_clear();
 
 	buffer_start = (void *) 0xC000;
     buffer_end = (void *) 0xFFFE;
@@ -1181,13 +1180,13 @@ void main(int argc, const char* argv[])
 	}
 
 	load_file();
-	con_goto(0, 0);
+	l3_goto(0, 0);
 	render_screen(first_line);
 	bindings = &normal_bindings;
 
 
     if(!file_name) {
-        banked(banked_help);
+        banked(system_splash);
     }
 
 	command_count = 0;
@@ -1202,7 +1201,7 @@ void main(int argc, const char* argv[])
 		for (;;)
 		{
 
-			c = con_getc();
+			c = l3_getc();
             if (isdigit(c))
             {
                 command_count = (command_count*10) + (c-'0');
@@ -1251,7 +1250,7 @@ void at_exit() {
     /*
      * Shutdown gracefully
      */
-    banked(banked_exit);
+    banked(system_exit);
 
     /*
      * Restore original paging configuration
