@@ -1,7 +1,9 @@
 evil.c
 ../TMP/BANK_system.o
+../TMP/BANK_command.o
 
 common/memory.c
+common/file.c
 
 liblayer3/clear.c
 liblayer3/cleareol.c

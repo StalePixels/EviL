@@ -13,8 +13,8 @@
 #include "../BANK_system/system.h"
 #include "textmode.h"
 
-extern uint16_t screenx;
-extern uint16_t screeny;
+
+extern uint8_t ScreenX, ScreenY;
 extern uint16_t screencolour;
 
 extern void l3_goto(uint16_t x, uint16_t y);

@@ -29,7 +29,7 @@ unsigned char orig_cpu_speed;
 static unsigned char bankedShadowTilemap[sizeof(tilemap)];
 static unsigned char bankedShadowTiles[sizeof(tiles)];
 
-extern uint8_t OriginalMMU6, OriginalMMU7, top_page, btm_page, file_handle;
+extern uint8_t OriginalMMU6, OriginalMMU7, top_page, btm_page, FileHandle;
 
 uint8_t tilemap_background[16] = {
         0xE3,0x01,     // Transparent
@@ -117,19 +117,25 @@ void system_init() {
 }
 
 void system_splash() {
-    uint16_t oldx = screenx;
-    uint16_t oldy = screeny;
-    screenx = 14;   screeny = 13;
+    uint16_t oldx = ScreenX;
+    uint16_t oldy = ScreenY;
+	ScreenX = 14;
+	ScreenY = 13;
     l3_puts("EVIL, a VI adjacent, by David Given, part of his CPMISH");
-    screenx = 18;   screeny = 14;
+	ScreenX = 18;
+	ScreenY = 14;
     l3_puts(    "NextZXOS port D. Rimron-Soutter, Stale Pixels");
-    screenx = 27;   screeny = 15;
+	ScreenX = 27;
+	ScreenY = 15;
     l3_puts(            "Cinema font by Damien Guard");
-    screenx = 26;   screeny = 17;
+	ScreenX = 26;
+	ScreenY = 17;
     l3_puts(            "Version 11h2 - Build 20201013");
-    screenx = 17;   screeny = 19;
+	ScreenX = 17;
+	ScreenY = 19;
     l3_puts(   "Here by accident?  Hold CAPS SHIFT and press ZZ");
-    screenx = oldx; screeny = oldy;
+	ScreenX = oldx;
+	ScreenY = oldy;
 }
 
 void system_beep() {
@@ -147,7 +153,7 @@ void system_exit() {
     zx_cls(PAPER_WHITE);
     zx_border(INK_WHITE);
     // Files
-    esxdos_f_close(file_handle);
+    esxdos_f_close(FileHandle);
 
     // Free buffers
     esx_ide_bank_free(0, top_page);

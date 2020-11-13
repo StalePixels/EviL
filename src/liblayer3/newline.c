@@ -10,9 +10,9 @@
 
 void l3_newline(void)
 {
-    if (screeny >= SCREENHEIGHT)
+    if (ScreenY >= SCREENHEIGHT)
             return;
 
-    screenx = 0;
-    screeny++;
+    ScreenX = 0;
+	ScreenY++;
 }

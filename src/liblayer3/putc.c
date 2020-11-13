@@ -13,7 +13,7 @@ uint16_t screencolour = TEXTMODE_DEFAULT_COLOUR;
 
 void l3_putc(uint16_t c)
 {
-    if (screeny >= SCREENHEIGHT)
+    if (ScreenY >= SCREENHEIGHT)
             return;
 
     if (c < 32)
@@ -22,13 +22,13 @@ void l3_putc(uint16_t c)
             c += '@';
     }
 
-    tilemap[screeny][screenx].tile = c;
-    tilemap[screeny][screenx].flags = screencolour;
-    screenx++;
-    if (screenx == SCREENWIDTH)
+    tilemap[ScreenY][ScreenX].tile = c;
+    tilemap[ScreenY][ScreenX].flags = screencolour;
+	ScreenX++;
+    if (ScreenX == SCREENWIDTH)
     {
-            screenx = 0;
-            screeny++;
+		ScreenX = 0;
+		ScreenY++;
     }
 }
 

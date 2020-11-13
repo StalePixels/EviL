@@ -9,7 +9,7 @@
 /* ======================================================================= */
 /*                                 BANKED CODE                             */
 /* ======================================================================= */
-void _far(uint8_t BANK, void *FnPtr) {
+void _far(uint8_t BANK, void (*FnPtr)(void)) {
 	uint8_t TopPage = ZXN_READ_REG(REG_MMU0 + 6);
 	uint8_t BottomPage = ZXN_READ_REG(REG_MMU0 + 7);
 

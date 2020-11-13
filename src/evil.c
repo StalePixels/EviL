@@ -24,25 +24,19 @@
 #include <arch/zxn/esxdos.h>
 #include <errno.h>
 
+#include "common/evil.h"
 #include "common/memory.h"
+#include "common/file.h"
 #include "liblayer3/liblayer3.h"
 
 #include "BANK_system/system.h"
+#include "BANK_command/error.h"
+#include "BANK_command/status.h"
 
 
+uint8_t ScreenX = 0, ScreenY = 0;
+uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, FileHandle;
 
-#define PAGE_INIT               94 /*47*/
-#define PAGE_INIT0              94
-#define PAGE_INIT1              95
-
-#define WIDTH SCREENWIDTH
-#define HEIGHT (SCREENHEIGHT-1)
-
-uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, file_handle;
-
-const char* file_name = 0;
-
-uint16_t screenx = 0, screeny = 0;
 uint16_t status_line_length;
 void (*print_status)(const char*);
 
@@ -50,7 +44,7 @@ uint8_t* buffer_start;
 uint8_t* gap_start;
 uint8_t* gap_end;
 uint8_t* buffer_end;
-uint16_t dirty;
+bool EvilDirtyFlag;
 
 uint8_t* first_line; /* <= gap_start */
 uint8_t* current_line; /* <= gap_start */
@@ -76,7 +70,6 @@ extern const struct bindings change_bindings;
 
 char buffer[128];
 char message_buffer[128];
-#define cpm_default_dma     (uint8_t*)buffer
 
 extern void colon(uint16_t count);
 extern void goto_line(uint16_t lineno);
@@ -101,7 +94,7 @@ void set_status_line(const char* message)
 {
 	uint16_t length = 0;
 
-	uint8_t oldx = screenx, oldy = screeny;
+	uint8_t oldx = ScreenX, oldy = ScreenY;
 
 	goto_status_line();
 	l3_revon();
@@ -126,15 +119,6 @@ void set_status_line(const char* message)
 /* ======================================================================= */
 /*                              BUFFER MANAGEMENT                          */
 /* ======================================================================= */
-
-void new_file(void)
-{
-	gap_start = buffer_start;
-	gap_end = buffer_end;
-
-	first_line = current_line = buffer_start;
-	dirty = true;
-}
 
 uint16_t compute_length(const uint8_t* inp, const uint8_t* endp, const uint8_t** nextp)
 {
@@ -169,10 +153,10 @@ uint8_t* draw_line(uint8_t* startp)
 {
 	uint16_t xo = 0;
 	uint16_t c;
-	uint16_t starty = screeny;
+	uint16_t starty = ScreenY;
 	uint8_t* inp = startp;
 
-	while (screeny != HEIGHT)
+	while (ScreenY != HEIGHT)
 	{
 		if (inp == gap_start)
 		{
@@ -221,13 +205,13 @@ uint8_t* draw_line(uint8_t* startp)
 void render_screen(uint8_t* inp)
 {
 	unsigned i;
-	for (i=screeny; i != HEIGHT; i++)
+	for (i= ScreenY; i != HEIGHT; i++)
 		display_height[i] = 0;
 
-	while (screeny < HEIGHT)
+	while (ScreenY < HEIGHT)
 	{
 		if (inp == current_line)
-			current_line_y = screeny;
+			current_line_y = ScreenY;
 		inp = draw_line(inp);
 	}
 }
@@ -312,11 +296,11 @@ void redraw_current_line(void)
 void insert_file(void)
 {
 	strcpy(message_buffer, "Reading ");
-    strcat(message_buffer, file_name);
+    strcat(message_buffer, FileName);
 	print_status(message_buffer);
 
     errno = 0;
-    file_handle = esxdos_f_open(file_name, ESXDOS_MODE_R);
+	FileHandle = esxdos_f_open(FileName, ESXDOS_MODE_R);
     if(errno)
         goto error;
 
@@ -324,7 +308,7 @@ void insert_file(void)
 	{
 		uint8_t* inptr;
 
-        uint8_t i = esxdos_f_read(file_handle, cpm_default_dma, 128);
+        uint8_t i = esxdos_f_read(FileHandle, cpm_default_dma, 128);
 		if (i == 0) /* EOF */
 			goto done;
         if(errno)
@@ -348,117 +332,46 @@ void insert_file(void)
 
 error:
     strcpy(message_buffer, "Could not read file ");
-    strcat(message_buffer, file_name);
+    strcat(message_buffer, FileName);
     strcat(message_buffer, " (errno:");
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
 	print_status(message_buffer);
 done:
-	esxdos_f_close(file_handle);
-	dirty = true;
+	esxdos_f_close(FileHandle);
+	EvilDirtyFlag = true;
 	return;
 }
 
 void load_file(void)
 {
-	new_file();
-    if(file_name)
+	file_new();
+    if(FileName)
 		insert_file();
 
-	dirty = false;
+	EvilDirtyFlag = false;
 	goto_line(1);
-}
-
-bool really_save_file(const char* fcb)
-{
-    const uint8_t* inp;
-	uint8_t* outp;
-	static uint16_t pushed;
-
-	strcpy(message_buffer, "Writing ");
-    strcat(message_buffer, fcb);
-	print_status(message_buffer);
-
-    errno = 0;
-    file_handle = esxdos_f_open(fcb, ESXDOS_MODE_W | ESXDOS_MODE_CT);
-	if (errno) {
-        strcpy(message_buffer, "Failed to create file (errno:");
-        itoa(errno, message_buffer + strlen(message_buffer), 10);
-        strcat(message_buffer, ")");
-        print_status(message_buffer);
-        _far(BANK_SYSTEM,system_beep);
-        return false;
-    }
-
-	inp = buffer_start;
-	outp = cpm_default_dma;
-	pushed = 0;
-	while ((inp != buffer_end) || (outp != cpm_default_dma) || pushed)
-	{
-		static uint16_t c;
-
-		if (pushed)
-		{
-			c = pushed;
-			pushed = 0;
-		}
-		else
-		{
-			if (inp == gap_start)
-				inp = gap_end;
-			c = (inp != buffer_end) ? *inp++ : 0;
-
-//			if (c == '\n')
-//			{
-//				pushed = '\n';
-//				c = '\r';
-//			}
-		}
-
-		if(c) *outp++ = c;
-
-		if (outp == (cpm_default_dma+128))
-		{
-            esx_f_write(file_handle, cpm_default_dma, 128);
-            if(errno)
-				goto error;
-			outp = cpm_default_dma;
-		}
-
-		// special case to get around CPMs 128b block
-		if ((inp == buffer_end) && !pushed && (outp != cpm_default_dma)) {
-		    uint8_t b = outp - cpm_default_dma;
-
-            esx_f_write(file_handle, cpm_default_dma, outp - cpm_default_dma);
-            if(errno)
-                goto error;
-            outp = cpm_default_dma;
-		}
-	}
-
-	dirty = false;
-	esxdos_f_close(file_handle);
-	return true;
-
-error:
-    esxdos_f_close(file_handle);
-	return false;
 }
 
 bool save_file(void)
 {
+	if (!FileName) {
+		command_error_no_filename();
+		return false;
+	}
+
     const char tempfcb[] = "EVILTEMP.$$$";
 
     errno = 0;
-    file_handle = esxdos_f_open(file_name, ESX_MODE_OPEN_CREAT_NOEXIST);
+	FileHandle = esxdos_f_open(FileName, ESX_MODE_OPEN_CREAT_NOEXIST);
     if(errno == ESX_EEXIST)
         goto file_exists;
 
-    esxdos_f_close(file_handle);
+    esxdos_f_close(FileHandle);
 	if (!errno) {
 		/* The file does not exist. */
-        if (really_save_file(file_name)) {
-            dirty = false;
+        if (really_save_file(FileName)) {
+            EvilDirtyFlag = false;
             return true;
         }
     }
@@ -467,6 +380,7 @@ bool save_file(void)
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
     print_status(message_buffer);
+
     _far(BANK_SYSTEM,system_beep);
 
     return false;
@@ -474,21 +388,21 @@ bool save_file(void)
 file_exists:
 	/* Write to a temporary file. */
 
-	esxdos_f_close(file_handle);
+	esxdos_f_close(FileHandle);
 	if (really_save_file(tempfcb) == false)
 		goto tempfile;
 
     strcpy(message_buffer, "Renaming ");
     strcat(message_buffer, tempfcb);
   	strcat(message_buffer, " to ");
-    strcat(message_buffer, file_name);
+    strcat(message_buffer, FileName);
     print_status(message_buffer);
 
     errno = 0;
-	esxdos_f_unlink(file_name);
+	esxdos_f_unlink(FileName);
     if (errno)
         goto commit;
-    esx_f_rename(tempfcb, file_name);
+    esx_f_rename(tempfcb, FileName);
 	if (errno)
 		goto commit;
 
@@ -646,7 +560,7 @@ void insert_newline(void)
 		*gap_start++ = '\n';
 		l3_goto(0, current_line_y);
 		current_line = draw_line(current_line);
-		current_line_y = screeny;
+		current_line_y = ScreenY;
 		display_height[current_line_y] = 0;
 	}
 }
@@ -664,7 +578,7 @@ void insert_mode(bool replacing)
 		if (c == 0x07)             // EDIT
 			break;
 
-		dirty = true;
+		EvilDirtyFlag = true;
 		if (c == 0x0C)             // DELETE (technically backspace)
 		{
 			if (gap_start != current_line)
@@ -733,7 +647,7 @@ void delete_right(uint16_t count)
 	}
 
 	redraw_current_line();
-	dirty = true;
+	EvilDirtyFlag = true;
 }
 
 void delete_rest_of_line(uint16_t count)
@@ -743,7 +657,7 @@ void delete_rest_of_line(uint16_t count)
 
 	if (count != 0)
 		redraw_current_line();
-	dirty = true;
+	EvilDirtyFlag = true;
 }
 
 void delete_line(uint16_t count)
@@ -760,7 +674,7 @@ void delete_line(uint16_t count)
 	}
 
 	redraw_current_line();
-	dirty = true;
+	EvilDirtyFlag = true;
 }
 
 void delete_word(uint16_t count)
@@ -783,7 +697,7 @@ void delete_word(uint16_t count)
 	}
 
 	redraw_current_line();
-	dirty = true;
+	EvilDirtyFlag = true;
 }
 
 void change_word(uint16_t count)
@@ -812,7 +726,7 @@ void join(uint16_t count)
 
 	l3_goto(0, current_line_y);
 	render_screen(current_line);
-	dirty = true;
+	EvilDirtyFlag = true;
 }
 
 void open_above(uint16_t count)
@@ -864,9 +778,9 @@ void replace_line(uint16_t count)
 
 void zed_save_and_quit(uint16_t count)
 {
-	if (!dirty)
+	if (!EvilDirtyFlag)
 		quit();
-	if (!file_name)
+	if (!FileName)
 	{
 		set_status_line("No filename set");
 		return;
@@ -992,142 +906,45 @@ const struct bindings zed_bindings =
 /*                             COLON COMMANDS                              */
 /* ======================================================================= */
 
-void print_colon_status(const char* s)
-{
-    uint8_t oldx = screenx, oldy = screeny;
-    screeny = HEIGHT - 1; screenx = 0;
-    l3_clear_to_eol();
-    l3_puts(s);
-    screenx = oldx; screeny = oldy;
-}
-
-void set_current_filename(const char* f)
-{
-    free(file_name);
-    file_name = malloc(strlen(f)+1);
-    strcpy(file_name, f);
-	dirty = true;
-}
-
-void print_no_filename(void)
-{
-    print_colon_status("No filename set");
-}
 
 void print_document_not_saved(void)
 {
-    print_colon_status("Document not saved (use ! to confirm)");
+    command_status_print("Document not saved (use ! to confirm)");
 }
 
 void colon(uint16_t count)
 {
     char c;
 
-	print_status = print_colon_status;
+	print_status = command_status_print;
 
-//	for (;;)
-	{
-	    memset(buffer, 0, 128);
-		char* w = buffer;
-		char* arg = 0;
-		goto_status_line();
-        l3_clear_to_eol();
-		l3_putc(':');
+	memset(buffer, 0, 128);
+	char* w = buffer;
+	char* arg = 0;
+	goto_status_line();
+	l3_clear_to_eol();
+	l3_putc(':');
 
-		for(;;) {
-            c = l3_getc();
-            if(c==0x0D)                         // enter
-                break;
+	for(;;) {
+		c = l3_getc();
+		if(c==0x0D)                         // enter
+		break;
 
-            if(c==0x0C && screenx>1) {          // backspace
-                *w = 0;
-                --screenx;
-                l3_putc(' ');
-                --screenx;
-                --w;
-            }
-            else if(c>31) {
-                l3_putc(c);
-                *w = c;
-                w++;
-            }
-        }
-
-        w = strtok(buffer, " ");
-		if (!*w)
-			goto cleanup;
-        arg = strtok(NULL, " ");
-		switch (*w)
-		{
-
-			case 'w':
-			{
-				bool quitting = (w[1] == 'q');
-				if (arg)
-					set_current_filename(arg);
-				if (!file_name)
-					print_no_filename();
-				else if (save_file())
-				{
-					if (quitting)
-						quit();
-				}
-				break;
-			}
-
-			case 'r':
-			{
-				if (arg)
-				{
-					char *backupfcb = malloc(sizeof(file_name));
-					memcpy(&backupfcb, &file_name, sizeof(backupfcb));
-                    file_name = arg;
-					insert_file();
-					memcpy(&file_name, &backupfcb, sizeof(backupfcb));
-					free(backupfcb);
-				}
-				else
-					print_no_filename();
-				break;
-			}
-			case 'e':
-			{
-				if (!arg)
-					print_no_filename();
-				else if (dirty && (w[1] != '!'))
-					print_document_not_saved();
-				else
-				{
-					set_current_filename(arg);
-					load_file();
-				}
-				break;
-			}
-			case 'n':
-			{
-				if (dirty && (w[1] != '!')) {
-                    print_document_not_saved();
-                }
-				else {
-					new_file();
-					file_name = 0;
-				}
-				break;
-			}
-			case 'q':
-			{
-				if (!dirty || (w[1] == '!'))
-					quit();
-				else
-					print_document_not_saved();
-				break;
-			}
-
-			default:
-                print_status("Unknown command");
+		if(c==0x0C && ScreenX >1) {          // backspace
+			*w = 0;
+			--ScreenX;
+			l3_putc(' ');
+			--ScreenX;
+			--w;
+		}
+		else if(c>31) {
+			l3_putc(c);
+			*w = c;
+			w++;
 		}
 	}
-    cleanup:
+
+	_far(BANK_COMMAND, command_parse);
 
 	l3_clear();
 	print_status = set_status_line;
@@ -1164,8 +981,8 @@ void main(int argc, const char* argv[])
 	print_status(buffer);
 
 	if(argc>1) {
-	    file_name = malloc(strlen(argv[1])+1);
-	    strcpy(file_name, argv[1]);
+		FileName = malloc(strlen(argv[1])+1);
+	    strcpy(FileName, argv[1]);
 	}
 
 	load_file();
@@ -1174,7 +991,7 @@ void main(int argc, const char* argv[])
 	bindings = &normal_bindings;
 
 
-    if(!file_name) {
+    if(!FileName) {
         _far(BANK_SYSTEM,system_splash);
     }
 

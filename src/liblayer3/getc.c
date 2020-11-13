@@ -25,7 +25,7 @@ void l3_cursor() {
     cursor_frame_counter--;
     WAIT_FOR_SCANLINE(239);
     if(cursor_frame_counter==0) {
-        tilemap[screeny][screenx].flags = tilemap[screeny][screenx].flags + 128;
+        tilemap[ScreenY][ScreenX].flags = tilemap[ScreenY][ScreenX].flags + 128;
         cursor_frame_counter = FRAME_FLASH;
     }
 }
@@ -53,7 +53,7 @@ uint8_t l3_getc(void)
     // Remember they key so we don't repeat it
     last_key = next_key;
 
-    tilemap[screeny][screenx].flags = tilemap[screeny][screenx].flags = screencolour;
+    tilemap[ScreenY][ScreenX].flags = tilemap[ScreenY][ScreenX].flags = screencolour;
 	return next_key;
 }
 

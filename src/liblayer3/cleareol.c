@@ -11,17 +11,17 @@
 
 void l3_clear_to_eol(void)
 {
-    if (screeny >= SCREENHEIGHT)
+    if (ScreenY >= SCREENHEIGHT)
             return;
 
-    uint16_t i = SCREENWIDTH - screenx;
-    if ((i != 0) && (screeny == (SCREENHEIGHT-1)))
+    uint16_t i = SCREENWIDTH - ScreenX;
+    if ((i != 0) && (ScreenY == (SCREENHEIGHT-1)))
         i--;
 
     while (i--) {
-        tilemap[screeny][SCREENWIDTH-i-1].tile = ' ';
+        tilemap[ScreenY][SCREENWIDTH-i-1].tile = ' ';
     }
 
-    l3_goto(screenx, screeny);
+    l3_goto(ScreenX, ScreenY);
 }
 

@@ -80,13 +80,21 @@ dirs:
 	$(MKDIR) $(BUILD_DIR)
 	$(MKDIR) $(TMP_DIR)
 
+# BANK_COMMAND
+bank_46:
+	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
+		--codesegBANK_46 --constsegBANK_46 \
+		--datasegBANK_46 --bsssegBANK_46   \
+		@src/BANK_command/command.lst -o$(TMP_DIR)/BANK_command.o
+
+# BANK_SYSTEM
 bank_47:
 	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
 		--codesegBANK_47 --constsegBANK_47 \
 		--datasegBANK_47 --bsssegBANK_47   \
 		@src/BANK_system/system.lst -o$(TMP_DIR)/BANK_system.o
 
-banks: dirs deps bank_47
+banks: dirs deps bank_47 bank_46
 
 assemble: banks
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) -create-app \
