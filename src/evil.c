@@ -29,15 +29,15 @@
 #include "common/file.h"
 #include "liblayer3/liblayer3.h"
 
-#include "BANK_system/system.h"
-#include "BANK_command/error.h"
 #include "BANK_command/status.h"
+#include "BANK_system/system.h"
+//#include "BANK_command/error.h"
+//#include "BANK_command/status.h"
 
 
 uint8_t ScreenX = 0, ScreenY = 0;
 uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, FileHandle;
 
-uint16_t status_line_length;
 void (*print_status)(const char*);
 
 uint8_t* buffer_start;
@@ -83,37 +83,6 @@ void l3_puti(int i)
 {
 	itoa(i, buffer, 10);
 	l3_puts(buffer);
-}
-
-void goto_status_line(void)
-{
-	l3_goto(0, HEIGHT);
-}
-
-void set_status_line(const char* message)
-{
-	uint16_t length = 0;
-
-	uint8_t oldx = ScreenX, oldy = ScreenY;
-
-	goto_status_line();
-	l3_revon();
-	for (;;)
-	{
-		uint16_t c = *message++;
-		if (!c)
-			break;
-		l3_putc(c);
-		length++;
-	}
-	l3_revoff();
-	while (length < status_line_length)
-	{
-		l3_putc(' ');
-		length++;
-	}
-	status_line_length = length;
-	l3_goto(oldx, oldy);
 }
 
 /* ======================================================================= */
@@ -297,7 +266,7 @@ void insert_file(void)
 {
 	strcpy(message_buffer, "Reading ");
     strcat(message_buffer, FileName);
-	print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 
     errno = 0;
 	FileHandle = esxdos_f_open(FileName, ESXDOS_MODE_R);
@@ -322,7 +291,7 @@ void insert_file(void)
 			{
 				if (gap_start == gap_end)
 				{
-					print_status("Out of memory");
+					_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, "Out of memory");
 					goto done;
 				}
 				*gap_start++ = c;
@@ -356,7 +325,7 @@ void load_file(void)
 bool save_file(void)
 {
 	if (!FileName) {
-		command_error_no_filename();
+		_far(BANK_COMMAND,command_error_no_filename);
 		return false;
 	}
 
@@ -379,7 +348,7 @@ bool save_file(void)
     strcpy(message_buffer, "Failed to save file (errno:");
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
-    print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 
     _far(BANK_SYSTEM,system_beep);
 
@@ -396,7 +365,7 @@ file_exists:
     strcat(message_buffer, tempfcb);
   	strcat(message_buffer, " to ");
     strcat(message_buffer, FileName);
-    print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 
     errno = 0;
 	esxdos_f_unlink(FileName);
@@ -412,7 +381,7 @@ tempfile:
     strcpy(message_buffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
-    print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
     _far(BANK_SYSTEM,system_beep);
 	return false;
 
@@ -420,7 +389,7 @@ commit:
     strcpy(message_buffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
     itoa(errno, message_buffer+strlen(message_buffer), 10);
     strcat(message_buffer, ")");
-    print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
     _far(BANK_SYSTEM,system_beep);
 	return false;
 }
@@ -567,7 +536,9 @@ void insert_newline(void)
 
 void insert_mode(bool replacing)
 {
-	set_status_line(replacing ? "Replace mode" : "Insert mode");
+
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,
+					(replacing ? "Replace mode" : "Insert mode"));
 
 	for (;;)
 	{
@@ -602,7 +573,7 @@ void insert_mode(bool replacing)
 		redraw_current_line();
 	}
 
-	set_status_line("");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,"");
 }
 
 void insert_text(uint16_t count)
@@ -780,11 +751,6 @@ void zed_save_and_quit(uint16_t count)
 {
 	if (!EvilDirtyFlag)
 		quit();
-	if (!FileName)
-	{
-		set_status_line("No filename set");
-		return;
-	}
 	if (save_file())
 		quit();
 }
@@ -906,12 +872,6 @@ const struct bindings zed_bindings =
 /*                             COLON COMMANDS                              */
 /* ======================================================================= */
 
-
-void print_document_not_saved(void)
-{
-    command_status_print("Document not saved (use ! to confirm)");
-}
-
 void colon(uint16_t count)
 {
     char c;
@@ -921,7 +881,8 @@ void colon(uint16_t count)
 	memset(buffer, 0, 128);
 	char* w = buffer;
 	char* arg = 0;
-	goto_status_line();
+
+	l3_goto(0, HEIGHT);
 	l3_clear_to_eol();
 	l3_putc(':');
 
@@ -947,7 +908,7 @@ void colon(uint16_t count)
 	_far(BANK_COMMAND, command_parse);
 
 	l3_clear();
-	print_status = set_status_line;
+	print_status = command_status_set;
 	render_screen(first_line);
 }
 
@@ -974,11 +935,12 @@ void main(int argc, const char* argv[])
 	buffer_start = (void *) 0xC000;
     buffer_end = (void *) 0xFFFE;
 	*buffer_end = '\n';
-	print_status = set_status_line;
+	print_status = command_status_set;
 
 	itoa((uint16_t)(buffer_end - buffer_start), buffer, 10);
 	strcat(buffer, " bytes free");
-	print_status(buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+//	print_status(buffer);
 
 	if(argc>1) {
 		FileName = malloc(strlen(argv[1])+1);
@@ -1014,11 +976,13 @@ void main(int argc, const char* argv[])
                 command_count = (command_count*10) + (c-'0');
                 itoa(command_count, buffer, 10);
                 strcat(buffer, " repeat");
-                set_status_line(buffer);
+
+				_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,buffer);
             }
             else
             {
-                set_status_line("");
+
+				_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,"");
                 break;
             }
 		}
@@ -1038,14 +1002,16 @@ void main(int argc, const char* argv[])
 			command_count = 0;
 
 			bindings = &normal_bindings;
-			set_status_line("");
+
+			_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,"");
 			cmd(count);
 			if (bindings->name)
-				set_status_line(bindings->name);
+				_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,bindings->name);
 		}
 		else
 		{
-			set_status_line("Unknown key");
+
+			_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,"Unknown key");
 			bindings = &normal_bindings;
 			command_count = 0;
 		}

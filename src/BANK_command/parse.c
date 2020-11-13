@@ -56,7 +56,7 @@ void command_parse() {
 			if (!arg)
 				command_error_no_filename();
 			else if (EvilDirtyFlag && (w[1] != '!'))
-				print_document_not_saved();
+				command_error_document_not_saved();
 			else
 			{
 				command_file_name_set(arg);
@@ -67,7 +67,7 @@ void command_parse() {
 		case 'n':
 		{
 			if (EvilDirtyFlag && (w[1] != '!')) {
-				print_document_not_saved();
+				command_error_document_not_saved();
 			}
 			else {
 				file_new();
@@ -80,11 +80,11 @@ void command_parse() {
 			if (!EvilDirtyFlag || (w[1] == '!'))
 				quit();
 			else
-				print_document_not_saved();
+				command_error_document_not_saved();
 			break;
 		}
 
 		default:
-			print_status("Unknown command");
+			_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, "Unknown Command");
 	}
 }

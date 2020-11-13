@@ -52,7 +52,7 @@ bool command_file_save(void)
 	strcpy(message_buffer, "Failed to save file (errno:");
 	itoa(errno, message_buffer+strlen(message_buffer), 10);
 	strcat(message_buffer, ")");
-	print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 
 	_far(BANK_SYSTEM,system_beep);
 
@@ -69,7 +69,7 @@ bool command_file_save(void)
 	strcat(message_buffer, FileNameTemp);
 	strcat(message_buffer, " to ");
 	strcat(message_buffer, FileName);
-	print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 
 	errno = 0;
 	esxdos_f_unlink(FileName);
@@ -85,7 +85,7 @@ bool command_file_save(void)
 	strcpy(message_buffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
 	itoa(errno, message_buffer+strlen(message_buffer), 10);
 	strcat(message_buffer, ")");
-	print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 
@@ -93,7 +93,7 @@ bool command_file_save(void)
 	strcpy(message_buffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
 	itoa(errno, message_buffer+strlen(message_buffer), 10);
 	strcat(message_buffer, ")");
-	print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 }

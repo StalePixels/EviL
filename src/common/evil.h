@@ -35,7 +35,6 @@ extern uint8_t* current_line; /* <= gap_start */
 // TODO - Migrate these to BANK_command
 void quit(void);
 void insert_file(void);
-void print_document_not_saved(void);
 void load_file(void);
 void load_file(void);
 

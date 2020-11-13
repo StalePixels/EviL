@@ -13,5 +13,6 @@
 extern unsigned char _z_page_table[];
 
 void _far(uint8_t BANK, void (*FnPtr)(void));
+void _farWithPointer(uint8_t BANK, void (*FnPtr)(void *), void *DataAddr);
 
 #endif//EVIL_MEMORY_H

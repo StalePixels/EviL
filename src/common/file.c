@@ -22,8 +22,9 @@
 #include "file.h"
 #include "evil.h"
 
-#include "../common/memory.h"
+#include "../BANK_system/system.h"
 #include "../common/file.h"
+#include "../common/memory.h"
 const char* FileName = 0;
 
 
@@ -44,7 +45,7 @@ bool really_save_file(const char* fcb)
 
 	strcpy(message_buffer, "Writing ");
 	strcat(message_buffer, fcb);
-	print_status(message_buffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 
 	errno = 0;
 	FileHandle = esxdos_f_open(fcb, ESXDOS_MODE_W | ESXDOS_MODE_CT);
@@ -52,7 +53,7 @@ bool really_save_file(const char* fcb)
 		strcpy(message_buffer, "Failed to create file (errno:");
 		itoa(errno, message_buffer + strlen(message_buffer), 10);
 		strcat(message_buffer, ")");
-		print_status(message_buffer);
+		_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
 		_far(BANK_SYSTEM,system_beep);
 		return false;
 	}
