@@ -7,11 +7,11 @@
 
 #include <stdlib.h>
 
-#define BANK_SYSTEM				47
-#define BANK_COMMAND 			46
-#define BANK_SPUI	 			45
-#define BANK_SETTINGS			44
-#define BANK_FONTS   			40
+#define BANK_SYSTEM				(47<<1)
+#define BANK_COMMAND 			(46<<1)
+#define BANK_SPUI	 			(45<<1)
+#define BANK_SETTINGS			(44<<1)
+#define BANK_FONTS   			(40<<1)
 
 extern unsigned char _z_page_table[];
 

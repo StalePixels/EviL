@@ -27,6 +27,7 @@
 #include "../common/memory.h"
 const char* FileName = 0;
 
+const char tmp_filename[] = "EVILTEMP.$$$";
 
 void file_new(void)
 {

@@ -922,6 +922,7 @@ void main(int argc, const char* argv[])
     OriginalMMU6 = ZXN_READ_REG(REG_MMU0 + 6);
     OriginalMMU7 = ZXN_READ_REG(REG_MMU0 + 7);
 
+	malloc(1024);
     /*
      * Initalise the hardware
      */

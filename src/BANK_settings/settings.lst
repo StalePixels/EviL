@@ -1,1 +1,6 @@
 load.c
+ini_get_line.c
+ini_get_one.c
+ini_common.c
+ini_set_one.c
+trim_whitespace.c
