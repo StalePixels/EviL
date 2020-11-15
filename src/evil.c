@@ -37,17 +37,17 @@ uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, FileHandle;
 
 void (*print_status)(const char*);
 
-uint8_t* buffer_start;
-uint8_t* gap_start;
-uint8_t* gap_end;
-uint8_t* buffer_end;
+uint8_t* BufferStart;
+uint8_t* GapStart;
+uint8_t* GapEnd;
+uint8_t* BufferEnd;
 bool EvilDirtyFlag;
 
-uint8_t* first_line; /* <= gap_start */
-uint8_t* current_line; /* <= gap_start */
-uint16_t current_line_y;
-uint8_t display_height[HEIGHT];
-uint16_t line_length[HEIGHT];
+uint8_t* FirstLine; /* <= gap_start */
+uint8_t* CurrentLine; /* <= gap_start */
+uint16_t CurrentLineY;
+uint8_t DisplayHeight[HEIGHT];
+uint16_t LineLength[HEIGHT];
 
 uint16_t command_count;
 typedef void command_t(uint16_t);
@@ -61,12 +61,12 @@ struct bindings
 
 const struct bindings* bindings;
 
-extern const struct bindings deleteBindings;
-extern const struct bindings zed_bindings;
-extern const struct bindings change_bindings;
+extern const struct bindings DeleteBindings;
+extern const struct bindings ZedBindings;
+extern const struct bindings ChangeBindings;
 
-char buffer[128];
-char message_buffer[128];
+char Buffer[128];
+char MessageBuffer[128];
 
 extern void colon(uint16_t count);
 extern void goto_line(uint16_t lineno);
@@ -78,8 +78,8 @@ extern void goto_line(uint16_t lineno);
 
 void l3_puti(int i)
 {
-	itoa(i, buffer, 10);
-	l3_puts(buffer);
+	itoa(i, Buffer, 10);
+	l3_puts(Buffer);
 }
 
 /* ======================================================================= */
@@ -96,8 +96,8 @@ uint16_t compute_length(const uint8_t* inp, const uint8_t* endp, const uint8_t**
 	{
 		if (inp == endp)
 			break;
-		if (inp == gap_start)
-			inp = gap_end;
+		if (inp == GapStart)
+			inp = GapEnd;
 
 		c = *inp++;
 		if (c == '\n')
@@ -124,12 +124,12 @@ uint8_t* draw_line(uint8_t* startp)
 
 	while (ScreenY != HEIGHT)
 	{
-		if (inp == gap_start)
+		if (inp == GapStart)
 		{
-			inp = gap_end;
-			startp += (gap_end - gap_start);
+			inp = GapEnd;
+			startp += (GapEnd - GapStart);
 		}
-		if (inp == buffer_end)
+		if (inp == BufferEnd)
 		{
 			if (xo == 0)
 				l3_puts("~");
@@ -161,8 +161,8 @@ uint8_t* draw_line(uint8_t* startp)
 		}
 	}
 
-	display_height[starty] = (xo / WIDTH) + 1;
-	line_length[starty] = inp - startp;
+	DisplayHeight[starty] = (xo / WIDTH) + 1;
+	LineLength[starty] = inp - startp;
 
 	return inp;
 }
@@ -172,12 +172,12 @@ void render_screen(uint8_t* inp)
 {
 	unsigned i;
 	for (i= ScreenY; i != HEIGHT; i++)
-		display_height[i] = 0;
+		DisplayHeight[i] = 0;
 
 	while (ScreenY < HEIGHT)
 	{
-		if (inp == current_line)
-			current_line_y = ScreenY;
+		if (inp == CurrentLine)
+			CurrentLineY = ScreenY;
 		inp = draw_line(inp);
 	}
 }
@@ -186,22 +186,22 @@ void adjust_scroll_position(void)
 {
 	uint16_t total_height = 0;
 
-	first_line = current_line;
-	while (first_line != buffer_start)
+	FirstLine = CurrentLine;
+	while (FirstLine != BufferStart)
 	{
-		uint8_t* line_start = first_line;
+		uint8_t* line_start = FirstLine;
 		const uint8_t* line_end = line_start--;
-		while ((line_start != buffer_start) && (line_start[-1] != '\n'))
+		while ((line_start != BufferStart) && (line_start[-1] != '\n'))
 			line_start--;
 
 		total_height += (compute_length(line_start, line_end, NULL) / WIDTH) + 1;
 		if (total_height > (HEIGHT/2))
 			break;
-		first_line = line_start;
+		FirstLine = line_start;
 	}
 
 	l3_goto(0, 0);
-	render_screen(first_line);
+	render_screen(FirstLine);
 }
 
 void recompute_screen_position(void)
@@ -209,28 +209,28 @@ void recompute_screen_position(void)
 	const uint8_t* inp;
 	uint16_t length;
 
-	if (current_line < first_line)
+	if (CurrentLine < FirstLine)
 		adjust_scroll_position();
 
 	for (;;)
 	{
-		inp = first_line;
-		current_line_y = 0;
-		while (current_line_y < HEIGHT)
+		inp = FirstLine;
+		CurrentLineY = 0;
+		while (CurrentLineY < HEIGHT)
 		{
 			uint16_t height;
 
-			if (inp == current_line)
+			if (inp == CurrentLine)
 				break;
 
-			height = display_height[current_line_y];
-			inp += line_length[current_line_y];
+			height = DisplayHeight[CurrentLineY];
+			inp += LineLength[CurrentLineY];
 
-			current_line_y += height;
+			CurrentLineY += height;
 		}
 
-		if ((current_line_y >= HEIGHT) ||
-			((current_line_y + display_height[current_line_y]) > HEIGHT))
+		if ((CurrentLineY >= HEIGHT) ||
+			((CurrentLineY + DisplayHeight[CurrentLineY]) > HEIGHT))
 		{
 			adjust_scroll_position();
 		}
@@ -238,8 +238,8 @@ void recompute_screen_position(void)
 			break;
 	}
 
-	length = compute_length(current_line, gap_start, NULL);
-	l3_goto(length % WIDTH, current_line_y + (length / WIDTH));
+	length = compute_length(CurrentLine, GapStart, NULL);
+	l3_goto(length % WIDTH, CurrentLineY + (length / WIDTH));
 }
 
 void redraw_current_line(void)
@@ -247,10 +247,10 @@ void redraw_current_line(void)
 	uint8_t* nextp;
     uint8_t oldheight;
 
-	oldheight = display_height[current_line_y];
-	l3_goto(0, current_line_y);
-	nextp = draw_line(current_line);
-	if (oldheight != display_height[current_line_y])
+	oldheight = DisplayHeight[CurrentLineY];
+	l3_goto(0, CurrentLineY);
+	nextp = draw_line(CurrentLine);
+	if (oldheight != DisplayHeight[CurrentLineY])
 		render_screen(nextp);
 
 	recompute_screen_position();
@@ -261,9 +261,9 @@ void redraw_current_line(void)
 /* ======================================================================= */
 void insert_file(void)
 {
-	strcpy(message_buffer, "Reading ");
-    strcat(message_buffer, FileName);
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	strcpy(MessageBuffer, "Reading ");
+    strcat(MessageBuffer, FileName);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 
     errno = 0;
 	FileHandle = esxdos_f_open(FileName, ESXDOS_MODE_R);
@@ -286,23 +286,23 @@ void insert_file(void)
 			uint8_t c = *inptr++;
 			if (c != '\r')
 			{
-				if (gap_start == gap_end)
+				if (GapStart == GapEnd)
 				{
 					_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, "Out of memory");
 					goto done;
 				}
-				*gap_start++ = c;
+				*GapStart++ = c;
 			}
 		}
 	}
 
 error:
-    strcpy(message_buffer, "Could not read file ");
-    strcat(message_buffer, FileName);
-    strcat(message_buffer, " (errno:");
-    itoa(errno, message_buffer+strlen(message_buffer), 10);
-    strcat(message_buffer, ")");
-	print_status(message_buffer);
+    strcpy(MessageBuffer, "Could not read file ");
+    strcat(MessageBuffer, FileName);
+    strcat(MessageBuffer, " (errno:");
+    itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+    strcat(MessageBuffer, ")");
+	print_status(MessageBuffer);
 done:
 	esxdos_f_close(FileHandle);
 	EvilDirtyFlag = true;
@@ -342,10 +342,10 @@ bool save_file(void)
         }
     }
 
-    strcpy(message_buffer, "Failed to save file (errno:");
-    itoa(errno, message_buffer+strlen(message_buffer), 10);
-    strcat(message_buffer, ")");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+    strcpy(MessageBuffer, "Failed to save file (errno:");
+    itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+    strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 
     _far(BANK_SYSTEM,system_beep);
 
@@ -358,11 +358,11 @@ file_exists:
 	if (really_save_file(tempfcb) == false)
 		goto tempfile;
 
-    strcpy(message_buffer, "Renaming ");
-    strcat(message_buffer, tempfcb);
-  	strcat(message_buffer, " to ");
-    strcat(message_buffer, FileName);
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+    strcpy(MessageBuffer, "Renaming ");
+    strcat(MessageBuffer, tempfcb);
+  	strcat(MessageBuffer, " to ");
+    strcat(MessageBuffer, FileName);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 
     errno = 0;
 	esxdos_f_unlink(FileName);
@@ -375,18 +375,18 @@ file_exists:
 	return true;
 
 tempfile:
-    strcpy(message_buffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
-    itoa(errno, message_buffer+strlen(message_buffer), 10);
-    strcat(message_buffer, ")");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+    strcpy(MessageBuffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
+    itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+    strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
     _far(BANK_SYSTEM,system_beep);
 	return false;
 
 commit:
-    strcpy(message_buffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
-    itoa(errno, message_buffer+strlen(message_buffer), 10);
-    strcat(message_buffer, ")");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+    strcpy(MessageBuffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
+    itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+    strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
     _far(BANK_SYSTEM,system_beep);
 	return false;
 }
@@ -404,22 +404,22 @@ void quit(void)
 
 void cursor_home(uint16_t count)
 {
-	while (gap_start != current_line)
-		*--gap_end = *--gap_start;
+	while (GapStart != CurrentLine)
+		*--GapEnd = *--GapStart;
 }
 
 void cursor_end(uint16_t count)
 {
-	while ((gap_end != buffer_end) && (gap_end[0] != '\n'))
-		*gap_start++ = *gap_end++;
+	while ((GapEnd != BufferEnd) && (GapEnd[0] != '\n'))
+		*GapStart++ = *GapEnd++;
 }
 
 void cursor_left(uint16_t count)
 {
 	while (count--)
 	{
-		if ((gap_start != buffer_start) && (gap_start[-1] != '\n')) {
-		    *--gap_end = *--gap_start;
+		if ((GapStart != BufferStart) && (GapStart[-1] != '\n')) {
+		    *--GapEnd = *--GapStart;
 		}
 	}
 }
@@ -428,8 +428,8 @@ void cursor_right(uint16_t count)
 {
 	while (count--)
 	{
-		if ((gap_end != buffer_end) && (gap_end[0] != '\n'))
-			*gap_start++ = *gap_end++;
+		if ((GapEnd != BufferEnd) && (GapEnd[0] != '\n'))
+			*GapStart++ = *GapEnd++;
 	}
 }
 
@@ -437,13 +437,13 @@ void cursor_down(uint16_t count)
 {
 	while (count--)
 	{
-		uint16_t offset = gap_start - current_line;
+		uint16_t offset = GapStart - CurrentLine;
 		cursor_end(1);
-		if (gap_end == buffer_end)
+		if (GapEnd == BufferEnd)
 			return;
 
-		*gap_start++ = *gap_end++;
-		current_line = gap_start;
+		*GapStart++ = *GapEnd++;
+		CurrentLine = GapStart;
 		cursor_right(offset);
 	}
 }
@@ -452,17 +452,17 @@ void cursor_up(uint16_t count)
 {
 	while (count--)
 	{
-		uint16_t offset = gap_start - current_line;
+		uint16_t offset = GapStart - CurrentLine;
 
 		cursor_home(1);
-		if (gap_start == buffer_start)
+		if (GapStart == BufferStart)
 			return;
 
 		do
-			*--gap_end = *--gap_start;
-		while ((gap_start != buffer_start) && (gap_start[-1] != '\n'));
+			*--GapEnd = *--GapStart;
+		while ((GapStart != BufferStart) && (GapStart[-1] != '\n'));
 
-		current_line = gap_start;
+		CurrentLine = GapStart;
 		cursor_right(offset);
 	}
 }
@@ -482,10 +482,10 @@ void cursor_wordleft(uint16_t count)
 	{
 		bool linechanged = false;
 
-		while (gap_start != buffer_start)
+		while (GapStart != BufferStart)
 		{
-			uint16_t right = *--gap_start = *--gap_end;
-			uint16_t left = gap_start[-1];
+			uint16_t right = *--GapStart = *--GapEnd;
+			uint16_t left = GapStart[-1];
 			if (right == '\n')
 				linechanged = true;
 
@@ -495,9 +495,9 @@ void cursor_wordleft(uint16_t count)
 
 		if (linechanged)
 		{
-			current_line = gap_start;
-			while ((current_line != buffer_start) && (current_line[-1] != '\n'))
-				current_line--;
+			CurrentLine = GapStart;
+			while ((CurrentLine != BufferStart) && (CurrentLine[-1] != '\n'))
+				CurrentLine--;
 		}
 	}
 }
@@ -506,12 +506,12 @@ void cursor_wordright(uint16_t count)
 {
 	while (count--)
 	{
-		while (gap_end != buffer_end)
+		while (GapEnd != BufferEnd)
 		{
-			uint16_t left = *gap_start++ = *gap_end++;
-			uint16_t right = *gap_end;
+			uint16_t left = *GapStart++ = *GapEnd++;
+			uint16_t right = *GapEnd;
 			if (left == '\n')
-				current_line = gap_start;
+				CurrentLine = GapStart;
 
 			if (word_boundary(left, right))
 				break;
@@ -521,13 +521,13 @@ void cursor_wordright(uint16_t count)
 
 void insert_newline(void)
 {
-	if (gap_start != gap_end)
+	if (GapStart != GapEnd)
 	{
-		*gap_start++ = '\n';
-		l3_goto(0, current_line_y);
-		current_line = draw_line(current_line);
-		current_line_y = ScreenY;
-		display_height[current_line_y] = 0;
+		*GapStart++ = '\n';
+		l3_goto(0, CurrentLineY);
+		CurrentLine = draw_line(CurrentLine);
+		CurrentLineY = ScreenY;
+		DisplayHeight[CurrentLineY] = 0;
 	}
 }
 
@@ -549,22 +549,22 @@ void insert_mode(bool replacing)
 		EvilDirtyFlag = true;
 		if (c == 0x0C)             // DELETE (technically backspace)
 		{
-			if (gap_start != current_line)
-				gap_start--;
+			if (GapStart != CurrentLine)
+				GapStart--;
 		}
-		else if (gap_start == gap_end)
+		else if (GapStart == GapEnd)
 		{
 			/* Do nothing, out of memory */
 		}
 		else
 		{
-			if (replacing && (gap_end != buffer_end) && (*gap_end != '\n'))
-				gap_end++;
+			if (replacing && (GapEnd != BufferEnd) && (*GapEnd != '\n'))
+				GapEnd++;
 
 			if (c == 13)
 				insert_newline();
 			else
-				*gap_start++ = c;
+				*GapStart++ = c;
 		}
 
 		redraw_current_line();
@@ -587,18 +587,18 @@ void append_text(uint16_t count)
 
 void goto_line(uint16_t lineno)
 {
-	while (gap_start != buffer_start)
-		*--gap_end = *--gap_start;
-	current_line = buffer_start;
+	while (GapStart != BufferStart)
+		*--GapEnd = *--GapStart;
+	CurrentLine = BufferStart;
 
-	while ((gap_end != buffer_end) && --lineno)
+	while ((GapEnd != BufferEnd) && --lineno)
 	{
-		while (gap_end != buffer_end)
+		while (GapEnd != BufferEnd)
 		{
-			uint16_t c = *gap_start++ = *gap_end++;
+			uint16_t c = *GapStart++ = *GapEnd++;
 			if (c == '\n')
 			{
-				current_line = gap_start;
+				CurrentLine = GapStart;
 				break;
 			}
 		}
@@ -609,9 +609,9 @@ void delete_right(uint16_t count)
 {
 	while (count--)
 	{
-		if (gap_end == buffer_end)
+		if (GapEnd == BufferEnd)
 			break;
-		gap_end++;
+		GapEnd++;
 	}
 
 	redraw_current_line();
@@ -620,7 +620,7 @@ void delete_right(uint16_t count)
 
 void delete_rest_of_line(uint16_t count)
 {
-	while ((gap_end != buffer_end) && (*++gap_end != '\n'))
+	while ((GapEnd != BufferEnd) && (*++GapEnd != '\n'))
 		;
 
 	if (count != 0)
@@ -634,10 +634,10 @@ void delete_line(uint16_t count)
 	{
 		cursor_home(1);
 		delete_rest_of_line(0);
-		if (gap_end != buffer_end)
+		if (GapEnd != BufferEnd)
 		{
-			gap_end++;
-			display_height[current_line_y] = 0;
+			GapEnd++;
+			DisplayHeight[CurrentLineY] = 0;
 		}
 	}
 
@@ -649,13 +649,13 @@ void delete_word(uint16_t count)
 {
 	while (count--)
 	{
-		uint16_t left = (gap_start == buffer_start) ? '\n' : gap_start[-1];
+		uint16_t left = (GapStart == BufferStart) ? '\n' : GapStart[-1];
 
-		while (gap_end != buffer_end)
+		while (GapEnd != BufferEnd)
 		{
-			uint16_t right = *++gap_end;
+			uint16_t right = *++GapEnd;
 
-			if ((gap_end == buffer_end) || (right == '\n'))
+			if ((GapEnd == BufferEnd) || (right == '\n'))
 				break;
 			if (word_boundary(left, right))
 				break;
@@ -684,30 +684,30 @@ void join(uint16_t count)
 {
 	while (count--)
 	{
-		uint8_t* ptr = gap_end;
-		while ((ptr != buffer_end) && (*ptr != '\n'))
+		uint8_t* ptr = GapEnd;
+		while ((ptr != BufferEnd) && (*ptr != '\n'))
 			ptr++;
 
-		if (ptr != buffer_end)
+		if (ptr != BufferEnd)
 			*ptr = ' ';
 	}
 
-	l3_goto(0, current_line_y);
-	render_screen(current_line);
+	l3_goto(0, CurrentLineY);
+	render_screen(CurrentLine);
 	EvilDirtyFlag = true;
 }
 
 void open_above(uint16_t count)
 {
-	if (gap_start == gap_end)
+	if (GapStart == GapEnd)
 		return;
 
 	cursor_home(1);
-	*--gap_end = '\n';
+	*--GapEnd = '\n';
 
 	recompute_screen_position();
-	l3_goto(0, current_line_y);
-	render_screen(current_line);
+	l3_goto(0, CurrentLineY);
+	render_screen(CurrentLine);
 	recompute_screen_position();
 
 	insert_text(count);
@@ -723,17 +723,17 @@ void replace_char(uint16_t count)
 {
 	uint16_t c = l3_getc();
 
-	if (gap_end == buffer_end)
+	if (GapEnd == BufferEnd)
 		return;
 	if (c == '\n')
 	{
-		gap_end++;
+		GapEnd++;
 		/* The cursor ends up *after* the newline. */
 		insert_newline();
 	}
 	else if (isprint(c))
 	{
-		*gap_end = c;
+		*GapEnd = c;
 		/* The cursor ends on *on* the replace character. */
 		redraw_current_line();
 	}
@@ -760,24 +760,24 @@ void zed_force_quit(uint16_t count)
 void redraw_screen(uint16_t count)
 {
 	l3_clear();
-	render_screen(first_line);
+	render_screen(FirstLine);
 }
 
 void enter_delete_mode(uint16_t count)
 {
-	bindings = &deleteBindings;
+	bindings = &DeleteBindings;
 	command_count = count;
 }
 
 void enter_zed_mode(uint16_t count)
 {
-	bindings = &zed_bindings;
+	bindings = &ZedBindings;
 	command_count = count;
 }
 
 void enter_change_mode(uint16_t count)
 {
-	bindings = &change_bindings;
+	bindings = &ChangeBindings;
 	command_count = count;
 }
 
@@ -830,7 +830,7 @@ command_t* const delete_cbs[] =
 	delete_rest_of_line,
 };
 
-const struct bindings deleteBindings =
+const struct bindings DeleteBindings =
 {
 	"Delete",
 	delete_keys,
@@ -844,7 +844,7 @@ command_t* const change_cbs[] =
 	change_rest_of_line,
 };
 
-const struct bindings change_bindings =
+const struct bindings ChangeBindings =
 {
 	"Change",
 	change_keys,
@@ -858,7 +858,7 @@ command_t* const zed_cbs[] =
 	zed_force_quit,	
 };
 
-const struct bindings zed_bindings =
+const struct bindings ZedBindings =
 {
 	"Zed",
 	zed_keys,
@@ -875,8 +875,8 @@ void colon(uint16_t count)
 
 	print_status = command_status_print;
 
-	memset(buffer, 0, 128);
-	char* w = buffer;
+	memset(Buffer, 0, 128);
+	char* w = Buffer;
 	char* arg = 0;
 
 	l3_goto(0, HEIGHT);
@@ -906,7 +906,7 @@ void colon(uint16_t count)
 
 	l3_clear();
 	print_status = command_status_set;
-	render_screen(first_line);
+	render_screen(FirstLine);
 }
 
 /* ======================================================================= */
@@ -930,14 +930,14 @@ void main(int argc, const char* argv[])
 
     l3_clear();
 
-	buffer_start = (void *) 0xC000;
-    buffer_end = (void *) 0xFFFE;
-	*buffer_end = '\n';
+	BufferStart = (void *) 0xC000;
+	BufferEnd = (void *) 0xFFFE;
+	*BufferEnd = '\n';
 	print_status = command_status_set;
 
-	itoa((uint16_t)(buffer_end - buffer_start), buffer, 10);
-	strcat(buffer, " bytes free");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	itoa((uint16_t)(BufferEnd - BufferStart), Buffer, 10);
+	strcat(Buffer, " bytes free");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 //	print_status(buffer);
 
 	if(argc>1) {
@@ -947,7 +947,7 @@ void main(int argc, const char* argv[])
 
 	load_file();
 	l3_goto(0, 0);
-	render_screen(first_line);
+	render_screen(FirstLine);
 	bindings = &normal_bindings;
 
 
@@ -972,10 +972,10 @@ void main(int argc, const char* argv[])
             if (isdigit(c))
             {
                 command_count = (command_count*10) + (c-'0');
-                itoa(command_count, buffer, 10);
-                strcat(buffer, " repeat");
+                itoa(command_count, Buffer, 10);
+                strcat(Buffer, " repeat");
 
-				_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,buffer);
+				_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set, Buffer);
             }
             else
             {

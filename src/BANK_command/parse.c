@@ -17,7 +17,7 @@
 #include "file_save.h"
 
 void command_parse() {
-	char* w = strtok(buffer, " ");
+	char* w = strtok(Buffer, " ");
 	if (!*w) return;
 	char* arg = strtok(NULL, " ");
 	switch (*w)

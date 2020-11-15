@@ -49,10 +49,10 @@ bool command_file_save(void)
 		}
 	}
 
-	strcpy(message_buffer, "Failed to save file (errno:");
-	itoa(errno, message_buffer+strlen(message_buffer), 10);
-	strcat(message_buffer, ")");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	strcpy(MessageBuffer, "Failed to save file (errno:");
+	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+	strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 
 	_far(BANK_SYSTEM,system_beep);
 
@@ -65,11 +65,11 @@ bool command_file_save(void)
 	if (really_save_file(FileNameTemp) == false)
 		goto tempfile;
 
-	strcpy(message_buffer, "Renaming ");
-	strcat(message_buffer, FileNameTemp);
-	strcat(message_buffer, " to ");
-	strcat(message_buffer, FileName);
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	strcpy(MessageBuffer, "Renaming ");
+	strcat(MessageBuffer, FileNameTemp);
+	strcat(MessageBuffer, " to ");
+	strcat(MessageBuffer, FileName);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 
 	errno = 0;
 	esxdos_f_unlink(FileName);
@@ -82,18 +82,18 @@ bool command_file_save(void)
 	return true;
 
 	tempfile:
-	strcpy(message_buffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
-	itoa(errno, message_buffer+strlen(message_buffer), 10);
-	strcat(message_buffer, ")");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	strcpy(MessageBuffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
+	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+	strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 
 	commit:
-	strcpy(message_buffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
-	itoa(errno, message_buffer+strlen(message_buffer), 10);
-	strcat(message_buffer, ")");
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	strcpy(MessageBuffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
+	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
+	strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 }

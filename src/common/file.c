@@ -31,10 +31,10 @@ const char tmp_filename[] = "EVILTEMP.$$$";
 
 void file_new(void)
 {
-	gap_start = buffer_start;
-	gap_end = buffer_end;
+	GapStart = BufferStart;
+	GapEnd = BufferEnd;
 
-	first_line = current_line = buffer_start;
+	FirstLine = CurrentLine = BufferStart;
 	EvilDirtyFlag = true;
 }
 
@@ -44,25 +44,25 @@ bool really_save_file(const char* fcb)
 	uint8_t* outp;
 	static uint16_t pushed;
 
-	strcpy(message_buffer, "Writing ");
-	strcat(message_buffer, fcb);
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+	strcpy(MessageBuffer, "Writing ");
+	strcat(MessageBuffer, fcb);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 
 	errno = 0;
 	FileHandle = esxdos_f_open(fcb, ESXDOS_MODE_W | ESXDOS_MODE_CT);
 	if (errno) {
-		strcpy(message_buffer, "Failed to create file (errno:");
-		itoa(errno, message_buffer + strlen(message_buffer), 10);
-		strcat(message_buffer, ")");
-		_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, message_buffer);
+		strcpy(MessageBuffer, "Failed to create file (errno:");
+		itoa(errno, MessageBuffer + strlen(MessageBuffer), 10);
+		strcat(MessageBuffer, ")");
+		_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 		_far(BANK_SYSTEM,system_beep);
 		return false;
 	}
 
-	inp = buffer_start;
+	inp = BufferStart;
 	outp = cpm_default_dma;
 	pushed = 0;
-	while ((inp != buffer_end) || (outp != cpm_default_dma) || pushed)
+	while ((inp != BufferEnd) || (outp != cpm_default_dma) || pushed)
 	{
 		static uint16_t c;
 
@@ -73,9 +73,9 @@ bool really_save_file(const char* fcb)
 		}
 		else
 		{
-			if (inp == gap_start)
-				inp = gap_end;
-			c = (inp != buffer_end) ? *inp++ : 0;
+			if (inp == GapStart)
+				inp = GapEnd;
+			c = (inp != BufferEnd) ? *inp++ : 0;
 
 //			if (c == '\n')
 //			{
@@ -95,7 +95,7 @@ bool really_save_file(const char* fcb)
 		}
 
 		// special case to get around CPMs 128b block
-		if ((inp == buffer_end) && !pushed && (outp != cpm_default_dma)) {
+		if ((inp == BufferEnd) && !pushed && (outp != cpm_default_dma)) {
 			uint8_t b = outp - cpm_default_dma;
 
 			esx_f_write(FileHandle, cpm_default_dma, outp - cpm_default_dma);

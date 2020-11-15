@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define cpm_default_dma     (uint8_t*)buffer
+#define cpm_default_dma     (uint8_t*) Buffer
 
 #define WIDTH SCREENWIDTH
 #define HEIGHT (SCREENHEIGHT-1)
@@ -20,17 +20,17 @@ extern uint8_t FileHandle;							// File Ops
 
 extern bool EvilDirtyFlag;
 
-extern uint8_t* buffer_start;
-extern uint8_t* gap_start;
-extern uint8_t* gap_end;
-extern uint8_t* buffer_end;
+extern uint8_t* BufferStart;
+extern uint8_t* GapStart;
+extern uint8_t* GapEnd;
+extern uint8_t* BufferEnd;
 
-extern char buffer[128];
-extern char message_buffer[128];
+extern char Buffer[128];
+extern char MessageBuffer[128];
 
 
-extern uint8_t* first_line; /* <= gap_start */
-extern uint8_t* current_line; /* <= gap_start */
+extern uint8_t* FirstLine; /* <= GapStart */
+extern uint8_t* CurrentLine; /* <= GapStart */
 
 // TODO - Migrate these to BANK_command
 void quit(void);
