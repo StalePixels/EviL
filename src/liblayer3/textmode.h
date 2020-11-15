@@ -25,7 +25,4 @@ struct __tiles
 };
 
 extern struct __tiles tiles[256];   //
-
-extern unsigned char font[];
-
 #endif //EVIL_TEXTMODE_H

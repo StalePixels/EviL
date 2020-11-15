@@ -31,9 +31,6 @@
 
 #include "BANK_command/status.h"
 #include "BANK_system/system.h"
-//#include "BANK_command/error.h"
-//#include "BANK_command/status.h"
-
 
 uint8_t ScreenX = 0, ScreenY = 0;
 uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, FileHandle;

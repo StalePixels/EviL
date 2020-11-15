@@ -5,6 +5,6 @@
 #ifndef EVIL_STATUS_H
 #define EVIL_STATUS_H
 
-void command_status_print(const char* s);
-void command_status_set(const char* s);
+void command_status_print(const char* message);
+void command_status_set(const char* message);
 #endif//EVIL_STATUS_H

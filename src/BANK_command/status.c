@@ -9,11 +9,12 @@
 
 uint8_t status_line_length = WIDTH;
 
-void command_status_print(const char* s) {
+void command_status_print(const char* message) {
+//	_farWithPointer(BANK_SPUI, (void (*)(void *)) SPUI_error, message_buffer);
 	uint8_t oldx = ScreenX, oldy = ScreenY;
 	ScreenY = HEIGHT - 1; ScreenX = 0;
 	l3_clear_to_eol();
-	l3_puts(s);
+	l3_puts(message);
 	ScreenX = oldx; ScreenY = oldy;
 }
 

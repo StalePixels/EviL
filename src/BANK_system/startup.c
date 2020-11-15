@@ -17,9 +17,11 @@
 #include <input.h>
 #include <compress/zx7.h>
 
-#include "system.h"
+#include "../BANK_fonts/set.h"
+#include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "../liblayer3/textmode.h"
+#include "system.h"
 
 extern void at_exit();
 
@@ -75,11 +77,7 @@ void system_init() {
     // We're going to trash this area for the Editor canvas, so let's back it up so we can restore it
     system_textmode_save();
 
-    // Load Cinema.ch8 font, taken from https://damieng.com/typography/zx-origins/cinema
-    dzx7_standard(((unsigned int *)font), ((unsigned char *)0x5D00));
-    memset(0x5C00, 0, 8);               // Make val 0 also blank
-
-    // 0x6E (110) R/W =>  Tilemap Base Address
+	// 0x6E (110) R/W =>  Tilemap Base Address
     //  bits 7-6 = Read back as zero, write values ignored
     //  bits 5-0 = MSB of address of the tilemap in Bank 5
     ZXN_NEXTREG(0x6e, 0x6C);                                    // tilemap base address is 0x6C00
@@ -92,7 +90,16 @@ void system_init() {
     ZXN_NEXTREG(REG_GLOBAL_TRANSPARENCY_COLOR, 0xE3);
     ZXN_NEXTREG(REG_FALLBACK_COLOR, 0x00);
 
-    // Select ULA palette
+	// Load Cinema.ch8 font, taken from https://damieng.com/typography/zx-origins/cinema
+	_farWithUChar(BANK_FONTS,font_set, 0);
+	memset(0x5C00, 0, 8);               // Make val 0 also blank
+
+//	_far(BANK_SETTINGS,settings_load);
+
+	/*
+	 * START BIT FOR SETTINGS HANDLER MIGRATION
+	 */
+	// Select ULA palette
     ZXN_NEXTREG(0x43, 0x00);                                    // 0x43 (67) => Palette Control, 00 is ULA
     // Set Magenta back to proper E3
     ZXN_NEXTREGA(REG_PALETTE_INDEX, 27);
@@ -109,6 +116,9 @@ void system_init() {
         ZXN_NEXTREGA(0x44, tilemap_foreground[(i%32)]);         // 0x44 (68) => 9 bit colour) autoinc after TWO writes
         ZXN_NEXTREGA(0x44, tilemap_foreground[(i%32)+1]);       // 0x44 (68) => 9 bit colour) autoinc after TWO writes
     } while ((i = i + 2) != 0);
+	/*
+	 * END BIT FOR SETTINGS HANDLER MIGRATION
+	 */
 
     zx_border(INK_BLACK);
     ZXN_NEXTREG(0x6b, /*0b11001000*/ 0xC8);                     // enable tilemap, 80x32 mode, 1bit palette

@@ -80,6 +80,26 @@ dirs:
 	$(MKDIR) $(BUILD_DIR)
 	$(MKDIR) $(TMP_DIR)
 
+# BANK_FONTS
+bank_40:
+	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
+		--codesegBANK_40 --constsegBANK_40 \
+		--datasegBANK_40 --bsssegBANK_40   \
+		@src/BANK_fonts/fonts.lst -o$(TMP_DIR)/BANK_fonts.o
+
+# BANK_SETTINGS
+bank_44:
+	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
+		--codesegBANK_44 --constsegBANK_44 \
+		--datasegBANK_44 --bsssegBANK_44   \
+		@src/BANK_settings/settings.lst -o$(TMP_DIR)/BANK_settings.o
+
+# BANK_SPUI
+bank_45:
+	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
+		--codesegBANK_45 --constsegBANK_45 \
+		--datasegBANK_45 --bsssegBANK_45   \
+		@src/BANK_spui/spui.lst -o$(TMP_DIR)/BANK_spui.o
 # BANK_COMMAND
 bank_46:
 	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
@@ -94,7 +114,7 @@ bank_47:
 		--datasegBANK_47 --bsssegBANK_47   \
 		@src/BANK_system/system.lst -o$(TMP_DIR)/BANK_system.o
 
-banks: dirs deps bank_47 bank_46
+banks: dirs deps bank_47 bank_46 bank_45 bank_44 bank_40
 
 assemble: banks
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) -create-app \
