@@ -49,7 +49,7 @@ uint16_t CurrentLineY;
 uint8_t DisplayHeight[HEIGHT];
 uint16_t LineLength[HEIGHT];
 
-uint16_t command_count;
+uint16_t CommandCount;
 typedef void command_t(uint16_t);
 
 struct bindings
@@ -766,19 +766,19 @@ void redraw_screen(uint16_t count)
 void enter_delete_mode(uint16_t count)
 {
 	bindings = &DeleteBindings;
-	command_count = count;
+	CommandCount = count;
 }
 
 void enter_zed_mode(uint16_t count)
 {
 	bindings = &ZedBindings;
-	command_count = count;
+	CommandCount = count;
 }
 
 void enter_change_mode(uint16_t count)
 {
 	bindings = &ChangeBindings;
-	command_count = count;
+	CommandCount = count;
 }
 
 const char normal_keys[] =
@@ -955,7 +955,7 @@ void main(int argc, const char* argv[])
         _far(BANK_SYSTEM,system_splash);
     }
 
-	command_count = 0;
+	CommandCount = 0;
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 	for (;;)
@@ -971,8 +971,8 @@ void main(int argc, const char* argv[])
 			c = l3_getc();
             if (isdigit(c))
             {
-                command_count = (command_count*10) + (c-'0');
-                itoa(command_count, Buffer, 10);
+				CommandCount = (CommandCount *10) + (c-'0');
+                itoa(CommandCount, Buffer, 10);
                 strcat(Buffer, " repeat");
 
 				_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set, Buffer);
@@ -989,7 +989,7 @@ void main(int argc, const char* argv[])
 		if (cmdp)
 		{
 			command_t* cmd = bindings->callbacks[cmdp - bindings->keys];
-			uint16_t count = command_count;
+			uint16_t count = CommandCount;
 			if (count == 0)
 			{
 				if (cmd == goto_line)
@@ -997,7 +997,7 @@ void main(int argc, const char* argv[])
 				else
 					count = 1;
 			}
-			command_count = 0;
+			CommandCount = 0;
 
 			bindings = &normal_bindings;
 
@@ -1011,7 +1011,7 @@ void main(int argc, const char* argv[])
 
 			_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,"Unknown key");
 			bindings = &normal_bindings;
-			command_count = 0;
+			CommandCount = 0;
 		}
 	}
 #pragma clang diagnostic pop
