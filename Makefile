@@ -14,7 +14,7 @@ Z88DK_CRT = 1
 DEBUGFLAGS =
 
 CC=zcc
-CCFLAGS=+zxn -vn -O3 -startup=$(Z88DK_CRT) -clib=new -preserve -pragma-include:zpragma.inc
+CCFLAGS=+zxn -vn -O3 -startup=$(Z88DK_CRT) -clib=new -pragma-include:zpragma.inc
 CZFLAGS=-Cz="--clean --fullsize --main-fence 0xC000"
 LDFLAGS=-m -lm
 INCFLAGS=

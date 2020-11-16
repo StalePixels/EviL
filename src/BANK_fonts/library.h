@@ -7,11 +7,13 @@
 
 #include <stdlib.h>
 
-extern const unsigned char* font_library[];
-extern const uint8_t* font_names[];
+#define FONT_COUNT 		2
+extern const uint8_t* font_library[];
+extern const char* font_names[];
 
-extern unsigned char font_sinclair[];
-extern unsigned char font_cinema[];
+
+extern const uint8_t 	font_sinclair[];
+extern const uint8_t 	font_cinema[];
 
 
 #endif//EVIL_FONT_LIBRARY_H

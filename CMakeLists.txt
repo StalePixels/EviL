@@ -32,4 +32,4 @@ add_executable(EVIL
         src/BANK_command/status
 # 47
         src/BANK_system/startup
-        src/BANK_spui/error.c src/BANK_spui/error.h src/BANK_settings/load.c src/BANK_settings/load.h src/BANK_fonts/library.c src/BANK_fonts/library.h src/BANK_fonts/set.c src/BANK_fonts/set.h)
+        src/BANK_spui/error.c src/BANK_spui/error.h src/BANK_settings/load.c src/BANK_settings/load.h src/BANK_fonts/library.c src/BANK_fonts/library.h src/BANK_fonts/set.c src/BANK_fonts/set.h src/BANK_settings/apply.c src/BANK_settings/apply.h src/BANK_fonts/get.c src/BANK_fonts/get.h)

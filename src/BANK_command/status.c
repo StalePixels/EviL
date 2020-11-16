@@ -25,7 +25,7 @@ void command_status_set(const char* message)
 
 	uint8_t oldx = ScreenX, oldy = ScreenY;
 
-	l3_goto(0, HEIGHT);
+	l3_goto(0, HEIGHT - 1);
 	l3_revon();
 	for (;;)
 	{

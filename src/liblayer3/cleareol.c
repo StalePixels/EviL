@@ -20,6 +20,7 @@ void l3_clear_to_eol(void)
 
     while (i--) {
         tilemap[ScreenY][SCREENWIDTH-i-1].tile = ' ';
+        tilemap[ScreenY][SCREENWIDTH-i-1].flags = screencolour;
     }
 
     l3_goto(ScreenX, ScreenY);

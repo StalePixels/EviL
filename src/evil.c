@@ -122,6 +122,7 @@ uint8_t* draw_line(uint8_t* startp)
 	uint16_t starty = ScreenY;
 	uint8_t* inp = startp;
 
+
 	while (ScreenY != HEIGHT)
 	{
 		if (inp == GapStart)
@@ -131,9 +132,10 @@ uint8_t* draw_line(uint8_t* startp)
 		}
 		if (inp == BufferEnd)
 		{
-			if (xo == 0)
+			if (xo == 0 && ScreenY < HEIGHT-1) {
 				l3_puts("~");
-			l3_clear_to_eol();
+				l3_clear_to_eol();
+			}
 			l3_newline();
 			break;
 		}
@@ -302,7 +304,7 @@ error:
     strcat(MessageBuffer, " (errno:");
     itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
     strcat(MessageBuffer, ")");
-	print_status(MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
 done:
 	esxdos_f_close(FileHandle);
 	EvilDirtyFlag = true;
@@ -922,7 +924,6 @@ void main(int argc, const char* argv[])
     OriginalMMU6 = ZXN_READ_REG(REG_MMU0 + 6);
     OriginalMMU7 = ZXN_READ_REG(REG_MMU0 + 7);
 
-	malloc(1024);
     /*
      * Initalise the hardware
      */
@@ -930,15 +931,11 @@ void main(int argc, const char* argv[])
 
     l3_clear();
 
-	BufferStart = (void *) 0xC000;
-	BufferEnd = (void *) 0xFFFE;
-	*BufferEnd = '\n';
 	print_status = command_status_set;
 
-	itoa((uint16_t)(BufferEnd - BufferStart), Buffer, 10);
-	strcat(Buffer, " bytes free");
+	itoa((uint16_t)(BufferEnd - BufferStart), MessageBuffer, 10);
+	strcat(MessageBuffer, " bytes free");
 	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
-//	print_status(buffer);
 
 	if(argc>1) {
 		FileName = malloc(strlen(argv[1])+1);
@@ -950,11 +947,11 @@ void main(int argc, const char* argv[])
 	render_screen(FirstLine);
 	bindings = &normal_bindings;
 
-
     if(!FileName) {
         _far(BANK_SYSTEM,system_splash);
     }
 
+//	zx_border(INK_GREEN);  while(1);
 	CommandCount = 0;
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"

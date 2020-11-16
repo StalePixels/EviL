@@ -1,4 +1,5 @@
 load.c
+apply.c
 ini_get_line.c
 ini_get_one.c
 ini_common.c
