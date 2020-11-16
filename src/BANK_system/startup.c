@@ -128,7 +128,6 @@ void system_init() {
 
 	zx_border(INK_BLACK);
 
-	_far(BANK_SETTINGS,settings_load);
 
 	ZXN_NEXTREG(0x6b, /*0b11001000*/ 0xC8);                     // enable tilemap, 80x32 mode,
 																// 1bit palette
@@ -139,6 +138,9 @@ void system_init() {
 	BufferStart = (void *) 0xC000;
 	BufferEnd = (void *) 0xFFFE;
 	*BufferEnd = '\n';
+
+	// Load the preferences
+	_far(BANK_SETTINGS,settings_load);
 }
 
 void system_splash() {
