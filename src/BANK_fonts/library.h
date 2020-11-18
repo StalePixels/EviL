@@ -7,13 +7,19 @@
 
 #include <stdlib.h>
 
-#define FONT_COUNT 		2
+#define FONT_COUNT 		8
 extern const uint8_t* font_library[];
 extern const char* font_names[];
 
 
 extern const uint8_t 	font_sinclair[];
 extern const uint8_t 	font_cinema[];
+extern const uint8_t 	font_courier[];
+extern const uint8_t 	font_magnetic[];
+extern const uint8_t 	font_minecraft[];
+extern const uint8_t 	font_ocra[];
+extern const uint8_t 	font_ocrb[];
+extern const uint8_t 	font_sixties[];
 
 
 #endif//EVIL_FONT_LIBRARY_H

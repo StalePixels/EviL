@@ -6,11 +6,23 @@
 
 const uint8_t* font_library[] = {
 		&font_sinclair,
-		&font_cinema
+		&font_cinema,
+		&font_courier,
+		&font_magnetic,
+		&font_minecraft,
+		&font_ocra,
+		&font_ocrb,
+		&font_sixties
 };
 
 const char* font_names[] = {
 		"Sinclair",
-		"Cinema"
+		"Cinema",
+		"Courier",
+		"Magnetic",
+		"Minecraft",
+		"OCR-A",
+		"OCR-B",
+		"60s"
 };
 

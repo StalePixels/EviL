@@ -1,5 +1,11 @@
 set.c
 get.c
 library.c
-sinclair.asm
 cinema.asm
+courier.asm
+magnetic.asm
+minecraft.asm
+ocr-a.asm
+ocr-b.asm
+sinclair.asm
+sixties.asm

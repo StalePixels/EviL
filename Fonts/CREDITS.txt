@@ -1,5 +1,9 @@
+60s.ch8:        Damien Guard's zx-origin project*
+Courier.ch8:    Damien Guard's zx-origin project*
+Magnetic.ch8:   Damien Guard's zx-origin project*
+Minecraft.ch8:  Damien Guard's zx-origin project*
+OCR-A.ch8:      Damien Guard's zx-origin project*
+OCR-B.ch8:      Damien Guard's zx-origin project*
 Sinclair.ch8:   Original Sinclair 48K ZX ROM Font
-Cinema.ch8:     Damien Guard's zx-origin project*
-
 
 * https://damieng.com/typography/zx-origins/
