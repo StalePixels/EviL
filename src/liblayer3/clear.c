@@ -10,6 +10,6 @@
 #include "liblayer3.h"
 void l3_clear(void)
 {
-    memset(tilemap, 1, sizeof(tilemap));
+    memset(tilemap, 0, sizeof(tilemap));
     ScreenX = ScreenY = 0;
 }
