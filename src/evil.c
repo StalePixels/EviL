@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "liblayer3/liblayer3.h"
 
+#include "BANK_command/parse.h"
 #include "BANK_command/status.h"
 #include "BANK_system/system.h"
 

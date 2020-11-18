@@ -146,21 +146,15 @@ void system_init() {
 void system_splash() {
     uint16_t oldx = ScreenX;
     uint16_t oldy = ScreenY;
-	ScreenX = 14;
-	ScreenY = 13;
-    l3_puts("EVIL, a VI adjacent, by David Given, part of his CPMISH");
-	ScreenX = 18;
-	ScreenY = 14;
-    l3_puts(    "NextZXOS port D. Rimron-Soutter, Stale Pixels");
-	ScreenX = 27;
+	ScreenX = 12;
 	ScreenY = 15;
-    l3_puts(            "Cinema font by Damien Guard");
-	ScreenX = 26;
-	ScreenY = 17;
-    l3_puts(            "Version 11h2 - Build 20201013");
-	ScreenX = 17;
-	ScreenY = 19;
-    l3_puts(   "Here by accident?  Hold CAPS SHIFT and press ZZ");
+	l3_puts("EVIL, a VI adjacent - forked from David Given's (CPMISH) QE");
+	ScreenX = 25;
+	ScreenY = 16;
+    l3_puts(           "Code: D. Rimron-Soutter, Stale Pixels");
+	ScreenX = 28;
+	ScreenY = 18;
+    l3_puts(             "Fonts: Damien Guard, zx-origins");
 	ScreenX = oldx;
 	ScreenY = oldy;
 }

@@ -34,8 +34,6 @@ void settings_apply(const char *command) {
 		// Load Font from file
 		else {
 			_farWithPointer(BANK_SPUI, spui_font_not_found, ini_value);
-
 		}
-
 	}
 }

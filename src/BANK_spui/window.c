@@ -4,6 +4,7 @@
 
 #include "window.h"
 #include "../common/ula.h"
+#include "../liblayer3/textmode.h"
 #include "common.h"
 #include "line.h"
 #include "triangle.h"
@@ -22,6 +23,17 @@
 void spui_window(const struct SPUIWindow *WindowArgs) {
 	uint8_t SpuiWindowRow, SpuiWindowCol;
 	uint16_t Address;
+// raise the ULA over the tileset
+
+	uint8_t th = 4+WindowArgs->row+WindowArgs->height;
+	uint8_t tw = (4+WindowArgs->col+WindowArgs->width)<<1;
+
+	for(uint8_t ty=1+WindowArgs->row; ty<th; ++ty) {
+		for(uint8_t tx=(3+WindowArgs->col)<<1; tx<tw; ++tx) {
+			tilemap[ty][tx].flags |=  1;
+		}
+	}
+
 
 	printBrightOn(); printFlashOff();
 	printPaper(INK_BLACK); printInk(INK_WHITE);

@@ -12,13 +12,23 @@
 #include <arch/zxn/esxdos.h>
 #include <errno.h>
 
-#include <input.h>
 #include "liblayer3.h"
+#include <input.h>
+#include <stdbool.h>
 
 static uint8_t last_key = 0;
 static uint8_t next_key = 0;
 
-#define FRAME_FLASH             27
+#define L3_REPEAT_START         25
+static uint8_t repeat_start = L3_REPEAT_START;
+#define L3_REPEAT_KEY           15
+static uint8_t repeat_key = L3_REPEAT_KEY;
+
+static uint8_t repeat_counter;
+static bool	key_repeating = false;
+
+
+#define FRAME_FLASH             10
 static uint8_t cursor_frame_counter =    FRAME_FLASH;
 
 void l3_cursor() {
@@ -30,7 +40,7 @@ void l3_cursor() {
     }
 }
 
-int8_t chrcmpi(unsigned char a, unsigned char b) {
+int8_t chricmp(unsigned char a, unsigned char b) {
     if((a>64 && a<91)) a=a+32;
     if((b>64 && b<91)) b=b+32;
     return a==b;
@@ -39,10 +49,27 @@ int8_t chrcmpi(unsigned char a, unsigned char b) {
 uint8_t l3_getc(void)
 {
     // Stop holding the previous key
-    while(chrcmpi(next_key, last_key)) {
+    while(chricmp(next_key, last_key)) {
         next_key = in_inkey();
         l3_cursor();
+		repeat_counter--;
+		if(!repeat_counter) {
+			// pretend they raised their finger for a moment, and then put it back
+			next_key = 0;
+
+			if(!key_repeating) {
+				key_repeating = true;
+				repeat_counter = repeat_start;
+			}
+			else {
+				repeat_counter = repeat_key;
+			}
+			goto get_next_key;
+		}
     }
+
+	repeat_counter = repeat_start;
+get_next_key:
 
     // Now wait for a new key
     while(!next_key) {

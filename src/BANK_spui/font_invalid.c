@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <input.h>
 
 void spui_font_invalid(const char*FontName) {
 	spui_error("Font Name Error");
@@ -18,6 +19,7 @@ void spui_font_invalid(const char*FontName) {
 	printAt(SPUI_ERROR_ROW+4,SPUI_ERROR_COL+1); printf("\"%.*s\"", SPUI_ERROR_WIDTH-4, FontName);
 	printAtStr(SPUI_ERROR_ROW+5,SPUI_ERROR_COL+1, "is not recognised. See");
 	printAtStr(SPUI_ERROR_ROW+6,SPUI_ERROR_COL+1, "help for a valid list.");
+	while(in_inkey()!=0);
 	printAtStr(SPUI_ERROR_ROW+8,SPUI_ERROR_COL+1, " Any key to continue! ");
 	spui_any_key();
 	zx_cls(PAPER_MAGENTA|BRIGHT);

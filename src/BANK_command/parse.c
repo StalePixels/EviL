@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "../BANK_settings/apply.h"
 #include "../common/evil.h"
 #include "../common/file.h"
 #include "../common/memory.h"
@@ -19,9 +20,17 @@
 void command_parse() {
 	char* w = strtok(Buffer, " ");
 	if (!*w) return;
-	char* arg = strtok(NULL, " ");
+	char* arg = strtok(NULL, "");
 	switch (*w)
 	{
+		case 's':		// S is for SETTINGS, or SET ;-)
+		{
+			if(!stricmp(w, "set")) {
+				strcat(arg, "\n");
+				_farWithPointer(BANK_SETTINGS, settings_apply, arg);
+			}
+			break;
+		}
 
 		case 'w':
 		{
