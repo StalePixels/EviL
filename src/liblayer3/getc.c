@@ -19,16 +19,13 @@
 static uint8_t last_key = 0;
 static uint8_t next_key = 0;
 
-#define L3_REPEAT_START         25
 uint8_t L3RepeatStart = L3_REPEAT_START;
-#define L3_REPEAT_KEY           15
 uint8_t L3RepeatKey = L3_REPEAT_KEY;
 
 static uint8_t repeat_counter;
 static bool	key_repeating = false;
 
 
-#define FRAME_FLASH             10
 static uint8_t cursor_frame_counter =    FRAME_FLASH;
 
 void l3_cursor() {

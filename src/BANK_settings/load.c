@@ -14,7 +14,7 @@
 #include "load.h"
 #include "trim_whitespace.h"
 
-const char settings_filename[] = "/sys/evil.rc";
+const char settings_filename[] = "/SYS/EviL.RC";
 
 void settings_load(void) {
 	IniValue = 0;

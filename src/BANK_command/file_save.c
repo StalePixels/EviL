@@ -82,7 +82,7 @@ bool command_file_save(void)
 	return true;
 
 	tempfile:
-	strcpy(MessageBuffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
+	strcpy(MessageBuffer, "Cannot create EviLtemp.$$$ file - it may exist (errno:");
 	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
 	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
@@ -90,7 +90,7 @@ bool command_file_save(void)
 	return false;
 
 	commit:
-	strcpy(MessageBuffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
+	strcpy(MessageBuffer, "Cannot commit file; your data may be in EviLtemp.$$$ (errno:");
 	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
 	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);

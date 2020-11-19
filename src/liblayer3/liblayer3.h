@@ -19,6 +19,7 @@ extern uint16_t screencolour;
 
 #define L3_REPEAT_START         25
 #define L3_REPEAT_KEY           15
+#define FRAME_FLASH             10
 
 extern uint8_t L3RepeatStart;
 extern uint8_t L3RepeatKey;

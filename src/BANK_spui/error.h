@@ -5,6 +5,8 @@
 #ifndef EVIL_SPUI_ERROR_H
 #define EVIL_SPUI_ERROR_H
 
+#include "../common/ula.h"
+
 #define SPUI_ERROR_WIDTH	24
 #define SPUI_ERROR_HEIGHT	10
 #define SPUI_ERROR_ROW		(((ULA_HEIGHT-SPUI_ERROR_HEIGHT)/2)-1)

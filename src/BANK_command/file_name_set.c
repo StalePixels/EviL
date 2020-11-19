@@ -14,7 +14,7 @@
 #include "../common/memory.h"
 
 
-const char FileNameTemp[] = "EVILTEMP.$$$";
+const char FileNameTemp[] = "EviLtemp.$$$";
 
 void command_file_name_set(const char* f)
 {

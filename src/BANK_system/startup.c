@@ -19,6 +19,7 @@
 
 #include "../BANK_fonts/set.h"
 #include "../BANK_settings/load.h"
+#include "../BANK_settings/show_errors.h"
 #include "../common/evil.h"
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
@@ -141,6 +142,8 @@ void system_init() {
 
 	// Load the preferences
 	_far(BANK_SETTINGS,settings_load);
+
+	_farWithUChar(BANK_SETTINGS, settings_show_errors, false);
 }
 
 void system_splash() {
@@ -148,7 +151,7 @@ void system_splash() {
     uint16_t oldy = ScreenY;
 	ScreenX = 14;
 	ScreenY = 13;
-	l3_puts(".EVIL (essentially VI lite) - a Vi adjacent for NextZXOS");
+	l3_puts(".EviL (Essentially vi Lite) - a vi adjacent for NextZXOS");
 	ScreenX = 14;
 	ScreenY = 14;
 	l3_puts("Originally forked from QE by David Given, part of CPMISH");

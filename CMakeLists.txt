@@ -12,6 +12,7 @@ add_executable(EVIL
 
         src/common/file
         src/common/memory
+        src/common/ula
 
         src/liblayer3/clear
         src/liblayer3/cleareol
@@ -55,4 +56,4 @@ add_executable(EVIL
         src/BANK_spui/triangle
         src/BANK_spui/line
         src/BANK_spui/not_zero
-        )
+        src/BANK_settings/common.h src/BANK_settings/string_is_true.c src/BANK_settings/string_is_true.h src/BANK_settings/string_is_false.c src/BANK_settings/string_is_false.h src/BANK_spui/bool_invalid.c src/BANK_spui/bool_invalid.h src/BANK_settings/show_errors.c src/BANK_settings/show_errors.h)

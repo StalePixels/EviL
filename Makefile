@@ -1,4 +1,4 @@
-NAME = EVIL
+NAME = EviL
 BUILD_DIR ?= ./BUILD-$(NAME)
 TMP_DIR ?= ./TMP
 SRC_DIRS ?= ./src
