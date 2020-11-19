@@ -9,31 +9,31 @@
 
 
 // Return the next line in the open ini. Max Len 512char
-bool ini_get_line(bool inc_comments) {
-    char c;                     // Current char in line
+bool ini_get_line(bool IncComments) {
+    char C;                     // Current char in line
     uint8_t r;                  // Number of chars read
-    uint16_t ini_char = 0;      // Current pos in this line
+    uint16_t IniChar = 0;      // Current pos in this line
 
     start_line:
-    r = esxdos_f_read(ini_in, &c, 1);
+    r = esxdos_f_read(IniIn, &C, 1);
 
     while(r) {
-        if(!ini_char && (c==';' || c=='[') && !inc_comments) {
-            while (r && c != 10) {
-                r = esxdos_f_read(ini_in, &c, 1);
+        if(!IniChar && (C ==';' || C =='[') && !IncComments) {
+            while (r && C != 10) {
+                r = esxdos_f_read(IniIn, &C, 1);
             }
             goto start_line;
         }
-        if(c==10) {
-            if (ini_char) {
-                ini_line[ini_char] = 0;
+        if(C ==10) {
+            if (IniChar) {
+                IniLine[IniChar] = 0;
                 return true;
             }
             goto start_line;
         }
-        ini_line[ini_char++] = c;
+        IniLine[IniChar++] = C;
 
-        r = esxdos_f_read(ini_in, &c, 1);
+        r = esxdos_f_read(IniIn, &C, 1);
     }
 
     return false;

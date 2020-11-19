@@ -5,6 +5,6 @@
 #ifndef EVIL_SETTINGS_APPLY_H
 #define EVIL_SETTINGS_APPLY_H
 
-void settings_apply(const char *command);
+void settings_apply(const char *Command);
 
 #endif//EVIL_SETTINGS_APPLY_H

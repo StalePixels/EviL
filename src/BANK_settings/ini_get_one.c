@@ -10,9 +10,9 @@
 #include <ctype.h>
 #include <string.h>
 
-bool ini_get_one(const char *filename, const char *key) {
-    ini_value = 0;
-    ini_in = esxdos_f_open(filename, ESXDOS_MODE_R | ESXDOS_MODE_OE);
+bool ini_get_one(const char *Filename, const char *Key) {
+    IniValue = 0;
+    IniIn = esxdos_f_open(Filename, ESXDOS_MODE_R | ESXDOS_MODE_OE);
 
     uint8_t* allowed_errno = errno_filter;
     while(*allowed_errno && errno!=*allowed_errno) {
@@ -26,15 +26,15 @@ bool ini_get_one(const char *filename, const char *key) {
 
     pass:
     while(ini_get_line(false)) {
-        ini_key = trim_whitespace(strtok(ini_line, "="));
-        if(!stricmp(ini_key, key)) {
-            ini_value = trim_whitespace(strtok(NULL, "\n"));
+        IniKey = trim_whitespace(strtok(IniLine, "="));
+        if(!stricmp(IniKey, Key)) {
+            IniValue = trim_whitespace(strtok(NULL, "\n"));
             goto done;
         }
     }
 
     done:
-    esxdos_f_close(ini_in);
+    esxdos_f_close(IniIn);
 
-    return (ini_value ? true : false);
+    return (IniValue ? true : false);
 }

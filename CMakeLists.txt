@@ -23,7 +23,14 @@ add_executable(EVIL
         src/liblayer3/revoff
         src/liblayer3/revon
         src/liblayer3/textmode
-
+# 44
+        src/BANK_settings/apply
+        src/BANK_settings/ini_common
+        src/BANK_settings/ini_get_one
+        src/BANK_settings/ini_get_line
+        src/BANK_settings/ini_set_one
+        src/BANK_settings/load
+        src/BANK_settings/trim_whitespace
 # 46
         src/BANK_command/error
         src/BANK_command/file_name_set
@@ -32,4 +39,20 @@ add_executable(EVIL
         src/BANK_command/status
 # 47
         src/BANK_system/startup
-        src/BANK_spui/error.c src/BANK_spui/error.h src/BANK_settings/load.c src/BANK_settings/load.h src/BANK_fonts/library.c src/BANK_fonts/library.h src/BANK_fonts/set.c src/BANK_fonts/set.h src/BANK_settings/apply.c src/BANK_settings/apply.h src/BANK_fonts/get.c src/BANK_fonts/get.h src/BANK_spui/font_invalid.c src/BANK_spui/font_invalid.h src/BANK_spui/window.c src/BANK_spui/window.h src/BANK_spui/dialog.c src/BANK_spui/dialog.h src/BANK_spui/button.c src/BANK_spui/button.h src/BANK_spui/font_not_found.c src/BANK_spui/font_not_found.h src/BANK_spui/triangle.c src/BANK_spui/triangle.h src/BANK_spui/line.c src/BANK_spui/line.h src/BANK_spui/any_key.c src/BANK_spui/any_key.h src/BANK_spui/not_zero.c src/BANK_spui/not_zero.h)
+        src/BANK_settings/load
+        src/BANK_fonts/library
+        src/BANK_fonts/set
+        src/BANK_settings/apply
+        src/BANK_fonts/get
+
+# 47
+        src/BANK_spui/error
+        src/BANK_spui/font_invalid
+        src/BANK_spui/window
+        src/BANK_spui/dialog
+        src/BANK_spui/button
+        src/BANK_spui/font_not_found
+        src/BANK_spui/triangle
+        src/BANK_spui/line
+        src/BANK_spui/not_zero
+        )

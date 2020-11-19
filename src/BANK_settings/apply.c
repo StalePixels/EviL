@@ -15,42 +15,42 @@
 #include <stdio.h>
 #include <string.h>
 
-void settings_apply(const char *command) {
-	ini_key = trim_whitespace(strtok(command, "="));
-	ini_value = trim_whitespace(strtok(NULL, "\n"));
+void settings_apply(const char *Command) {
+	IniKey = trim_whitespace(strtok(Command, "="));
+	IniValue = trim_whitespace(strtok(NULL, "\n"));
 
-	if(!stricmp(ini_key, "font")) {
+	if(!stricmp(IniKey, "font")) {
 		// Use bundled font
-		if(ini_value[0] != '/') {
-			int8_t font_id = _farWithPointer(BANK_FONTS, font_get, ini_value);
+		if(IniValue[0] != '/') {
+			int8_t FontID = _farWithPointer(BANK_FONTS, font_get, IniValue);
 			// -1 means we did not find a font
-			if(font_id!=-1) {
-				_farWithUChar(BANK_FONTS, font_set, font_id);
+			if(FontID !=-1) {
+				_farWithUChar(BANK_FONTS, font_set, FontID);
 			}
 			else {
 				// ERROR
-				_farWithPointer(BANK_SPUI, spui_font_invalid, ini_value);
+				_farWithPointer(BANK_SPUI, spui_font_invalid, IniValue);
 			}
 
 		}
 		// Load Font from file
 		else {
-			_farWithPointer(BANK_SPUI, spui_font_not_found, ini_value);
+			_farWithPointer(BANK_SPUI, spui_font_not_found, IniValue);
 		}
 	} else
-	if(!stricmp(ini_key, "repeat_start")) {
-		uint8_t repeat_start = atoi(ini_value);
-		if(ini_value) {
-			L3RepeatStart = repeat_start;
+	if(!stricmp(IniKey, "repeat_start")) {
+		uint8_t RepeatStart = atoi(IniValue);
+		if(IniValue) {
+			L3RepeatStart = RepeatStart;
 		}
 		// Load Font from file
 		else {
 			_far(BANK_SPUI, spui_not_zero);
 		}
 	} else
-	if(!stricmp(ini_key, "repeat_key")) {
-		uint8_t repeat_key = atoi(ini_value);
-		if(ini_value) {
+	if(!stricmp(IniKey, "repeat_key")) {
+		uint8_t repeat_key = atoi(IniValue);
+		if(IniValue) {
 			L3RepeatKey = repeat_key;
 		}
 			// Load Font from file

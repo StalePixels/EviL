@@ -13,18 +13,18 @@
 
 #include "../common/memory.h"
 
-extern unsigned char ini_in, ini_out;
-#define ini_line 		Buff512
-extern char *ini_key;
-extern char *ini_value;
+extern unsigned char IniIn, IniOut;
+#define IniLine Buff512
+extern char *IniKey;
+extern char *IniValue;
 extern char *tmp_filename[];
 extern uint8_t *errno_filter;
-extern uint32_t ini_char;
+extern uint32_t IniChar;
 
-bool ini_get_one(const char *filename, const char *key);
+bool ini_get_one(const char *Filename, const char *Key);
 // returns if managed to get a line
-bool ini_get_line(bool inc_comments);
-bool ini_set_one(const char *filename, const char *key, const char *value);
+bool ini_get_line(bool IncComments);
+bool ini_set_one(const char *Filename, const char *Key, const char *Value);
 
 void ini_file_close();
 
