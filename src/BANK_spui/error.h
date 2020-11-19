@@ -12,6 +12,8 @@
 #define SPUI_ERROR_ROW		(((ULA_HEIGHT-SPUI_ERROR_HEIGHT)/2)-1)
 #define SPUI_ERROR_COL		(((ULA_WIDTH-SPUI_ERROR_WIDTH)/2)+1)
 
+extern const char *SpuiErrorTitleValue;
+
 void spui_error(const char* FontName);
 
 #endif//EVIL_SPUI_ERROR_H

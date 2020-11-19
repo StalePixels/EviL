@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+const char *SpuiErrorTitleValue = {"Value Error"};
+
 void spui_error(const char* Title) {
 	struct SPUIWindow *WindowArgs = malloc(sizeof (struct SPUIWindow));
 //	if(window_args) exit(0);

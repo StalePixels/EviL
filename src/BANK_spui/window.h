@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+extern uint8_t SpuiWindowRow, SpuiWindowCol;
 struct SPUIWindow {
 	uint8_t row;
 	uint8_t col;

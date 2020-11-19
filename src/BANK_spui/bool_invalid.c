@@ -5,19 +5,22 @@
 #include "bool_invalid.h"
 #include "common.h"
 #include "error.h"
+#include "window.h"
 #include <arch/zxn.h>
-#include <stdio.h>
 #include <input.h>
+#include <stdio.h>
 
 void spui_bool_invalid(const char*Setting) {
-	spui_error("Toggle Value Error");
-	printAtStr(SPUI_ERROR_ROW+2,SPUI_ERROR_COL+1, "Expecting a True/False");
-	printAtStr(SPUI_ERROR_ROW+3,SPUI_ERROR_COL+1, "but got the following:");
-	printAtStr(SPUI_ERROR_ROW+5,SPUI_ERROR_COL+1, Setting);
-//	printAt(SPUI_ERROR_ROW+5,SPUI_ERROR_COL+1); printf("%.*s", SPUI_ERROR_WIDTH-2, Setting);
-	printAtStr(SPUI_ERROR_ROW+6,SPUI_ERROR_COL+1, "Use: True/False or Y/N");
+	spui_error(SpuiErrorTitleValue);
+	printAtStr(SpuiWindowRow,SpuiWindowCol, "Boolean Value Required");
+	SpuiWindowRow = SpuiWindowRow + 2;
+	printAtStr(SpuiWindowRow,SpuiWindowCol, "The setting:");
+	printAt(++SpuiWindowRow,SpuiWindowCol+1);
+		printf("%.*s", SPUI_ERROR_WIDTH-3, Setting);
+	printAtStr(++SpuiWindowRow,SpuiWindowCol, "uses True/False or Y/N");
 	in_wait_nokey();
-	printAtStr(SPUI_ERROR_ROW+8,SPUI_ERROR_COL+1, " Any key to continue! ");
+	SpuiWindowRow = SpuiWindowRow + 2;
+	printAtStr(SpuiWindowRow,SpuiWindowCol, " Any key to continue! ");
 	spui_any_key();
 	zx_cls(PAPER_MAGENTA|BRIGHT);
 }

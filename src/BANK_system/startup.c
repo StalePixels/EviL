@@ -143,7 +143,8 @@ void system_init() {
 	// Load the preferences
 	_far(BANK_SETTINGS,settings_load);
 
-	_farWithUChar(BANK_SETTINGS, settings_show_errors, false);
+	// Even if errors were
+	_farWithUChar(BANK_SETTINGS, settings_show_errors, true);
 }
 
 void system_splash() {

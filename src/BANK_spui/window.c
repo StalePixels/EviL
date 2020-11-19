@@ -20,10 +20,13 @@
 #include <string.h>
 #include <stdio.h>
 
+uint8_t SpuiWindowRow, SpuiWindowCol;
+
 void spui_window(const struct SPUIWindow *WindowArgs) {
-	uint8_t SpuiWindowRow, SpuiWindowCol;
 	uint16_t Address;
 // raise the ULA over the tileset
+
+
 
 	uint8_t th = 4+WindowArgs->row+WindowArgs->height;
 	uint8_t tw = (4+WindowArgs->col+WindowArgs->width)<<1;
@@ -78,4 +81,6 @@ void spui_window(const struct SPUIWindow *WindowArgs) {
 	spui_line(SpuiWindowRow, WindowArgs->col, SPUI_LINE_LEFT_BOTTOM);
 	spui_line(SpuiWindowRow, WindowArgs->col+WindowArgs->width-1, SPUI_LINE_RIGHT_BOTTOM);
 
+	SpuiWindowRow = WindowArgs->row + 2;
+	SpuiWindowCol = WindowArgs->col + 1;
 }

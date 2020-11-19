@@ -35,7 +35,7 @@ void settings_apply(const char *Command) {
 		}
 		// Load Font from file
 		else if (SettingsShowErrors) {
-			_farWithPointer(BANK_SPUI, spui_bool_invalid, Command);
+			_farWithPointer(BANK_SPUI, spui_bool_invalid, IniKey);
 			return;
 		}
 	} else
