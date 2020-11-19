@@ -8,7 +8,7 @@ https://en.wikipedia.org/wiki/Run_commands says
     In the context of Unix-like systems, the term rc stands for the phrase "run 
     commands". It is used for any file that contains startup information for a 
     command. It is believed to have originated sometime in 1965 at a runcom 
-    facility from the MIT Compatible Time-Sharing System (CTSS).[1]
+    facility from the MIT Compatible Time-Sharing System (CTSS).
     
     From Brian Kernighan and Dennis Ritchie:
         There was a facility that would execute a bunch of commands stored in a
