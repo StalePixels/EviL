@@ -6,7 +6,7 @@
 #define EVIL_STRING_IS_FALSE_H
 
 #include <stdbool.h>
-#define SPUI_FALSE_WORDCOUNT	5
+#define SPUI_FALSE_WORDCOUNT	6
 extern const char *spui_words_false[];
 
 bool string_is_false(const char *value);

@@ -7,7 +7,7 @@
 
 #include <stdbool.h>
 
-#define SPUI_TRUE_WORDCOUNT	5
+#define SPUI_TRUE_WORDCOUNT	6
 extern const char *spui_words_true[];
 
 bool string_is_true(const char *value);

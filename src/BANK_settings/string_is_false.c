@@ -13,7 +13,8 @@ const char *spui_words_false[] = {
 		"f",
 		"no",
 		"n",
-		"0"
+		"0",
+		"off"
 };
 
 bool string_is_false(const char *value) {

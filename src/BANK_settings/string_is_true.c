@@ -11,7 +11,8 @@ const char *spui_words_true[] = {
 		"t",
 		"yes",
 		"y",
-		"1"
+		"1",
+		"on"
 };
 
 bool string_is_true(const char *value) {
