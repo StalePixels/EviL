@@ -6,6 +6,9 @@
 #define EVIL_SPUI_COMMON_H
 
 #include <stdint.h>
+#include <input.h>
+
+#define spui_any_key	in_wait_key();in_wait_nokey
 
 extern uint8_t			SpuiPaddingLength;
 extern uint8_t			SpuiContentLength;

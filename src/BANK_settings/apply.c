@@ -7,7 +7,9 @@
 #include "../BANK_fonts/set.h"
 #include "../BANK_spui/font_invalid.h"
 #include "../BANK_spui/font_not_found.h"
+#include "../BANK_spui/not_zero.h"
 #include "../common/memory.h"
+#include "../liblayer3/liblayer3.h"
 #include "ini_common.h"
 #include "trim_whitespace.h"
 #include <stdio.h>
@@ -34,6 +36,26 @@ void settings_apply(const char *command) {
 		// Load Font from file
 		else {
 			_farWithPointer(BANK_SPUI, spui_font_not_found, ini_value);
+		}
+	} else
+	if(!stricmp(ini_key, "repeat_start")) {
+		uint8_t repeat_start = atoi(ini_value);
+		if(ini_value) {
+			L3RepeatStart = repeat_start;
+		}
+		// Load Font from file
+		else {
+			_far(BANK_SPUI, spui_not_zero);
+		}
+	} else
+	if(!stricmp(ini_key, "repeat_key")) {
+		uint8_t repeat_key = atoi(ini_value);
+		if(ini_value) {
+			L3RepeatKey = repeat_key;
+		}
+			// Load Font from file
+		else {
+			_far(BANK_SPUI, spui_not_zero);
 		}
 	}
 }

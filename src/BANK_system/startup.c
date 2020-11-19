@@ -146,15 +146,18 @@ void system_init() {
 void system_splash() {
     uint16_t oldx = ScreenX;
     uint16_t oldy = ScreenY;
-	ScreenX = 12;
-	ScreenY = 15;
-	l3_puts("EVIL, a VI adjacent - forked from David Given's (CPMISH) QE");
-	ScreenX = 25;
-	ScreenY = 16;
-    l3_puts(           "Code: D. Rimron-Soutter, Stale Pixels");
-	ScreenX = 28;
+	ScreenX = 14;
+	ScreenY = 13;
+	l3_puts(".EVIL (essentially VI lite) - a Vi adjacent for NextZXOS");
+	ScreenX = 14;
+	ScreenY = 14;
+	l3_puts("Originally forked from QE by David Given, part of CPMISH");
+	ScreenX = 23;
+	ScreenY = 17;
+    l3_puts("Code: D. Rimron-Soutter, Stale Pixels");
+	ScreenX = 26;
 	ScreenY = 18;
-    l3_puts(             "Fonts: Damien Guard, zx-origins");
+    l3_puts(     "Fonts: Damien Guard, zx-origins");
 	ScreenX = oldx;
 	ScreenY = oldy;
 }

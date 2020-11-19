@@ -20,9 +20,9 @@ static uint8_t last_key = 0;
 static uint8_t next_key = 0;
 
 #define L3_REPEAT_START         25
-static uint8_t repeat_start = L3_REPEAT_START;
+uint8_t L3RepeatStart = L3_REPEAT_START;
 #define L3_REPEAT_KEY           15
-static uint8_t repeat_key = L3_REPEAT_KEY;
+uint8_t L3RepeatKey = L3_REPEAT_KEY;
 
 static uint8_t repeat_counter;
 static bool	key_repeating = false;
@@ -59,16 +59,16 @@ uint8_t l3_getc(void)
 
 			if(!key_repeating) {
 				key_repeating = true;
-				repeat_counter = repeat_start;
+				repeat_counter = L3RepeatStart;
 			}
 			else {
-				repeat_counter = repeat_key;
+				repeat_counter = L3RepeatKey;
 			}
 			goto get_next_key;
 		}
     }
 
-	repeat_counter = repeat_start;
+	repeat_counter = L3RepeatStart;
 get_next_key:
 
     // Now wait for a new key
@@ -81,6 +81,7 @@ get_next_key:
     last_key = next_key;
 
     tilemap[ScreenY][ScreenX].flags = tilemap[ScreenY][ScreenX].flags = screencolour;
+	cursor_frame_counter = FRAME_FLASH;
 	return next_key;
 }
 

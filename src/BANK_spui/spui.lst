@@ -5,6 +5,6 @@ dialog.c
 triangle.c
 line.c
 common.c
-any_key.c
+not_zero.c
 font_invalid.c
 font_not_found.c
