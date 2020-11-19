@@ -103,6 +103,6 @@ If invoked outside of the run control file it will suppress error reporting duri
  
 Footnotes
 -
- [^1]: Intervals measures in screen refreshes will be variable dependent upon the machines video speed, not CPU speed.
+ [^1]: Intervals measured in screen refreshes will be variable dependent upon the machines video speed, not CPU speed.
  
  [^2]: While the loading of external font files is referenced in several places it's not yet complete, so the setting will warn you if you try to reference an external font file. When implemented external font files will need to be valid 768byte files in the "CH8" format
