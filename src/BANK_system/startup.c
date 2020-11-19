@@ -150,9 +150,9 @@ void system_init() {
 void system_splash() {
     uint16_t oldx = L3ScreenX;
     uint16_t oldy = L3ScreenY;
-	L3ScreenX = 14;
+	L3ScreenX = 12;
 	L3ScreenY = 13;
-	l3_puts(".EviL (Essentially vi Lite) - a vi adjacent for NextZXOS");
+	l3_puts("EviL a.k.a. Essentially vi Lite - a vi adjacent for NextZXOS");
 	L3ScreenX = 14;
 	L3ScreenY = 14;
 	l3_puts("Originally forked from QE by David Given, part of CPMISH");
