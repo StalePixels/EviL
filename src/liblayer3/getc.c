@@ -48,28 +48,29 @@ uint8_t l3_getc(void)
     // Stop holding the previous key
     while(chricmp(next_key, last_key)) {
         next_key = in_inkey();
+
+		if(!next_key) goto ready_next_key;
+
         l3_cursor();
 		repeat_counter--;
 		if(!repeat_counter) {
 			// pretend they raised their finger for a moment, and then put it back
 			next_key = 0;
+			key_repeating = true;
+			repeat_counter = L3RepeatKey;
 
-			if(!key_repeating) {
-				key_repeating = true;
-				repeat_counter = L3RepeatStart;
-			}
-			else {
-				repeat_counter = L3RepeatKey;
-			}
 			goto get_next_key;
 		}
     }
 
+ready_next_key:
+	key_repeating = false;
 	repeat_counter = L3RepeatStart;
 get_next_key:
 
     // Now wait for a new key
     while(!next_key) {
+		// And if we faked a finger_raise, this will act like it's put down again
         next_key = in_inkey();
         l3_cursor();
     }

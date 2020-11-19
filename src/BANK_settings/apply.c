@@ -41,6 +41,7 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
+
 	if(!stricmp(IniKey, "font")) {
 		// Use bundled font
 		if(IniValue[0] != '/') {
@@ -62,6 +63,7 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
+
 	if(!stricmp(IniKey, "repeat_start")) {
 		SettingsTempValue = atoi(IniValue);
 		if(SettingsTempValue) {
@@ -72,6 +74,7 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
+
 	if(!stricmp(IniKey, "repeat_key")) {
 		SettingsTempValue = atoi(IniValue);
 		if(SettingsTempValue) {
@@ -82,6 +85,7 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
+
 	if(!stricmp(IniKey, "cursor_flash")) {
 		SettingsTempValue = atoi(IniValue);
 		if(SettingsTempValue) {
