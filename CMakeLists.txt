@@ -32,6 +32,9 @@ add_executable(EVIL
         src/BANK_settings/ini_set_one
         src/BANK_settings/load
         src/BANK_settings/trim_whitespace
+        src/BANK_settings/show_errors
+        src/BANK_settings/string_is_true
+        src/BANK_settings/string_is_false
 # 46
         src/BANK_command/error
         src/BANK_command/file_name_set
@@ -56,4 +59,6 @@ add_executable(EVIL
         src/BANK_spui/triangle
         src/BANK_spui/line
         src/BANK_spui/not_zero
-        src/BANK_settings/common.h src/BANK_settings/string_is_true.c src/BANK_settings/string_is_true.h src/BANK_settings/string_is_false.c src/BANK_settings/string_is_false.h src/BANK_spui/bool_invalid.c src/BANK_spui/bool_invalid.h src/BANK_settings/show_errors.c src/BANK_settings/show_errors.h)
+        src/BANK_spui/bool_invalid
+        src/BANK_spui/unknown_setting
+        )
