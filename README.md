@@ -6,6 +6,7 @@ EviL began file as fort of QE with more NextZXOS features. It goals are to feel 
 Current differences to QE[^1]:
  * Renamed ;-)
  * Broken into bank based chunks, designed around app functions
+ * Consistent UI with other Stale Pixels apps.
  * Persistent & runtime settings via EVIL.RC & :set, see https://github.com/StalePixels/EviL/blob/main/docs/settings.md
  * Key repeat with configurable initial, and subsequent repeat rates
  * Configurable flashing cursor
