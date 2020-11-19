@@ -148,22 +148,22 @@ void system_init() {
 }
 
 void system_splash() {
-    uint16_t oldx = ScreenX;
-    uint16_t oldy = ScreenY;
-	ScreenX = 14;
-	ScreenY = 13;
+    uint16_t oldx = L3ScreenX;
+    uint16_t oldy = L3ScreenY;
+	L3ScreenX = 14;
+	L3ScreenY = 13;
 	l3_puts(".EviL (Essentially vi Lite) - a vi adjacent for NextZXOS");
-	ScreenX = 14;
-	ScreenY = 14;
+	L3ScreenX = 14;
+	L3ScreenY = 14;
 	l3_puts("Originally forked from QE by David Given, part of CPMISH");
-	ScreenX = 23;
-	ScreenY = 17;
+	L3ScreenX = 23;
+	L3ScreenY = 17;
     l3_puts("Code: D. Rimron-Soutter, Stale Pixels");
-	ScreenX = 26;
-	ScreenY = 18;
+	L3ScreenX = 26;
+	L3ScreenY = 18;
     l3_puts(     "Fonts: Damien Guard, zx-origins");
-	ScreenX = oldx;
-	ScreenY = oldy;
+	L3ScreenX = oldx;
+	L3ScreenY = oldy;
 }
 
 void system_beep() {

@@ -79,6 +79,8 @@ deps: incs
 dirs:
 	$(MKDIR) $(BUILD_DIR)
 	$(MKDIR) $(TMP_DIR)
+	$(MKDIR) $(FILES_DIR)/dot
+	$(MKDIR) $(FILES_DIR)/docs
 
 # BANK_FONTS
 bank_40:
@@ -137,3 +139,9 @@ q: dotn
 	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/dot/$(NAME)
 
 qq: assemble update
+
+release: dotn
+	$(CP) docs/* $(FILES_DIR)/docs/.
+	$(CP) BUILD-EviL/EviL $(FILES_DIR)/dot/EviL.DOT
+
+

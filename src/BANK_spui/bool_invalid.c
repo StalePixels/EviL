@@ -16,11 +16,7 @@ void spui_bool_invalid(const char*Setting) {
 	SpuiWindowRow = SpuiWindowRow + 2;
 	printAtStr(SpuiWindowRow,SpuiWindowCol, "The setting:");
 	printAt(++SpuiWindowRow,SpuiWindowCol+1);
-		printf("%.*s", SPUI_ERROR_WIDTH-3, Setting);
+							printf("%.*s", SPUI_ERROR_WIDTH-3, Setting);
 	printAtStr(++SpuiWindowRow,SpuiWindowCol, "uses True/False or Y/N");
-	in_wait_nokey();
-	SpuiWindowRow = SpuiWindowRow + 2;
-	printAtStr(SpuiWindowRow,SpuiWindowCol, " Any key to continue! ");
-	spui_any_key();
-	zx_cls(PAPER_MAGENTA|BRIGHT);
+	spui_error_end();
 }

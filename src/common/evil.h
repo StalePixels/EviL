@@ -10,8 +10,8 @@
 
 #define cpm_default_dma     (uint8_t*) Buffer
 
-#define WIDTH SCREENWIDTH
-#define HEIGHT (SCREENHEIGHT-1)
+#define WIDTH LIBLAYER3_SCREENWIDTH
+#define HEIGHT (LIBLAYER3_SCREENHEIGHT-1)
 
 extern void (*print_status)(const char*);
 

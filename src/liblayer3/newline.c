@@ -10,9 +10,9 @@
 
 void l3_newline(void)
 {
-    if (ScreenY >= SCREENHEIGHT)
+    if (L3ScreenY >= LIBLAYER3_SCREENHEIGHT)
             return;
 
-    ScreenX = 0;
-	ScreenY++;
+	L3ScreenX = 0;
+	L3ScreenY++;
 }

@@ -1,8 +1,8 @@
 //
-// Created by D Rimron-Soutter on 16/11/2020.
+// Created by D Rimron-Soutter on 19/11/2020.
 //
 
-#include "font_invalid.h"
+#include "unknown_setting.h"
 #include "../common/ula.h"
 #include "common.h"
 #include "error.h"
@@ -13,13 +13,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-void spui_font_invalid(const char*FontName) {
-	spui_error("Font Name Error");
 
-	printAtStr(SpuiWindowRow,SpuiWindowCol, "Unknown Font Face Name");
+void spui_unknown_setting(const char*Setting) {
+	spui_error("Setting Error");
+
+	printAtStr(SpuiWindowRow,SpuiWindowCol, " Unknown Setting Name ");
 	SpuiWindowRow = SpuiWindowRow + 2;
 	printAt(SpuiWindowRow,SpuiWindowCol+1);
-						printf("\"%.*s\"", SPUI_ERROR_WIDTH-4, FontName);
+	printf("\"%.*s\"", SPUI_ERROR_WIDTH-4, Setting);
 	printAtStr(++SpuiWindowRow,SpuiWindowCol, "is not recognised. See");
 	printAtStr(++SpuiWindowRow,SpuiWindowCol, "help for a valid list.");
 	spui_error_end();

@@ -9,3 +9,4 @@ not_zero.c
 font_invalid.c
 font_not_found.c
 bool_invalid.c
+unknown_setting.c

@@ -14,12 +14,13 @@
 #include "textmode.h"
 
 
-extern uint8_t ScreenX, ScreenY;
-extern uint16_t screencolour;
+extern uint8_t L3ScreenX, L3ScreenY;
+extern uint16_t L3ScreenColour;
+extern uint8_t L3CursorFlashRate;
 
-#define L3_REPEAT_START         25
-#define L3_REPEAT_KEY           15
-#define FRAME_FLASH             10
+#define LIBLAYER3_REPEAT_START 25
+#define LIBLAYER3_REPEAT_KEY 15
+#define LIBLAYER3_CURSOR_FLASH_RATE 10
 
 extern uint8_t L3RepeatStart;
 extern uint8_t L3RepeatKey;
@@ -34,8 +35,8 @@ extern void l3_clear_to_eol(void);
 extern void l3_revon(void);
 extern void l3_revoff(void);
 
-#define SCREENWIDTH 80
-#define SCREENHEIGHT 32
+#define LIBLAYER3_SCREENWIDTH 80
+#define LIBLAYER3_SCREENHEIGHT 32
 #define LIBLAYER3_ANSI
 
 // OCTAL BATSHITTERY AHEAD!

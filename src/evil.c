@@ -33,7 +33,7 @@
 #include "BANK_command/status.h"
 #include "BANK_system/system.h"
 
-uint8_t ScreenX = 0, ScreenY = 0;
+uint8_t L3ScreenX = 0, L3ScreenY = 0;
 uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, FileHandle;
 
 void (*print_status)(const char*);
@@ -72,17 +72,6 @@ char MessageBuffer[128];
 extern void colon(uint16_t count);
 extern void goto_line(uint16_t lineno);
 
-
-/* ======================================================================= */
-/*                                SCREEN DRAWING                           */
-/* ======================================================================= */
-
-void l3_puti(int i)
-{
-	itoa(i, Buffer, 10);
-	l3_puts(Buffer);
-}
-
 /* ======================================================================= */
 /*                              BUFFER MANAGEMENT                          */
 /* ======================================================================= */
@@ -120,11 +109,11 @@ uint8_t* draw_line(uint8_t* startp)
 {
 	uint16_t xo = 0;
 	uint16_t c;
-	uint16_t starty = ScreenY;
+	uint16_t starty = L3ScreenY;
 	uint8_t* inp = startp;
 
 
-	while (ScreenY != HEIGHT)
+	while (L3ScreenY != HEIGHT)
 	{
 		if (inp == GapStart)
 		{
@@ -133,7 +122,7 @@ uint8_t* draw_line(uint8_t* startp)
 		}
 		if (inp == BufferEnd)
 		{
-			if (xo == 0 && ScreenY < HEIGHT-1) {
+			if (xo == 0 && L3ScreenY < HEIGHT-1) {
 				l3_puts("~");
 				l3_clear_to_eol();
 			}
@@ -174,13 +163,13 @@ uint8_t* draw_line(uint8_t* startp)
 void render_screen(uint8_t* inp)
 {
 	unsigned i;
-	for (i= ScreenY; i != HEIGHT; i++)
+	for (i= L3ScreenY; i != HEIGHT; i++)
 		DisplayHeight[i] = 0;
 
-	while (ScreenY < HEIGHT)
+	while (L3ScreenY < HEIGHT)
 	{
 		if (inp == CurrentLine)
-			CurrentLineY = ScreenY;
+			CurrentLineY = L3ScreenY;
 		inp = draw_line(inp);
 	}
 }
@@ -243,6 +232,8 @@ void recompute_screen_position(void)
 
 	length = compute_length(CurrentLine, GapStart, NULL);
 	l3_goto(length % WIDTH, CurrentLineY + (length / WIDTH));
+
+	tilemap[L3ScreenY][L3ScreenX].flags = tilemap[L3ScreenY][L3ScreenX].flags + 128;
 }
 
 void redraw_current_line(void)
@@ -529,7 +520,7 @@ void insert_newline(void)
 		*GapStart++ = '\n';
 		l3_goto(0, CurrentLineY);
 		CurrentLine = draw_line(CurrentLine);
-		CurrentLineY = ScreenY;
+		CurrentLineY = L3ScreenY;
 		DisplayHeight[CurrentLineY] = 0;
 	}
 }
@@ -891,11 +882,11 @@ void colon(uint16_t count)
 		if(c==0x0D)                         // enter
 		break;
 
-		if(c==0x0C && ScreenX >1) {          // backspace
+		if(c==0x0C && L3ScreenX >1) {          // backspace
 			*w = 0;
-			--ScreenX;
+			--L3ScreenX;
 			l3_putc(' ');
-			--ScreenX;
+			--L3ScreenX;
 			--w;
 		}
 		else if(c>31) {

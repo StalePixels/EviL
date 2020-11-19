@@ -9,11 +9,11 @@
 
 #include "liblayer3.h"
 
-uint16_t screencolour = TEXTMODE_DEFAULT_COLOUR;
+uint16_t L3ScreenColour = TEXTMODE_DEFAULT_COLOUR;
 
 void l3_putc(uint16_t c)
 {
-    if (ScreenY >= SCREENHEIGHT)
+    if (L3ScreenY >= LIBLAYER3_SCREENHEIGHT)
             return;
 
     if (c < 32)
@@ -22,13 +22,13 @@ void l3_putc(uint16_t c)
             c += '@';
     }
 
-    tilemap[ScreenY][ScreenX].tile = c;
-    tilemap[ScreenY][ScreenX].flags = screencolour;
-	ScreenX++;
-    if (ScreenX == SCREENWIDTH)
+    tilemap[L3ScreenY][L3ScreenX].tile = c;
+    tilemap[L3ScreenY][L3ScreenX].flags = L3ScreenColour;
+	L3ScreenX++;
+    if (L3ScreenX == LIBLAYER3_SCREENWIDTH)
     {
-		ScreenX = 0;
-		ScreenY++;
+		L3ScreenX = 0;
+		L3ScreenY++;
     }
 }
 

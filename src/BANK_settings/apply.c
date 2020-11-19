@@ -9,6 +9,7 @@
 #include "../BANK_spui/font_invalid.h"
 #include "../BANK_spui/font_not_found.h"
 #include "../BANK_spui/not_zero.h"
+#include "../BANK_spui/unknown_setting.h"
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "ini_common.h"
@@ -19,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 
+uint8_t SettingsTempValue;
 void settings_apply(const char *Command) {
 	IniKey = trim_whitespace(strtok(Command, "="));
 	IniValue = trim_whitespace(strtok(NULL, "\n"));
@@ -36,16 +38,16 @@ void settings_apply(const char *Command) {
 		// Load Font from file
 		else if (SettingsShowErrors) {
 			_farWithPointer(BANK_SPUI, spui_bool_invalid, IniKey);
-			return;
 		}
+		return;
 	} else
 	if(!stricmp(IniKey, "font")) {
 		// Use bundled font
 		if(IniValue[0] != '/') {
-			int8_t FontID = _farWithPointer(BANK_FONTS, font_get, IniValue);
+			SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
 			// -1 means we did not find a font
-			if(FontID !=-1) {
-				_farWithUChar(BANK_FONTS, font_set, FontID);
+			if(SettingsTempValue != -1) {
+				_farWithUChar(BANK_FONTS, font_set, SettingsTempValue);
 				return;
 			}
 			else {
@@ -55,32 +57,43 @@ void settings_apply(const char *Command) {
 			}
 
 		}
-		// Load Font from file
 		else if (SettingsShowErrors) {
 			_farWithPointer(BANK_SPUI, spui_font_not_found, IniValue);
-			return;
 		}
+		return;
 	} else
 	if(!stricmp(IniKey, "repeat_start")) {
-		uint8_t RepeatStart = atoi(IniValue);
-		if(RepeatStart) {
-			L3RepeatStart = RepeatStart;
+		SettingsTempValue = atoi(IniValue);
+		if(SettingsTempValue) {
+			L3RepeatStart = SettingsTempValue;
 		}
-		// Load Font from file
 		else if (SettingsShowErrors) {
 			_far(BANK_SPUI, spui_not_zero);
-			return;
 		}
+		return;
 	} else
 	if(!stricmp(IniKey, "repeat_key")) {
-		uint8_t RepeatKey = atoi(IniValue);
-		if(IniValue) {
-			L3RepeatKey = RepeatKey;
+		SettingsTempValue = atoi(IniValue);
+		if(SettingsTempValue) {
+			L3RepeatKey = SettingsTempValue;
 		}
-			// Load Font from file
 		else if (SettingsShowErrors) {
 			_far(BANK_SPUI, spui_not_zero);
-			return;
 		}
+		return;
+	} else
+	if(!stricmp(IniKey, "cursor_flash")) {
+		SettingsTempValue = atoi(IniValue);
+		if(SettingsTempValue) {
+			L3CursorFlashRate = SettingsTempValue;
+		}
+		else if (SettingsShowErrors) {
+			_far(BANK_SPUI, spui_not_zero);
+		}
+		return;
+	} else
+	if (SettingsShowErrors) {
+		_farWithPointer(BANK_SPUI, spui_unknown_setting, IniKey);
 	}
+	return;
 }

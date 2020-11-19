@@ -10,7 +10,7 @@
 
 void l3_revoff(void)
 {
-    screencolour = TEXTMODE_DEFAULT_COLOUR;
+	L3ScreenColour = TEXTMODE_DEFAULT_COLOUR;
 }
 
 

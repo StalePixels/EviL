@@ -11,11 +11,13 @@ uint8_t status_line_length = WIDTH;
 
 void command_status_print(const char* message) {
 //	_farWithPointer(BANK_SPUI, (void (*)(void *)) SPUI_error, message_buffer);
-	uint8_t oldx = ScreenX, oldy = ScreenY;
-	ScreenY = HEIGHT - 1; ScreenX = 0;
+	uint8_t oldx = L3ScreenX, oldy = L3ScreenY;
+	L3ScreenY = HEIGHT - 1;
+	L3ScreenX = 0;
 	l3_clear_to_eol();
 	l3_puts(message);
-	ScreenX = oldx; ScreenY = oldy;
+	L3ScreenX = oldx;
+	L3ScreenY = oldy;
 }
 
 
@@ -23,7 +25,7 @@ void command_status_set(const char* message)
 {
 	uint8_t length = 0;
 
-	uint8_t oldx = ScreenX, oldy = ScreenY;
+	uint8_t oldx = L3ScreenX, oldy = L3ScreenY;
 
 	l3_goto(0, HEIGHT - 1);
 	l3_revon();

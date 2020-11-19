@@ -13,6 +13,7 @@ add_executable(EVIL
         src/common/file
         src/common/memory
         src/common/ula
+        src/common/evil
 
         src/liblayer3/clear
         src/liblayer3/cleareol

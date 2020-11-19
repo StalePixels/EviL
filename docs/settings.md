@@ -73,6 +73,11 @@ Individual Settings
 
 **repeat_key** controls how many screen refreshes[^1] EVIL will count before repeating a key again, after the first repeat.
 ### Display Control ###
+####```cursor_flash```
+ ```default = 10```
+ 
+**cursor_flash** sets how frequently the cursor changes colour[^1], two inversions per cycle (i.e. returns to where it starts in 2x **cursor_flash**.)  
+
 ####```font```
  ```default = sinclair```
  
@@ -100,6 +105,8 @@ When referencing an external font file make sure to use the full path name, star
 **errors** disables error reporting while loading the run control file. This is useful for when sharing the same run control file between multiple editors, or using the same config files between different SD cards where fonts may not exist. 
 
 If invoked outside of the run control file it will suppress error reporting during subsequent error messages until re-enabled. 
+ 
+ 
  
 Footnotes
 -

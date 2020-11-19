@@ -19,21 +19,21 @@
 static uint8_t last_key = 0;
 static uint8_t next_key = 0;
 
-uint8_t L3RepeatStart = L3_REPEAT_START;
-uint8_t L3RepeatKey = L3_REPEAT_KEY;
+uint8_t L3RepeatStart = LIBLAYER3_REPEAT_START;
+uint8_t L3RepeatKey = LIBLAYER3_REPEAT_KEY;
 
 static uint8_t repeat_counter;
 static bool	key_repeating = false;
 
 
-static uint8_t cursor_frame_counter =    FRAME_FLASH;
+uint8_t L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
 
 void l3_cursor() {
-    cursor_frame_counter--;
+	L3CursorFlashRate--;
     WAIT_FOR_SCANLINE(239);
-    if(cursor_frame_counter==0) {
-        tilemap[ScreenY][ScreenX].flags = tilemap[ScreenY][ScreenX].flags + 128;
-        cursor_frame_counter = FRAME_FLASH;
+    if(L3CursorFlashRate ==0) {
+        tilemap[L3ScreenY][L3ScreenX].flags = tilemap[L3ScreenY][L3ScreenX].flags + 128;
+		L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
     }
 }
 
@@ -77,8 +77,8 @@ get_next_key:
     // Remember they key so we don't repeat it
     last_key = next_key;
 
-    tilemap[ScreenY][ScreenX].flags = tilemap[ScreenY][ScreenX].flags = screencolour;
-	cursor_frame_counter = FRAME_FLASH;
+    tilemap[L3ScreenY][L3ScreenX].flags = L3ScreenColour;
+	L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
 	return next_key;
 }
 

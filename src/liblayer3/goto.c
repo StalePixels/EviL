@@ -11,7 +11,7 @@
 
 void l3_goto(uint16_t x, uint16_t y)
 {
-	ScreenX = x;
-	ScreenY = y;
+	L3ScreenX = x;
+	L3ScreenY = y;
 }
 

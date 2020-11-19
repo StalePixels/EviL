@@ -11,7 +11,7 @@
 
 void l3_revon(void)
 {
-    screencolour = TEXTMODE_REVERSE_COLOUR;
+	L3ScreenColour = TEXTMODE_REVERSE_COLOUR;
 }
 
 
