@@ -55,7 +55,7 @@ When in command mode (not typing in the main editor area, toggled with EDIT) you
 
     :set font = sinclair
     :set silent = false
-    repeat_start = 25
+    :SET repeat_start = 25
     
 Settings applied in this manner will revert to the startup defaults (i.e. they don't change the run control file.)
 
