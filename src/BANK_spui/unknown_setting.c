@@ -19,8 +19,13 @@ void spui_unknown_setting(const char*Setting) {
 
 	printAtStr(SpuiWindowRow,SpuiWindowCol, " Unknown Setting Name ");
 	SpuiWindowRow = SpuiWindowRow + 2;
-	printAt(SpuiWindowRow,SpuiWindowCol+1);
-	printf("\"%.*s\"", SPUI_ERROR_WIDTH-4, Setting);
+	printAt(SpuiWindowRow,SpuiWindowCol);
+	if(strlen(Setting)<SPUI_ERROR_WIDTH-5) {
+		if(Setting[strlen(Setting)-1]=='\n')
+			printf(" \"%.*s\"", strlen(Setting)-1, Setting);
+		else
+			printf(" \"%s\"", Setting);
+	}
 	printAtStr(++SpuiWindowRow,SpuiWindowCol, "is not recognised. See");
 	printAtStr(++SpuiWindowRow,SpuiWindowCol, "help for a valid list.");
 	spui_error_end();
