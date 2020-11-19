@@ -15,9 +15,9 @@
 
 void spui_not_zero(void) {
 	spui_error("Value Error");
-	printAtStr(SPUI_ERROR_ROW+2,SPUI_ERROR_COL+1, "Non-Zero Value Expected");
-	printAtStr(SPUI_ERROR_ROW+4,SPUI_ERROR_COL+1, "You must enter a bigger");
-	printAtStr(SPUI_ERROR_ROW+5,SPUI_ERROR_COL+1, "number, current setting");
+	printAtStr(SPUI_ERROR_ROW+2,SPUI_ERROR_COL+1, "NonZero Value Expected");
+	printAtStr(SPUI_ERROR_ROW+4,SPUI_ERROR_COL+1, " You must use a bigger");
+	printAtStr(SPUI_ERROR_ROW+5,SPUI_ERROR_COL+1, "number, so the setting");
 	printAtStr(SPUI_ERROR_ROW+6,SPUI_ERROR_COL+1, "remains unchanged.");
 	in_wait_nokey();
 	printAtStr(SPUI_ERROR_ROW+8,SPUI_ERROR_COL+1, " Any key to continue! ");
