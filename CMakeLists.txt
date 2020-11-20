@@ -62,4 +62,4 @@ add_executable(EVIL
         src/BANK_spui/not_zero
         src/BANK_spui/bool_invalid
         src/BANK_spui/unknown_setting
-        )
+        src/BANK_system/palette_save.c src/BANK_system/palette_save.h src/BANK_system/textmode_save.c src/BANK_system/textmode_save.h src/BANK_system/common.c src/BANK_system/common.h src/BANK_system/splash.c src/BANK_system/splash.h src/BANK_system/beep.c src/BANK_system/beep.h src/BANK_system/exit.c src/BANK_system/exit.h src/BANK_system/textmode_restore.c src/BANK_system/textmode_restore.h src/BANK_system/palette_restore.c src/BANK_system/palette_restore.h)

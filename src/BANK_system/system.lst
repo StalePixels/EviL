@@ -1,1 +1,10 @@
+
+beep.c
+common.c
+exit.c
+palette_save.c
+palette_restore.c
+splash.c
 startup.c
+textmode_save.c
+textmode_restore.c
