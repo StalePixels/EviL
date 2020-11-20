@@ -26,6 +26,7 @@
 #include "../liblayer3/textmode.h"
 #include "palette_restore.h"
 #include "palette_save.h"
+#include "palette_set.h"
 #include "palettes.h"
 #include "system.h"
 unsigned char SystemOriginalSpeed;
@@ -64,18 +65,15 @@ void system_init() {
     ZXN_NEXTREG(REG_GLOBAL_TRANSPARENCY_COLOR, 0xE3);
     ZXN_NEXTREG(REG_FALLBACK_COLOR, 0x00);
 
-	system_palette_save(0x30, SystemShadowTilemapPalette);
-	system_palette_restore(0x30, SystemTilemapPalette);
-	system_palette_save(0x00, SystemShadowULAPalette);
+	system_palette_save(RPC_SELECT_TILEMAP_PALETTE_0, SystemBackupTilemapPalette);
+	system_palette_restore(RPC_SELECT_TILEMAP_PALETTE_0, SystemTilemapPalette);
+	system_palette_save(RPC_SELECT_ULA_PALETTE_0, SystemBackupULAPalette);
 
 	// Force ULA bright magenta to be transparent version
 	ZXN_NEXTREG(REG_PALETTE_INDEX, 27);
 	ZXN_NEXTREG(REG_PALETTE_VALUE_8, 0xE3);
 
-	ZXN_NEXTREGA(REG_PALETTE_CONTROL, 0x00);              		// Set some forced entries on the ULA
-	ZXN_NEXTREG(REG_PALETTE_INDEX, 19);
-	ZXN_NEXTREGA(0x44, *SystemTilemapPalette);       			// 0x44 (68) => Palette Value (9 bit colour)
-	ZXN_NEXTREGA(0x44, *(SystemTilemapPalette+1));       		// 0x44 (68) => Palette Value (9 bit colour)
+	system_palette_set(RPC_SELECT_ULA_PALETTE_0, 19, SystemTilemapPalette);
 
 	zx_border(INK_MAGENTA);
 

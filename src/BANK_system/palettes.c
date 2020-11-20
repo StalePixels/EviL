@@ -6,8 +6,8 @@
 
 uint8_t SystemShadowTilemap[sizeof(tilemap)];
 uint8_t SystemShadowTiles[sizeof(tiles)];
-uint8_t SystemShadowULAPalette[512];
-uint8_t SystemShadowTilemapPalette[512];
+uint8_t SystemBackupULAPalette[512];
+uint8_t SystemBackupTilemapPalette[512];
 
 uint8_t SystemTilemapPalette[512] = {
 	// FIRST EIGHT (32 vals)
