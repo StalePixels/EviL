@@ -9,8 +9,8 @@
 
 uint8_t status_line_length = WIDTH;
 
+// this *DOES* set the entire bottom line to the rev colour
 void command_status_print(const char* message) {
-//	_farWithPointer(BANK_SPUI, (void (*)(void *)) SPUI_error, message_buffer);
 	uint8_t oldx = L3ScreenX, oldy = L3ScreenY;
 	L3ScreenY = HEIGHT;
 	L3ScreenX = 0;
@@ -21,6 +21,7 @@ void command_status_print(const char* message) {
 }
 
 
+// this doesn't set the entire bottom line to the rev colour
 void command_status_set(const char* message)
 {
 	uint8_t length = 0;

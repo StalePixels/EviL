@@ -72,7 +72,12 @@ void system_init() {
 	ZXN_NEXTREG(REG_PALETTE_INDEX, 27);
 	ZXN_NEXTREG(REG_PALETTE_VALUE_8, 0xE3);
 
-	zx_border(INK_BLACK);
+	ZXN_NEXTREGA(REG_PALETTE_CONTROL, 0x00);              		// Set some forced entries on the ULA
+	ZXN_NEXTREG(REG_PALETTE_INDEX, 19);
+	ZXN_NEXTREGA(0x44, *SystemTilemapPalette);       			// 0x44 (68) => Palette Value (9 bit colour)
+	ZXN_NEXTREGA(0x44, *(SystemTilemapPalette+1));       		// 0x44 (68) => Palette Value (9 bit colour)
+
+	zx_border(INK_MAGENTA);
 
 
 	ZXN_NEXTREG(0x6b, /*0b11001000*/ 0xC8);                     // enable tilemap, 80x32 mode,
