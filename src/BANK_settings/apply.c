@@ -121,12 +121,91 @@ void settings_apply(char *Command) {
 		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
 
 		return;
-	} else	if(!stricmp(IniKey, "colour_default_foreground")) {
+	} else
+	if(!stricmp(IniKey, "colour_default_foreground")) {
 		/*
 		 * Colour: Default / Foreground
 		 */
 		SettingsTempValue = atoi(IniValue);
 		Command[0] = SYSTEM_PALETTE_DEFAULT_FOREGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_cursor_background")) {
+		/*
+		 * Colour: Cursor / Background
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_CURSOR_BACKGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_cursor_foreground")) {
+		/*
+		 * Colour: Cursor / Foreground
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_CURSOR_FOREGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_status_background")) {
+		/*
+		 * Colour: Status / Background
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_STATUS_BACKGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_status_foreground")) {
+		/*
+		 * Colour: Status / Foreground
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_STATUS_FOREGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_error_background")) {
+		/*
+		 * Colour: Error / Background
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_ERROR_BACKGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_error_foreground")) {
+		/*
+		 * Colour: Error / Foreground
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_ERROR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
