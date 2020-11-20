@@ -1,0 +1,23 @@
+; This is an example evil.rc, lines that start with ; are ignored
+
+; This stops all error reporting as the RC file loads
+errors = off
+
+; repeat_keys every 2 frames after starting
+repeat_key=2
+
+; I like this font :-P
+font = cinema
+
+; How many frames to delay before toggling the cursor flash
+cursor_flash =1
+
+; Text BG
+colour_default_background=0
+; Text FG
+colour_default_foreground=24
+; Cursor Highlight
+colour_cursor_background=24
+; Text when under cursor
+colour_cursor_foreground=0
+
