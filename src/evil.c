@@ -527,7 +527,6 @@ void insert_newline(void)
 
 void insert_mode(bool replacing)
 {
-
 	_farWithPointer(BANK_COMMAND, (void (*)(void *)) command_status_set,
 					(replacing ? "Replace mode" : "Insert mode"));
 

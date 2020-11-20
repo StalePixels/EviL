@@ -10,6 +10,8 @@
 #include "../BANK_spui/font_not_found.h"
 #include "../BANK_spui/not_zero.h"
 #include "../BANK_spui/unknown_setting.h"
+#include "../BANK_system/palette_apply.h"
+#include "../BANK_system/palettes.h"
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "ini_common.h"
@@ -17,16 +19,19 @@
 #include "string_is_false.h"
 #include "string_is_true.h"
 #include "trim_whitespace.h"
+#include <arch/zxn.h>
 #include <stdio.h>
 #include <string.h>
 
-uint8_t SettingsTempValue;
-void settings_apply(const char *Command) {
+int SettingsTempValue;
+void settings_apply(char *Command) {
 	IniKey = trim_whitespace(strtok(Command, "="));
 	IniValue = trim_whitespace(strtok(NULL, "\n"));
 
 	if(!stricmp(IniKey, "errors")) {
-		// Error handling for settings/colon commands
+		/*
+		 * Error Supression
+		 */
 		if(string_is_false(IniValue)) {
 			SettingsShowErrors = false;
 			return;
@@ -41,8 +46,10 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
-
 	if(!stricmp(IniKey, "font")) {
+		/*
+		 * Font
+		 */
 		// Use bundled font
 		if(IniValue[0] != '/') {
 			SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
@@ -63,8 +70,10 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
-
 	if(!stricmp(IniKey, "repeat_start")) {
+		/*
+		 * Key Initial Repeat
+		 */
 		SettingsTempValue = atoi(IniValue);
 		if(SettingsTempValue) {
 			L3RepeatStart = SettingsTempValue;
@@ -74,8 +83,10 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
-
 	if(!stricmp(IniKey, "repeat_key")) {
+		/*
+		 * Key Subsiquent Repeat
+		 */
 		SettingsTempValue = atoi(IniValue);
 		if(SettingsTempValue) {
 			L3RepeatKey = SettingsTempValue;
@@ -85,8 +96,10 @@ void settings_apply(const char *Command) {
 		}
 		return;
 	} else
-
 	if(!stricmp(IniKey, "cursor_flash")) {
+		/*
+		 * Cursor Flash Rate
+		 */
 		SettingsTempValue = atoi(IniValue);
 		if(SettingsTempValue) {
 			L3CursorFlashRate = SettingsTempValue;
@@ -94,6 +107,31 @@ void settings_apply(const char *Command) {
 		else if (SettingsShowErrors) {
 			_far(BANK_SPUI, spui_not_zero);
 		}
+		return;
+	} else
+	if(!stricmp(IniKey, "colour_default_background")) {
+		/*
+		 * Colour: Default / Background
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_DEFAULT_BACKGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
+		return;
+	} else	if(!stricmp(IniKey, "colour_default_foreground")) {
+		/*
+		 * Colour: Default / Foreground
+		 */
+		SettingsTempValue = atoi(IniValue);
+		Command[0] = SYSTEM_PALETTE_DEFAULT_FOREGROUND;
+		Command[1] = (SettingsTempValue) & 255;
+		Command[2] = (SettingsTempValue>>8) & 1;
+
+		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+
 		return;
 	} else
 	if (SettingsShowErrors) {

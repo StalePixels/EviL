@@ -1,4 +1,5 @@
 palette_set.c
+palette_apply.c
 beep.c
 exit.c
 palettes.c

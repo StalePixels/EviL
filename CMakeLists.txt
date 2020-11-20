@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(EVIL C)
 
-
 include_directories(
         /u/ZX/z88dk/include/_DEVELOPMENT/sccz80
 )
@@ -38,6 +37,8 @@ add_executable(EVIL
         src/BANK_system/palette_restore
         src/BANK_system/init
         src/BANK_system/exit
+        src/BANK_system/palettes
+        src/BANK_system/palette_set
 
         # 46
         src/BANK_command/error
@@ -58,6 +59,7 @@ add_executable(EVIL
         src/BANK_spui/not_zero
         src/BANK_spui/bool_invalid
         src/BANK_spui/unknown_setting
+
         # 44
         src/BANK_settings/apply
         src/BANK_settings/ini_common
@@ -71,6 +73,7 @@ add_executable(EVIL
         src/BANK_settings/string_is_false
         src/BANK_settings/load
         src/BANK_settings/apply
+
         # 43
         # 42
         # 41
@@ -79,4 +82,4 @@ add_executable(EVIL
         src/BANK_fonts/library
         src/BANK_fonts/set
         src/BANK_fonts/get
-        src/BANK_system/palettes.c src/BANK_system/palettes.h src/BANK_system/palette_set.c src/BANK_system/palette_set.h)
+        src/BANK_system/palette_apply.c src/BANK_system/palette_apply.h)

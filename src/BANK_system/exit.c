@@ -12,8 +12,6 @@
 #include <arch/zxn/esxdos.h>
 
 void system_exit() {
-	zx_cls(PAPER_WHITE);
-	zx_border(INK_WHITE);
 	// Files
 	esxdos_f_close(FileHandle);
 
