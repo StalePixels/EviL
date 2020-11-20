@@ -4,7 +4,7 @@
 
 #include "textmode_save.h"
 #include "../liblayer3/textmode.h"
-#include "common.h"
+#include "palettes.h"
 #include <string.h>
 
 void system_textmode_save() {

@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
-void palette_save(uint8_t *Destination);
+// x000xxxx is ULA first palette	   (0x00)
+// x011xxxx is Tilemap first palette   (0x30)
+void system_palette_save(uint8_t PaletteType, uint8_t *MemoryDestination);
 
 #endif//EVIL_PALETTE_SAVE_H

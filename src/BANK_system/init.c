@@ -24,27 +24,11 @@
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "../liblayer3/textmode.h"
-#include "common.h"
+#include "palette_restore.h"
+#include "palette_save.h"
+#include "palettes.h"
 #include "system.h"
 unsigned char SystemOriginalSpeed;
-
-uint8_t tilemap_background[16] = {
-        0xE3,0x01,     // Transparent
-        0xA0,0x00,     // Red
-        0x14,0x00,     // Green
-        0xAC,0x00,     // Yellow
-        0x02,0x01,     // Blue
-        0xA2,0x01,     // Magenta
-        0x16,0x01,     // Cyan
-        0xB6,0x01      // White
-};
-
-uint8_t tilemap_foreground[32] = {            // 0xE3 = 277
-//      TRANS,     Red,       Green,     Yellow,    Blue,      Magenta,   Cyan,      White,
-        0xE3,0x01, 0xA0,0x00, 0x14,0x00, 0xAC,0x00, 0x02,0x01, 0xA2,0x01, 0x16,0x01, 0xB6,0x01, // (normal)
-        0x6D,0x01, 0xED,0x01, 0x7D,0x01, 0xFD,0x01, 0x77,0x01, 0xEE,0x01, 0x7F,0x01, 0xFF,0x01  // (bright)
-};
-
 
 void system_init() {
     // Store CPU speed
@@ -80,46 +64,21 @@ void system_init() {
     ZXN_NEXTREG(REG_GLOBAL_TRANSPARENCY_COLOR, 0xE3);
     ZXN_NEXTREG(REG_FALLBACK_COLOR, 0x00);
 
+	system_palette_save(0x30, SystemShadowTilemapPalette);
+	system_palette_restore(0x30, SystemTilemapPalette);
+	system_palette_save(0x00, SystemShadowULAPalette);
 
-	/*
-	 * START BIT FOR SETTINGS HANDLER MIGRATION
-	 */
-	// Select ULA palette
-    ZXN_NEXTREG(REG_PALETTE_CONTROL, 0x00);                     // 0x43 (67) => Palette Control,
-																// x000xxxx is ULA first palette
-    // Set Magenta back to proper E3
-    ZXN_NEXTREGA(REG_PALETTE_INDEX, 27);
-    ZXN_NEXTREGA(REG_PALETTE_VALUE_8, 0xE3);
-
-    ZXN_NEXTREG(REG_PALETTE_CONTROL, 0x30);                     // 0x43 (67) => Palette Control
-																// x011xxxx is Tilemap first palette
-    ZXN_NEXTREG(REG_PALETTE_INDEX, 0);
-    uint8_t i = 0;
-    do {
-//BG
-        ZXN_NEXTREGA(0x44, tilemap_background[2*(i/32)]);       // 0x44 (68) => 9 bit colour)
-																// autoinc after TWO writes
-        ZXN_NEXTREGA(0x44, tilemap_background[2*(i/32)+1]);     // 0x44 (68) => 9 bit colour)
-																// autoinc after TWO writes
-//FG
-        ZXN_NEXTREGA(0x44, tilemap_foreground[(i%32)]);         // 0x44 (68) => 9 bit colour)
-																// autoinc after TWO writes
-        ZXN_NEXTREGA(0x44, tilemap_foreground[(i%32)+1]);       // 0x44 (68) => 9 bit colour)
-																// autoinc after TWO writes
-    } while ((i = i + 2) != 0);
-
-
-	/*
-	 * END BIT FOR SETTINGS HANDLER MIGRATION
-	 */
+	// Force ULA bright magenta to be transparent version
+	ZXN_NEXTREG(REG_PALETTE_INDEX, 27);
+	ZXN_NEXTREG(REG_PALETTE_VALUE_8, 0xE3);
 
 	zx_border(INK_BLACK);
 
 
 	ZXN_NEXTREG(0x6b, /*0b11001000*/ 0xC8);                     // enable tilemap, 80x32 mode,
-																// 1bit palette
+																// 1bit palette "textmode"
 	// Setup the ULA for overlay UI
-    zx_cls(PAPER_MAGENTA|BRIGHT);
+    zx_cls(INK_MAGENTA|PAPER_MAGENTA|BRIGHT);
 
 	// Establish the memory buffer constraints
 	BufferStart = (void *) 0xC000;

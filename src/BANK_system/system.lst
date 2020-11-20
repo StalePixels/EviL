@@ -1,7 +1,7 @@
 
 beep.c
-common.c
 exit.c
+palettes.c
 palette_save.c
 palette_restore.c
 splash.c

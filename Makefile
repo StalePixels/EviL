@@ -141,9 +141,11 @@ deploy: all install
 q: banks assemble
 	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/dot/$(NAME)
 
-release: dotn
+report:
 	$(CLOC) src > docs/cloc.txt
 	$(CAT) docs/cloc.txt
+
+release: dotn report
 	$(CP) docs/* $(FILES_DIR)/docs/.
 	$(CP) BUILD-EviL/EviL $(FILES_DIR)/dot/EviL.DOT
 
