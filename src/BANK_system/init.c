@@ -26,10 +26,7 @@
 #include "../liblayer3/textmode.h"
 #include "common.h"
 #include "system.h"
-
-extern void at_exit();
-
-unsigned char orig_cpu_speed;
+unsigned char SystemOriginalSpeed;
 
 uint8_t tilemap_background[16] = {
         0xE3,0x01,     // Transparent
@@ -51,7 +48,7 @@ uint8_t tilemap_foreground[32] = {            // 0xE3 = 277
 
 void system_init() {
     // Store CPU speed
-    orig_cpu_speed = ZXN_READ_REG(REG_TURBO_MODE);
+	SystemOriginalSpeed = ZXN_READ_REG(REG_TURBO_MODE);
 
     // Set CPU speed to 28Mhz
     ZXN_NEXTREG(REG_TURBO_MODE, 3);
@@ -60,8 +57,8 @@ void system_init() {
     atexit(at_exit);
 
     // Get 16k of scratch RAM for text editing
-    top_page = esx_ide_bank_alloc(0);
-    btm_page = esx_ide_bank_alloc(0);
+	EvilBufferBank0 = esx_ide_bank_alloc(0);
+	EvilBufferBank1 = esx_ide_bank_alloc(0);
 
     // We're going to trash this area for the Editor canvas, so let's back it up so we can restore it
     system_textmode_save();

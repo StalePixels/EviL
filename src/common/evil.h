@@ -32,7 +32,10 @@ extern char MessageBuffer[128];
 extern uint8_t* FirstLine; /* <= GapStart */
 extern uint8_t* CurrentLine; /* <= GapStart */
 
-extern uint8_t OriginalMMU6, OriginalMMU7, top_page, btm_page, FileHandle;
+extern uint8_t OriginalMMU6, OriginalMMU7, EvilBufferBank1, EvilBufferBank0, FileHandle;
+
+
+void at_exit();
 
 // TODO - Migrate these to BANK_command
 void quit(void);

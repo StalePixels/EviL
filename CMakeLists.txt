@@ -25,32 +25,28 @@ add_executable(EVIL
         src/liblayer3/revoff
         src/liblayer3/revon
         src/liblayer3/textmode
-# 44
-        src/BANK_settings/apply
-        src/BANK_settings/ini_common
-        src/BANK_settings/ini_get_one
-        src/BANK_settings/ini_get_line
-        src/BANK_settings/ini_set_one
-        src/BANK_settings/load
-        src/BANK_settings/trim_whitespace
-        src/BANK_settings/show_errors
-        src/BANK_settings/string_is_true
-        src/BANK_settings/string_is_false
-# 46
+
+
+        # 47
+        src/BANK_system/palette_save
+        src/BANK_system/textmode_save
+        src/BANK_system/common
+        src/BANK_system/splash
+        src/BANK_system/beep
+        src/BANK_system/exit
+        src/BANK_system/textmode_restore
+        src/BANK_system/palette_restore
+        src/BANK_system/init
+        src/BANK_system/exit
+
+        # 46
         src/BANK_command/error
         src/BANK_command/file_name_set
         src/BANK_command/file_save
         src/BANK_command/parse
         src/BANK_command/status
-# 47
-        src/BANK_system/startup
-        src/BANK_settings/load
-        src/BANK_fonts/library
-        src/BANK_fonts/set
-        src/BANK_settings/apply
-        src/BANK_fonts/get
 
-# 47
+        # 45
         src/BANK_spui/error
         src/BANK_spui/font_invalid
         src/BANK_spui/window
@@ -62,4 +58,25 @@ add_executable(EVIL
         src/BANK_spui/not_zero
         src/BANK_spui/bool_invalid
         src/BANK_spui/unknown_setting
-        src/BANK_system/palette_save.c src/BANK_system/palette_save.h src/BANK_system/textmode_save.c src/BANK_system/textmode_save.h src/BANK_system/common.c src/BANK_system/common.h src/BANK_system/splash.c src/BANK_system/splash.h src/BANK_system/beep.c src/BANK_system/beep.h src/BANK_system/exit.c src/BANK_system/exit.h src/BANK_system/textmode_restore.c src/BANK_system/textmode_restore.h src/BANK_system/palette_restore.c src/BANK_system/palette_restore.h)
+        # 44
+        src/BANK_settings/apply
+        src/BANK_settings/ini_common
+        src/BANK_settings/ini_get_one
+        src/BANK_settings/ini_get_line
+        src/BANK_settings/ini_set_one
+        src/BANK_settings/load
+        src/BANK_settings/trim_whitespace
+        src/BANK_settings/show_errors
+        src/BANK_settings/string_is_true
+        src/BANK_settings/string_is_false
+        src/BANK_settings/load
+        src/BANK_settings/apply
+        # 43
+        # 42
+        # 41
+
+        # 40
+        src/BANK_fonts/library
+        src/BANK_fonts/set
+        src/BANK_fonts/get
+        )

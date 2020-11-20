@@ -34,7 +34,7 @@
 #include "BANK_system/system.h"
 
 uint8_t L3ScreenX = 0, L3ScreenY = 0;
-uint8_t top_page, btm_page, OriginalMMU6, OriginalMMU7, FileHandle;
+uint8_t EvilBufferBank1, EvilBufferBank0, OriginalMMU6, OriginalMMU7, FileHandle;
 
 void (*print_status)(const char*);
 

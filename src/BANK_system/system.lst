@@ -5,6 +5,6 @@ exit.c
 palette_save.c
 palette_restore.c
 splash.c
-startup.c
+init.c
 textmode_save.c
 textmode_restore.c

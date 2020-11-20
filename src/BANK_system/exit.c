@@ -4,6 +4,7 @@
 
 #include "exit.h"
 #include "../common/evil.h"
+#include "init.h"
 #include "system.h"
 #include <arch/zxn.h>
 #include <arch/zxn/esxdos.h>
@@ -15,8 +16,8 @@ void system_exit() {
 	esxdos_f_close(FileHandle);
 
 	// Free buffers
-	esx_ide_bank_free(0, top_page);
-	esx_ide_bank_free(0, btm_page);
+	esx_ide_bank_free(0, EvilBufferBank1);
+	esx_ide_bank_free(0, EvilBufferBank0);
 
 	// disable textmode
 	ZXN_NEXTREG(0x6b, 0);                                    // disable tilemap
@@ -25,5 +26,5 @@ void system_exit() {
 	system_textmode_restore();
 
 	// Finally, restore the original CPU speed
-	ZXN_NEXTREGA(REG_TURBO_MODE, orig_cpu_speed);
+	ZXN_NEXTREGA(REG_TURBO_MODE, SystemOriginalSpeed);
 }
