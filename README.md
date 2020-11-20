@@ -7,7 +7,8 @@ Current differences to QE[^1]:
  * Renamed ;-)
  * Broken into bank based chunks, designed around app functions
  * Consistent UI with other Stale Pixels apps.
- * Persistent & runtime settings via `EVIL.RC` & `:set`[^2] [^3]  
+ * Runtime settings via `:set`[^2] 
+ * Persistent settings loaded from `EVIL.RC`[^3]  
  * Key repeat with configurable initial, and subsequent repeat rates
  * Configurable flashing cursor speed
  * Configurable colours for most of text canvas
