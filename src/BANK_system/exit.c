@@ -23,6 +23,10 @@ void system_exit() {
 	system_palette_restore(RPC_SELECT_TILEMAP_PALETTE_0, SystemBackupTilemapPalette);
 	system_palette_restore(RPC_SELECT_ULA_PALETTE_0, SystemBackupULAPalette);
 
+	// Clear ULA to default colours
+	zx_cls(PAPER_WHITE|INK_BLACK);
+	zx_border(INK_WHITE);
+
 	// disable textmode
 	ZXN_NEXTREG(0x6b, 0);                                    // disable tilemap
 

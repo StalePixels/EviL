@@ -65,6 +65,9 @@ void system_init() {
     ZXN_NEXTREG(REG_GLOBAL_TRANSPARENCY_COLOR, 0xE3);
     ZXN_NEXTREG(REG_FALLBACK_COLOR, 0x00);
 
+	// Load the preferences
+	_far(BANK_SETTINGS,settings_load);
+
 	system_palette_save(RPC_SELECT_TILEMAP_PALETTE_0, SystemBackupTilemapPalette);
 	system_palette_restore(RPC_SELECT_TILEMAP_PALETTE_0, SystemTilemapPalette);
 	system_palette_save(RPC_SELECT_ULA_PALETTE_0, SystemBackupULAPalette);
@@ -88,8 +91,6 @@ void system_init() {
 	BufferEnd = (void *) 0xFFFE;
 	*BufferEnd = '\n';
 
-	// Load the preferences
-	_far(BANK_SETTINGS,settings_load);
 
 	// Even if errors were
 	_farWithUChar(BANK_SETTINGS, settings_show_errors, true);
