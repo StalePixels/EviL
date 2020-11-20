@@ -66,17 +66,17 @@ Individual Settings
 ####```repeat_start```
  ```default = 25```
 
-**repeat_start** controls how many screen refreshes[^1] EVIL will count before considering a key ready to begin repeating.
+**repeat_start** controls how many screen refreshes<sup>[*1](#footnote1)</sup> EVIL will count before considering a key ready to begin repeating.
 
 ####```repeat_key``` 
  ```default = 15```
 
-**repeat_key** controls how many screen refreshes[^1] EVIL will count before repeating a key again, after the first repeat.
+**repeat_key** controls how many screen refreshes<sup>[*1](#footnote1)</sup> EVIL will count before repeating a key again, after the first repeat.
 ### Display Control ###
 ####```cursor_flash```
  ```default = 10```
  
-**cursor_flash** sets how frequently the cursor changes colour[^1], two inversions per cycle (i.e. returns to where it starts in 2x **cursor_flash**.)  
+**cursor_flash** sets how frequently the cursor changes colour<sup>[*1](#footnote1)</sup>, two inversions per cycle (i.e. returns to where it starts in 2x **cursor_flash**.)  
 
 ####```font```
  ```default = sinclair```
@@ -96,7 +96,7 @@ Available bundled fonts are:
  | ocr-b        	| OCR-B               	| zx-origin's by Damien Guard 	|
  | sixties        	| 60s               	| zx-origin's by Damien Guard 	|
 
-When referencing an external font file make sure to use the full path name, starting with /[^2]
+When referencing an external font file make sure to use the full path name, starting with / <sup>[*2](#footnote2)</sup>
 
 ### EviL Control ###
 ####```errors```
@@ -110,6 +110,6 @@ If invoked outside of the run control file it will suppress error reporting duri
  
 Footnotes
 -
- [^1]: Intervals measured in screen refreshes will be variable dependent upon the machines video speed, not CPU speed.
+ <a name="footnote1">*1</a>: Intervals measured in screen refreshes will be variable dependent upon the machines video speed, not CPU speed.
  
- [^2]: While the loading of external font files is referenced in several places it's not yet complete, so the setting will warn you if you try to reference an external font file. When implemented external font files will need to be valid 768byte files in the "CH8" format
+ <a name="footnote2">*2</a>: While the loading of external font files is referenced in several places it's not yet complete, so the setting will warn you if you try to reference an external font file. When implemented external font files will need to be valid 768byte files in the "CH8" format
