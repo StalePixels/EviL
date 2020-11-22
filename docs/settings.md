@@ -38,12 +38,12 @@ Settings can be invoked in one of two ways, and both end up at the same command 
 
 1: Programmatically - via /SYS/EviL.rc
 -
-Our "run control" file is stored on /SYS since NextZXOS is not a multi-user system and the setting is system-wide, unlike traditional Unix-like systems, and /HOME.
+Our "run control" file is stored on /SYS since NextZXOS is not a multi-user system and the setting is system-wide, unlike traditional Unix-like systems, and /HOME.  
 Settings changed in /SYS/EviL.RC are applied at startup automatically every time EviL is started, effectively changing the startup defaults.
 
 An example run control file, saved in /sys/evil.rc could look as follows;
 
-    silent = true
+    errors = true
     font = cinema
     repeat_key = 10
 
@@ -54,7 +54,7 @@ For an explanation of what these settings do, see the "Individual Settings" sect
 When in command mode (not typing in the main editor area, toggled with EDIT) you can change settings in realtime using the :set command. e.g.;
 
     :set font = sinclair
-    :set silent = false
+    :set errors = false
     :set repeat_start = 25
     
 Settings applied in this manner will revert to the startup defaults (i.e. they don't change the run control file.)
@@ -63,22 +63,38 @@ Individual Settings
 -
 
 ### Input Control ###
-####```repeat_start```
- ```default = 25```
-
+#### ```repeat_start```
+ ```default = 25```  
 **repeat_start** controls how many screen refreshes<sup>[*1](#footnote1)</sup> EVIL will count before considering a key ready to begin repeating.
 
-####```repeat_key``` 
- ```default = 15```
-
+#### ```repeat_key``` 
+ ```default = 15```  
 **repeat_key** controls how many screen refreshes<sup>[*1](#footnote1)</sup> EVIL will count before repeating a key again, after the first repeat.
+
 ### Display Control ###
-####```cursor_flash```
- ```default = 10```
+In this documented the expanded binary notation for Run Control colours are written as follows:B1, R3R2R1 G3G2G1 B3B2- the least significant bit of the Blue component being valued at 256 in the final value. Colours are calculated from an integer between 0 and 511, expanded and internally 9bit colours.
+
+#### ```colour_default_background```
+ ```default = 257```  
+**colour_default_background** is the background of the main text editor area, default is Dark Blue: 1, 000 000 01  
+
+#### ```colour_default_foreground```
+ ```default = 511```   
+**colour_default_foreground** is the text colour of the main text editor area, default is Bright White: 1, 111 111 11
  
+#### ```colour_cursor_background```
+ ```default = 287```   
+**colour_cursor_background** is the highlight colour of the movable cursor in the editor area, default is Bright Cyan: 1, 000 111 11
+
+####```colour_cursor_foreground```
+ ```default = 252```  
+**colour_cursor_foreground** is the highlight colour of the movable cursor in the editor area, default is Bright Yellow: 0, 111 111 00
+   
+#### ```cursor_flash```
+ ```default = 10```  
 **cursor_flash** sets how frequently the cursor changes colour<sup>[*1](#footnote1)</sup>, two inversions per cycle (i.e. returns to where it starts in 2x **cursor_flash**.)  
 
-####```font```
+#### ```font```
  ```default = sinclair```
  
 **font** selects which font to use for the main editor layer. 
@@ -105,8 +121,6 @@ When referencing an external font file make sure to use the full path name, star
 **errors** disables error reporting while loading the run control file. This is useful for when sharing the same run control file between multiple editors, or using the same config files between different SD cards where fonts may not exist. 
 
 If invoked outside of the run control file it will suppress error reporting during subsequent error messages until re-enabled. 
- 
- 
  
 Footnotes
 -

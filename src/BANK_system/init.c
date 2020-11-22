@@ -91,7 +91,6 @@ void system_init() {
 	BufferEnd = (void *) 0xFFFE;
 	*BufferEnd = '\n';
 
-
 	// Even if errors were
 	_farWithUChar(BANK_SETTINGS, settings_show_errors, true);
 }
