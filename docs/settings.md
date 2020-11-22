@@ -101,34 +101,34 @@ In this documented the expanded binary notation for Run Control colours are writ
 
 Available bundled fonts are:
  
- | Settings Name 	| Font Name            	| Font Source                 	|
- |---------------   |----------------------	|-----------------------------	|
- | Sinclair      	| Sinclair System Font 	| ZX ROM                      	|
- | Cinema        	| Cinema               	| zx-origin's by Damien Guard 	|
- | Courier        	| Courier             	| zx-origin's by Damien Guard 	|
- | Envious        	| Envious             	| zx-origin's by Damien Guard 	|
- | EnviousBold     	| Envious Bold        	| zx-origin's by Damien Guard 	|
- | EnviousItalic   	| Envious Italic       	| zx-origin's by Damien Guard 	|
- | EnviousSerif   	| Envious Serif       	| zx-origin's by Damien Guard 	|
- | EnviousSerifBold | Envious Serif Bold   	| zx-origin's by Damien Guard 	|
- | Magic5        	| Magic 5             	| zx-origin's by Damien Guard 	|
- | Magic5Bold      	| Magic 5 Bold         	| zx-origin's by Damien Guard 	|
- | Magnetic        	| Magnetic             	| zx-origin's by Damien Guard 	|
- | Minecraft       	| Minecraft            	| Mojang, CH8 by Damien Guard 	|
- | OCR-A        	| OCR-A               	| zx-origin's by Damien Guard 	|
- | OCR-B        	| OCR-B               	| zx-origin's by Damien Guard 	|
- | Plotter          | Plotter              	| zx-origin's by Damien Guard 	|
- | PlotterBold      | Plotter Bold         	| zx-origin's by Damien Guard 	|
- | PlotterCondensed | Plotter Condensed   	| zx-origin's by Damien Guard 	|
- | Computing60s    	| Computing 60s        	| zx-origin's by Damien Guard 	|
+ | Settings Name 	    | Font Name            	| Font Source                  |
+ |----------------------|-----------------------|------------------------------|
+ | **Sinclair**      	| Sinclair System Font 	| ZX ROM                       |
+ | **Cinema**        	| Cinema               	| zx-origin's by Damien Guard  |
+ | **Courier**        	| Courier             	| zx-origin's by Damien Guard  |
+ | **Envious**        	| Envious             	| zx-origin's by Damien Guard  |
+ | **EnviousBold**     	| Envious Bold        	| zx-origin's by Damien Guard  |
+ | **EnviousItalic**   	| Envious Italic       	| zx-origin's by Damien Guard  |
+ | **EnviousSerif**   	| Envious Serif       	| zx-origin's by Damien Guard  |
+ | **EnviousSerifBold** | Envious Serif Bold   	| zx-origin's by Damien Guard  |
+ | **Magic5**        	| Magic 5             	| zx-origin's by Damien Guard  |
+ | **Magic5Bold**      	| Magic 5 Bold         	| zx-origin's by Damien Guard  |
+ | **Magnetic**        	| Magnetic             	| zx-origin's by Damien Guard  |
+ | **Minecraft**       	| Minecraft            	| Mojang, CH8 by Damien Guard  |
+ | **OCR-A**        	| OCR-A               	| zx-origin's by Damien Guard  |
+ | **OCR-B**        	| OCR-B               	| zx-origin's by Damien Guard  |
+ | **Plotter**          | Plotter              	| zx-origin's by Damien Guard  |
+ | **PlotterBold**      | Plotter Bold         	| zx-origin's by Damien Guard  |
+ | **PlotterCondensed** | Plotter Condensed   	| zx-origin's by Damien Guard  |
+ | **Computing60s**    	| Computing 60s        	| zx-origin's by Damien Guard  |
  
 Font "Settings Name"s are case insensitive, and are purely in "*PascalCase*" in the table above to make for easier reading, so "enviousserifbold" and "EnviousSerifBold", and even "enVIouSSeRIFBolD" are all valid font name settings.
 
 There are also several shorthand font aliases which are also valid settings - the most notable of which are:
-1) ROM, which refers to the Sinclair ZX ROM font,
-2) QE, which refers to the Cinema font, as used by the QE editor - this is a convenience method for people migrating, and
-3) 60s, which is a shorthand for the Computing60s.
-
+1) **ROM**, which refers to the Sinclair ZX ROM font,  
+2) **QE**, which refers to the Cinema font, as used by the QE editor - this is a convenience method for people migrating,  
+3) **60s**, which is a shorthand for the Computing60s, and
+4) & 5. **OCRA**, & **OCRB** - handling the oft'forgetten hyphen.
 
 When referencing an external font file make sure to use the full path name, starting with / <sup>[*2](#footnote2)</sup>
 

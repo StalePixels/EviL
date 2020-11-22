@@ -5,6 +5,7 @@
 #include "apply.h"
 #include "../BANK_fonts/get.h"
 #include "../BANK_fonts/library.h"
+#include "../BANK_fonts/picker.h"
 #include "../BANK_fonts/set.h"
 #include "../BANK_spui/bool_invalid.h"
 #include "../BANK_spui/font_invalid.h"
@@ -26,8 +27,16 @@
 
 int16_t SettingsTempValue;
 void settings_apply(char *Command) {
+	// not all settings are KV pairs
+	IniKey = 0;
 	IniKey = trim_whitespace(strtok(Command, "="));
-	IniValue = trim_whitespace(strtok(NULL, "\n"));
+	if(IniKey[strlen(IniKey)-1]=='\n') {
+		IniKey[strlen(IniKey)-1] = 0;
+		IniValue = 0;
+	}
+	else {
+		IniValue = trim_whitespace(strtok(NULL, "\n"));
+	}
 
 	if(!stricmp(IniKey, "errors")) {
 		/*
@@ -52,22 +61,24 @@ void settings_apply(char *Command) {
 		 * Font
 		 */
 		// Use bundled font
-		if(IniValue[0] != '/') {
-			SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
-			// -1 means we did not find a font
-			if(SettingsTempValue < FONT_COUNT) {
-				_farWithUChar(BANK_FONTS, font_set, SettingsTempValue);
-				return;
-			}
-			else {
-				// ERROR
-				_farWithPointer(BANK_SPUI, spui_font_invalid, IniValue);
-				return;
-			}
+		if(IniValue) {
+			if (IniValue[0] != '/') {
+				SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
+				// -1 means we did not find a font
+				if (SettingsTempValue < FONT_COUNT) {
+					_farWithUChar(BANK_FONTS, font_set, SettingsTempValue);
+					return;
+				} else {
+					// ERROR
+					_farWithPointer(BANK_SPUI, spui_font_invalid, IniValue);
+					return;
+				}
 
-		}
-		else if (SettingsShowErrors) {
-			_farWithPointer(BANK_SPUI, spui_font_not_found, IniValue);
+			} else if (SettingsShowErrors) {
+				_farWithPointer(BANK_SPUI, spui_font_not_found, IniValue);
+			}
+		} else {
+			_far(BANK_FONTS, font_picker);
 		}
 		return;
 	} else

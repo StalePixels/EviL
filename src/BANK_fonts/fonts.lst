@@ -1,6 +1,8 @@
 set.c
 get.c
 library.c
+picker.c
+
 cinema.asm
 courier.asm
 envious.asm

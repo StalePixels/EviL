@@ -82,4 +82,4 @@ add_executable(EVIL
         src/BANK_fonts/library
         src/BANK_fonts/set
         src/BANK_fonts/get
-        src/BANK_system/palette_apply.c src/BANK_system/palette_apply.h)
+        src/BANK_system/palette_apply.c src/BANK_system/palette_apply.h src/BANK_fonts/picker.c src/BANK_fonts/picker.h)
