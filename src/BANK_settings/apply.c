@@ -4,6 +4,7 @@
 
 #include "apply.h"
 #include "../BANK_fonts/get.h"
+#include "../BANK_fonts/library.h"
 #include "../BANK_fonts/set.h"
 #include "../BANK_spui/bool_invalid.h"
 #include "../BANK_spui/font_invalid.h"
@@ -23,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int SettingsTempValue;
+int16_t SettingsTempValue;
 void settings_apply(char *Command) {
 	IniKey = trim_whitespace(strtok(Command, "="));
 	IniValue = trim_whitespace(strtok(NULL, "\n"));
@@ -54,7 +55,7 @@ void settings_apply(char *Command) {
 		if(IniValue[0] != '/') {
 			SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
 			// -1 means we did not find a font
-			if(SettingsTempValue != -1) {
+			if(SettingsTempValue < FONT_COUNT) {
 				_farWithUChar(BANK_FONTS, font_set, SettingsTempValue);
 				return;
 			}
