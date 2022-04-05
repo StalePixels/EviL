@@ -5,7 +5,7 @@ SRC_DIRS ?= ./src
 DOCS_DIR ?= ./docs
 FILES_DIR ?= ./dist
 RELEASE_DIR ?= ./RELEASE-$(NAME)
-INSTALL_BASE ?= /Volumes/devnext
+INSTALL_BASE ?= /Volumes/devnext.xalior.com
 INSTALL_DIR ?= $(INSTALL_BASE)/$(NAME)
 
 Z88DK_CRT = 1
