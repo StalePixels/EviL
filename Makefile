@@ -122,8 +122,8 @@ banks: bank_47 bank_46 bank_45 bank_44 bank_40
 all_banks: dirs deps banks
 
 assemble:
-	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) -create-app \
-		-subtype=dotn $(CZFLAGS)
+	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) \
+		-subtype=dotn $(CZFLAGS) -create-app
 	$(MV) $(NAME) $(BUILD_DIR)/$(NAME)
 
 dotn: all_banks assemble
