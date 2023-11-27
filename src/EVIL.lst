@@ -1,4 +1,5 @@
 evil.c
+../TMP/BANK_fonts.o
 ../TMP/BANK_system.o
 ../TMP/BANK_command.o
 ../TMP/BANK_spui.o
@@ -6,7 +7,6 @@ evil.c
 #43
 #42
 #41
-../TMP/BANK_fonts.o
 
 common/memory.c
 common/file.c
