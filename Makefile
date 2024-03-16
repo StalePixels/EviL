@@ -6,12 +6,12 @@ DOCS_DIR ?= ./docs
 FILES_DIR ?= ./dist
 RELEASE_DIR ?= ./RELEASE-$(NAME)
 
-INSTALL_BASE ?= /u/devnext.xalior.com
+INSTALL_BASE ?= /mnt/devnext
 INSTALL_DIR ?= $(INSTALL_BASE)/$(NAME)
 
 EMU_DIR ?= ./EMU
-EMU_BASE ?= $(EMU)/mount
-EMU_DIR ?= $(EMU_BASE)/dot
+EMU_BASE ?= $(EMU_DIR)/mount
+EMU_DIR ?= $(EMU_BASE)/DOT
 
 PWD = $(shell pwd)
 
@@ -132,7 +132,7 @@ assemble:
 	ls -l src/$(NAME).lst
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) \
 		-subtype=dotn $(CZFLAGS) -create-app
-	$(MV) $(NAME) $(BUILD_DIR)/$(NAME)
+	$(MV) EVIL $(BUILD_DIR)/$(NAME)
 
 dotn: all_banks assemble
 
@@ -140,14 +140,14 @@ install-dir:
 	$(MKDIR) $(INSTALL_DIR)
 
 update:
-	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/dot/$(NAME)
+	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/DOT/$(NAME)
 
 install: install-dir update
 
 deploy: all install
 
 q: banks assemble
-	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/dot/$(NAME)
+	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/DOT/$(NAME)
 
 report:
 	$(CLOC) src > docs/cloc.txt
@@ -155,6 +155,7 @@ report:
 
 install_emulator:
 	$(CP) $(BUILD_DIR)/$(NAME) $(EMU_BASE)/dot/$(NAME)
+
 emulate:
 	$(PWD)/bin/zenext --noconfigfile --disablemenuandexit --nosplash --quickexit --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc
 

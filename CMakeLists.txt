@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(EVIL C)
 
 include_directories(
-        /u/ZX/z88dk/include/_DEVELOPMENT/sccz80
+        /opt/z88dk/include/
+        /opt/z88dk/include/_DEVELOPMENT/sccz80/
 )
 
 add_executable(EVIL
