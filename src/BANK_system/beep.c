@@ -7,7 +7,7 @@
 #include <arch/zxn.h>
 #include <stdio.h>
 
-void system_beep() {
+void system_beep(void) {
 	zx_border(INK_RED);
 	ZXN_NEXTREG(REG_TURBO_MODE, 0);
 	printf("\x07");

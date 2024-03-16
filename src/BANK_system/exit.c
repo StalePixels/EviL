@@ -11,7 +11,7 @@
 #include <arch/zxn.h>
 #include <arch/zxn/esxdos.h>
 
-void system_exit() {
+void system_exit(void) {
 	// Files
 	esxdos_f_close(FileHandle);
 

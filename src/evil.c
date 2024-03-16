@@ -1006,7 +1006,7 @@ void main(int argc, const char* argv[])
     exit(0);
 }
 
-void at_exit() {
+void at_exit(void) {
     /*
      * Shutdown gracefully
      */
