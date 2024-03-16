@@ -31,7 +31,7 @@
 #include "system.h"
 unsigned char SystemOriginalSpeed;
 
-void system_init() {
+void system_init(void) {
     // Store CPU speed
 	SystemOriginalSpeed = ZXN_READ_REG(REG_TURBO_MODE);
 

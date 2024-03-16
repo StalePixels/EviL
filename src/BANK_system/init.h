@@ -6,6 +6,6 @@
 #define EVIL_SYSTEM_INIT_H
 extern unsigned char SystemOriginalSpeed;
 
-void system_init();
+void system_init(void);
 
 #endif//EVIL_SYSTEM_INIT_H
