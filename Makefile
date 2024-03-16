@@ -5,17 +5,23 @@ SRC_DIRS ?= ./src
 DOCS_DIR ?= ./docs
 FILES_DIR ?= ./dist
 RELEASE_DIR ?= ./RELEASE-$(NAME)
-INSTALL_BASE ?= /Volumes/devnext.xalior.com
+
+INSTALL_BASE ?= /u/devnext.xalior.com
 INSTALL_DIR ?= $(INSTALL_BASE)/$(NAME)
 
-Z88DK_CRT = 1
+EMU_DIR ?= ./EMU
+EMU_BASE ?= $(EMU)/mount
+EMU_DIR ?= $(EMU_BASE)/dot
 
+PWD = $(shell pwd)
+
+Z88DK_CRT = 1
 #DEBUGFLAGS := --list --c-code-in-asm
 DEBUGFLAGS =
 
 CC=zcc
 CCFLAGS=+zxn -vn -O3 -startup=$(Z88DK_CRT) -clib=new -pragma-include:zpragma.inc
-CZFLAGS=-Cz="--clean --fullsize --main-fence 0xC000"
+CZFLAGS=-Cz="--fullsize --main-fence 0xC000"
 LDFLAGS=-m -lm
 INCFLAGS=
 
@@ -48,6 +54,7 @@ clean:
 	$(RM) NAME
 
 incs: dirs
+	$(ECHO) $(ZCCCFG)
 	$(ECHO) $(NAME) > NAME
 
 	$(ECHO) `git rev-list --all --count` > $(TMP_DIR)/BUILD
@@ -122,6 +129,7 @@ banks: bank_47 bank_46 bank_45 bank_44 bank_40
 all_banks: dirs deps banks
 
 assemble:
+	ls -l src/$(NAME).lst
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) \
 		-subtype=dotn $(CZFLAGS) -create-app
 	$(MV) $(NAME) $(BUILD_DIR)/$(NAME)
@@ -145,8 +153,14 @@ report:
 	$(CLOC) src > docs/cloc.txt
 	$(CAT) docs/cloc.txt
 
+install_emulator:
+	$(CP) $(BUILD_DIR)/$(NAME) $(EMU_BASE)/dot/$(NAME)
+emulate:
+	$(PWD)/bin/zenext --noconfigfile --disablemenuandexit --nosplash --quickexit --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc
+
+debug:
+	$(PWD)/bin/zenext --noconfigfile --disablemultitaskmenu --nosplash --forcevisiblehotkeys --enable-breakpoints --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc
+
 release: dotn report
 	$(CP) docs/* $(FILES_DIR)/docs/.
 	$(CP) BUILD-EviL/EviL $(FILES_DIR)/dot/EviL.DOT
-
-
