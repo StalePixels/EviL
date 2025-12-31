@@ -2,10 +2,14 @@
 // Created by D Rimron-Soutter on 12/11/2020.
 //
 
-#include "status.h"
 #include <stdlib.h>
+
+#include "status.h"
+
 #include "../common/evil.h"
 #include "../liblayer3/liblayer3.h"
+
+#include "../BANK_system/system.h"
 
 uint8_t status_line_length = WIDTH;
 

@@ -15,7 +15,6 @@
 #include <z80.h>
 #include <intrinsic.h>
 #include <arch/zxn.h>
-#include <arch/zx/esxdos.h>
 #include <arch/zxn/esxdos.h>
 #include <errno.h>
 
@@ -25,9 +24,9 @@
 #include "../BANK_system/system.h"
 #include "../common/file.h"
 #include "../common/memory.h"
-const char* FileName = 0;
+char* FileName = 0;
 
-const char tmp_filename[] = "EVILTEMP.$$$";
+const char *tmp_filename = "EVILTEMP.$$$";
 
 void file_new(void)
 {
@@ -46,17 +45,13 @@ bool really_save_file(const char* fcb)
 
 	strcpy(MessageBuffer, "Writing ");
 	strcat(MessageBuffer, fcb);
-	_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
 
 	errno = 0;
 	FileHandle = esxdos_f_open(fcb, ESXDOS_MODE_W | ESXDOS_MODE_CT);
 	if (errno) {
-		strcpy(MessageBuffer, "Failed to create file (errno:");
-		itoa(errno, MessageBuffer + strlen(MessageBuffer), 10);
-		strcat(MessageBuffer, ")");
-		_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, MessageBuffer);
-		_far(BANK_SYSTEM,system_beep);
-		return false;
+		goto error;
+
 	}
 
 	inp = BufferStart;
@@ -86,6 +81,7 @@ bool really_save_file(const char* fcb)
 
 		if(c) *outp++ = c;
 
+		zx_border(0);
 		if (outp == (cpm_default_dma+128))
 		{
 			esx_f_write(FileHandle, cpm_default_dma, 128);
@@ -94,6 +90,7 @@ bool really_save_file(const char* fcb)
 			outp = cpm_default_dma;
 		}
 
+		zx_border(2);
 		// special case to get around CPMs 128b block
 		if ((inp == BufferEnd) && !pushed && (outp != cpm_default_dma)) {
 			uint8_t b = outp - cpm_default_dma;
@@ -110,6 +107,14 @@ bool really_save_file(const char* fcb)
 	return true;
 
 	error:
+	strcpy(MessageBuffer, "Failed to save file (errno:");
+	itoa(errno, MessageBuffer + strlen(MessageBuffer), 10);
+	strcat(MessageBuffer, ")");
+	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_far(BANK_SYSTEM,system_beep);
+	return false;
+
 	esxdos_f_close(FileHandle);
+
 	return false;
 }

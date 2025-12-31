@@ -8,18 +8,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <arch/zxn.h>
 
 #include "../BANK_settings/apply.h"
 #include "../common/evil.h"
 #include "../common/file.h"
 #include "../common/memory.h"
+#include "../BANK_system/system.h"
 #include "error.h"
 #include "file_name_set.h"
 #include "file_save.h"
 
 void command_parse() {
+	// Get the first part of the command (we space delimit parameters)
 	char* w = strtok(Buffer, " ");
-	if (!*w) return;
+	if (!*w) {
+		return;
+	}
+
 	char* arg = strtok(NULL, "");
 	switch (*w)
 	{
@@ -27,7 +33,7 @@ void command_parse() {
 		{
 			if(!stricmp(w, "set")) {
 				strcat(arg, "\n");
-				_farWithPointer(BANK_SETTINGS, settings_apply, arg);
+				_farWithPointer(BANK_SETTINGS, (void *(*)(void *))settings_apply, arg);
 			}
 			break;
 		}
@@ -35,8 +41,9 @@ void command_parse() {
 		case 'w':
 		{
 			bool quitting = (w[1] == 'q');
-			if (arg)
+			if (arg) {
 				command_file_name_set(arg);
+			}
 			else if (command_file_save())
 			{
 				if (quitting)
@@ -94,6 +101,6 @@ void command_parse() {
 		}
 
 		default:
-			_farWithPointer(BANK_COMMAND, (void (*)(void *)) print_status, "Unknown Command");
+			_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, "Unknown Command");
 	}
 }

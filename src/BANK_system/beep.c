@@ -7,13 +7,13 @@
 #include <arch/zxn.h>
 #include <stdio.h>
 
-void system_beep(void) {
+void *system_beep(void) {
 	zx_border(INK_RED);
 	ZXN_NEXTREG(REG_TURBO_MODE, 0);
 	printf("\x07");
-	ZXN_NEXTREG(REG_TURBO_MODE, 3);
-	for(uint8_t delay = 60; delay;delay--) {
+	for(uint8_t delay = 25; delay;delay--) {
 		WAIT_FOR_SCANLINE(239);
 	}
-	zx_border(INK_BLACK);
+	ZXN_NEXTREG(REG_TURBO_MODE, 3);
+	zx_border(INK_MAGENTA);
 }

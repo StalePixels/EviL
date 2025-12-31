@@ -7,8 +7,8 @@
 
 #include <stdbool.h>
 
-extern const char* FileName;
-const char tmp_filename[];
+extern char* FileName;
+extern const char *tmp_filename;
 
 bool really_save_file(const char* fcb);
 

@@ -10,7 +10,7 @@
 #include <input.h>
 #include <stdio.h>
 
-void spui_bool_invalid(const char*Setting) {
+void spui_bool_invalid(const char *Setting) {
 	spui_error(SpuiErrorTitleValue);
 	printAtStr(SpuiWindowRow,SpuiWindowCol, "Boolean Value Required");
 	SpuiWindowRow = SpuiWindowRow + 2;

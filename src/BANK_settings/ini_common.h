@@ -12,12 +12,12 @@
 #include <errno.h>
 
 #include "../common/memory.h"
+#include "../common/file.h"
 
 extern unsigned char IniIn, IniOut;
 #define IniLine Buff512
 extern char *IniKey;
 extern char *IniValue;
-extern char *tmp_filename[];
 extern uint8_t *errno_filter;
 extern uint32_t IniChar;
 
