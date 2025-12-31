@@ -2,6 +2,7 @@
 // Created by D Rimron-Soutter on 16/11/2020.
 //
 
+#include <stdlib.h>
 #include "apply.h"
 #include "../BANK_fonts/get.h"
 #include "../BANK_fonts/library.h"
@@ -52,7 +53,7 @@ void settings_apply(char *Command) {
 		}
 		// Load Font from file
 		else if (SettingsShowErrors) {
-			_farWithPointer(BANK_SPUI, spui_bool_invalid, IniKey);
+			_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_bool_invalid, (void *)IniKey);
 		}
 		return;
 	} else
@@ -70,15 +71,15 @@ void settings_apply(char *Command) {
 					return;
 				} else {
 					// ERROR
-					_farWithPointer(BANK_SPUI, spui_font_invalid, IniValue);
+					_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_font_invalid, IniValue);
 					return;
 				}
 
 			} else if (SettingsShowErrors) {
-				_farWithPointer(BANK_SPUI, spui_font_not_found, IniValue);
+				_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_font_not_found, IniValue);
 			}
 		} else {
-			_far(BANK_FONTS, font_picker);
+			_far(BANK_FONTS, (void *)font_picker);
 		}
 		return;
 	} else
@@ -86,12 +87,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Key Initial Repeat
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		if(SettingsTempValue) {
 			L3RepeatStart = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, spui_not_zero);
+			_far(BANK_SPUI, (void *)spui_not_zero);
 		}
 		return;
 	} else
@@ -99,12 +100,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Key Subsiquent Repeat
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		if(SettingsTempValue) {
 			L3RepeatKey = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, spui_not_zero);
+			_far(BANK_SPUI, (void *)spui_not_zero);
 		}
 		return;
 	} else
@@ -112,7 +113,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Cursor Flash Rate
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		if(SettingsTempValue) {
 			L3CursorFlashRate = SettingsTempValue;
 		}
@@ -125,7 +126,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Default / Background
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_DEFAULT_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -138,7 +139,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Default / Foreground
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_DEFAULT_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -151,7 +152,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Cursor / Background
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_CURSOR_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -164,7 +165,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Cursor / Foreground
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_CURSOR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -177,7 +178,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Status / Background
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_STATUS_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -190,7 +191,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Status / Foreground
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_STATUS_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -203,7 +204,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Error / Background
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_ERROR_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -216,7 +217,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Error / Foreground
 		 */
-		SettingsTempValue = atoi(IniValue);
+		SettingsTempValue = (atoi)(IniValue);
 		Command[0] = SYSTEM_PALETTE_ERROR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;

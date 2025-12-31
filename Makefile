@@ -9,8 +9,8 @@ RELEASE_DIR ?= ./RELEASE-$(NAME)
 INSTALL_BASE ?= /mnt/devnext
 INSTALL_DIR ?= $(INSTALL_BASE)/$(NAME)
 
-EMU_DIR ?= ./EMU
-EMU_BASE ?= $(EMU_DIR)/mount
+EMU ?= ./EMU
+EMU_BASE ?= $(EMU)/mount
 EMU_DIR ?= $(EMU_BASE)/DOT
 
 PWD = $(shell pwd)
@@ -156,11 +156,20 @@ report:
 install_emulator:
 	$(CP) $(BUILD_DIR)/$(NAME) $(EMU_BASE)/dot/$(NAME)
 
+mount-setup:
+	udisksctl loop-setup --file ./EMU/tbblue.mmc
+
+mount-emulator:
+	mount -u -o sync,noasync ./EMU/tbblue.emu ./EMU/MOUNT
+
 emulate:
-	$(PWD)/bin/zenext --noconfigfile --disablemenuandexit --nosplash --quickexit --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc
+	$(PWD)/bin/zenext --noconfigfile --nosplash --quickexit --def-f-function f4 reset \
+		--disablerealjoystick --no-native-linux-realjoy --joystickemulated kempston \
+		--ao null --frameskip 1 \
+		--enable-divmmc-ports --enable-mmc --mmc-file $(EMU)/tbblue.mmc
 
 debug:
-	$(PWD)/bin/zenext --noconfigfile --disablemultitaskmenu --nosplash --forcevisiblehotkeys --enable-breakpoints --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc
+	$(PWD)/bin/zenext --noconfigfile --disablemultitaskmenu --nosplash --forcevisiblehotkeys --enable-breakpoints --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc --ao null
 
 release: dotn report
 	$(CP) docs/* $(FILES_DIR)/docs/.

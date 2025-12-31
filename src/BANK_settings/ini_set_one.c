@@ -19,10 +19,10 @@ bool ini_set_one(const char *filename, const char *key, const char *value) {
     if(errno==5) {
         file_exists = false;
         errno = 0;
-        IniOut = command_create_file(filename);
+        IniOut = command_create_file((char *)filename);
     }
     else if(!errno) {
-        IniOut = command_create_file(tmp_filename);
+        IniOut = command_create_file((char *)tmp_filename);
     }
     if(errno) exit(errno);
 
@@ -38,9 +38,9 @@ bool ini_set_one(const char *filename, const char *key, const char *value) {
             if (!strcmp(IniKey, key)) {
                 IniValue = strtok(NULL, "\n");
 
-                esxdos_f_write(IniOut, key, strlen(key));
+                esxdos_f_write(IniOut, (void *)key, strlen(key));
                 esxdos_f_write(IniOut, "=", 1);
-                esxdos_f_write(IniOut, value, strlen(value));
+                esxdos_f_write(IniOut, (void *)value, strlen(value));
                 esxdos_f_write(IniOut, "\n", 1);
 
                 entry_exists = true;
@@ -57,12 +57,12 @@ bool ini_set_one(const char *filename, const char *key, const char *value) {
     create_line:
     // Insert line, so we are new, or never found the entry.
     if(!IniValue) {
-        esxdos_f_write(IniOut, key, strlen(key));
+        esxdos_f_write(IniOut, (void *)key, strlen(key));
         esxdos_f_write(IniOut, "=", 1);
-        esxdos_f_write(IniOut, value, strlen(value));
+        esxdos_f_write(IniOut, (void *)value, strlen(value));
         esxdos_f_write(IniOut, "\n", 1);
-        IniKey = key;
-        IniValue = value;
+        IniKey = (char *)key;
+        IniValue = (char *)value;
     }
 
     esxdos_f_close(IniOut);

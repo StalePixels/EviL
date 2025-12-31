@@ -5,6 +5,6 @@
 #ifndef D3_CREATE_DIR_H
 #define D3_CREATE_DIR_H
 
-void create_dir(char *pathname);
+void create_dir(const char *pathname);
 
 #endif //D3_CREATE_DIR_H
