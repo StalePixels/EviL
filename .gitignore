@@ -9,3 +9,5 @@ NAME
 BUILD-EVIL
 TMP
 cmake-build-debug
+MAME
+HARD1.img
