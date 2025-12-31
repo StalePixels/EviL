@@ -1,0 +1,56 @@
+build#72
+Notice: Main binary occupies [32768,45775]
+Notice: Space to end of dot is 2797 bytes
+Notice: Main bank allocation mask is 0xf0
+Notice: Main bank load mask is 0x30
+Page 0, main bank allocate
+Page 1, main bank allocate
+Page 4, main bank allocate and load
+Page 5, main bank allocate and load
+Page 80, allocate and load
+Page 81, allocate and load, 7634 tail bytes free
+Page 88, allocate and load, 5210 tail bytes free
+Page 90, allocate and load, 5263 tail bytes free
+Page 92, allocate and load, 6761 tail bytes free
+Page 94, allocate and load
+Page 95, allocate and load, 6547 tail bytes free
+dotn_last_page = 223
+dotn_num_extra = 0
+EVIL -> ./BUILD-EviL/EviL
+
+build#46
+Notice: Main binary occupies [32768,45987]
+Notice: Space to end of dot is 2894 bytes
+Notice: Main bank allocation mask is 0xf0
+Notice: Main bank load mask is 0x30
+Page 0, main bank allocate
+Page 1, main bank allocate
+Page 4, main bank allocate and load
+Page 5, main bank allocate and load
+Page 80, allocate and load, 4288 tail bytes free
+Page 88, allocate and load, 6181 tail bytes free
+Page 90, allocate and load, 5088 tail bytes free
+Page 92, allocate and load, 6773 tail bytes free
+Page 94, allocate and load
+Page 95, allocate and load, 7322 tail bytes free
+dotn_last_page = 223
+dotn_num_extra = 0
+EviL -> ./BUILD-EviL/EviL
+
+
+build#16
+Notice: Main binary occupies [32768,44354]
+Notice: Space to end of dot is 4052 bytes
+Notice: Main bank allocation mask is 0xf0
+Notice: Main bank load mask is 0x30
+Page 0, main bank allocate
+Page 1, main bank allocate
+Page 4, main bank allocate and load
+Page 5, main bank allocate and load
+Page 80, allocate and load, 7213 tail bytes free
+Page 88, allocate and load, 6490 tail bytes free
+Page 90, allocate and load, 8191 tail bytes free
+Page 92, allocate and load, 6836 tail bytes free
+Page 94, allocate and load, 162 tail bytes free
+dotn_last_page = 223
+dotn_num_extra = 0
