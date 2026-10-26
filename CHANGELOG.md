@@ -2,6 +2,11 @@
 
 ## Unreleased (0.2)
 
+### New
+
+- A help screen lists the keys of the current mode, with the keys in red. It opens by itself at the `:` prompt and after `d`, `c`, `Z` and `r`, and closes when EviL goes back to normal mode or into insert mode. BREAK opens and closes it in any mode. The `help` setting turns it off.
+- In insert and replace mode, the cursor keys move the cursor.
+
 ### Fonts
 
 - New bundled fonts: Envious, Envious Bold, Envious Italic, Envious Serif, Envious Serif Bold, Magic 5, Magic 5 Bold, Plotter, Plotter Bold and Plotter Condensed.
@@ -25,6 +30,13 @@
 - `EviL.RC` reads files with CRLF line ends, a last line with no newline, and settings with no value. A line longer than 511 characters is cut short; before, it overwrote memory.
 - `:set` with no setting, an empty `:` command and a command longer than 125 characters no longer write to memory outside their buffers.
 - EviL no longer allocates two 16K banks that it does not use.
+- A count typed after `d` or `c` sets the count for that command: `d2w` deletes 2 words. Before, `d2w` deleted 12. Counts before and after multiply, so `2d3w` deletes 6 words.
+- `dw` and `cw` delete up to the start of the next word. Before, at the start of a word they deleted one character.
+- `dd` on an empty line and `d$` at the end of a line no longer also delete the next line.
+- `r` then ENTER replaces the character with a line break. Before, ENTER did nothing and the DOWN key put the line break.
+- A change made with `r` is saved by `ZZ`, and `:q` asks for `!`. Before, `r` did not mark the text as changed.
+- The bottom text row is cleared when the text ends above it.
+- In insert mode, control keys other than the cursor keys no longer insert control characters.
 
 ### Build
 

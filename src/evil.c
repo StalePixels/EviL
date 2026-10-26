@@ -28,6 +28,7 @@
 #include "common/evil.h"
 #include "common/memory.h"
 #include "common/file.h"
+#include "common/help.h"
 #include "liblayer3/liblayer3.h"
 
 #include "BANK_command/parse.h"
@@ -53,6 +54,7 @@ uint8_t DisplayHeight[HEIGHT];
 uint16_t LineLength[HEIGHT];
 
 uint16_t CommandCount;
+uint16_t OperatorCount = 1;		// count typed before d, c or Z
 typedef void command_t(uint16_t);
 
 struct bindings
@@ -60,6 +62,7 @@ struct bindings
 	const char* name;
 	const char* keys;
 	command_t* const* callbacks;
+	uint8_t help;
 };
 
 const struct bindings* bindings;
@@ -127,10 +130,9 @@ uint8_t* draw_line(uint8_t* startp)
 		}
 		if (inp == BufferEnd)
 		{
-			if (xo == 0 && L3ScreenY < HEIGHT-1) {
+			if (xo == 0 && L3ScreenY < HEIGHT-1)
 				l3_puts("~");
-				l3_clear_to_eol();
-			}
+			l3_clear_to_eol();
 			l3_newline();
 			break;
 		}
@@ -534,6 +536,7 @@ void insert_mode(bool replacing)
 {
 	_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,
 					(replacing ? "Replace mode" : "Insert mode"));
+	help_mode(replacing ? HELP_REPLACE : HELP_INSERT);
 
 	for (;;)
 	{
@@ -543,6 +546,22 @@ void insert_mode(bool replacing)
 		uint16_t c = l3_getc();
 		if (c == 0x07)             // EDIT
 			break;
+		if (c == 0x08 || c == 0x09 || c == 0x0A || c == 0x0B)
+		{
+			// Cursor keys: LEFT, RIGHT, DOWN, UP
+			if (c == 0x08)
+				cursor_left(1);
+			else if (c == 0x09)
+				cursor_right(1);
+			else if (c == 0x0A)
+				cursor_down(1);
+			else
+				cursor_up(1);
+			recompute_screen_position();
+			continue;
+		}
+		if (c < 32 && c != 13 && c != 0x0C)
+			continue;              // other control codes are not inserted
 
 		EvilDirtyFlag = true;
 		if (c == 0x0C)             // DELETE (technically backspace)
@@ -618,8 +637,8 @@ void delete_right(uint16_t count)
 
 void delete_rest_of_line(uint16_t count)
 {
-	while ((GapEnd != BufferEnd) && (*++GapEnd != '\n'))
-		;
+	while ((GapEnd != BufferEnd) && (*GapEnd != '\n'))
+		GapEnd++;
 
 	if (count != 0)
 		redraw_current_line();
@@ -647,7 +666,8 @@ void delete_word(uint16_t count)
 {
 	while (count--)
 	{
-		uint16_t left = (GapStart == BufferStart) ? '\n' : GapStart[-1];
+		// Compare the character under the cursor with the next one, not the one before it
+		uint16_t left = *GapEnd;
 
 		while (GapEnd != BufferEnd)
 		{
@@ -719,21 +739,27 @@ void open_below(uint16_t count)
 
 void replace_char(uint16_t count)
 {
-	uint16_t c = l3_getc();
+	uint16_t c;
+
+	help_mode(HELP_REPLACE_CHAR);
+	c = l3_getc();
 
 	if (GapEnd == BufferEnd)
 		return;
-	if (c == '\n')
+	if (c == 13)
 	{
 		GapEnd++;
 		/* The cursor ends up *after* the newline. */
 		insert_newline();
+		redraw_current_line();
+		EvilDirtyFlag = true;
 	}
 	else if (isprint(c))
 	{
 		*GapEnd = c;
 		/* The cursor ends on *on* the replace character. */
 		redraw_current_line();
+		EvilDirtyFlag = true;
 	}
 }
 
@@ -767,19 +793,19 @@ void redraw_screen(uint16_t count)
 void enter_delete_mode(uint16_t count)
 {
 	bindings = &DeleteBindings;
-	CommandCount = count;
+	OperatorCount = count;
 }
 
 void enter_zed_mode(uint16_t count)
 {
 	bindings = &ZedBindings;
-	CommandCount = count;
+	OperatorCount = count;
 }
 
 void enter_change_mode(uint16_t count)
 {
 	bindings = &ChangeBindings;
-	CommandCount = count;
+	OperatorCount = count;
 }
 
 const char normal_keys[] =
@@ -820,7 +846,8 @@ const struct bindings normal_bindings =
 {
 	NULL,
 	normal_keys,
-	normal_cbs
+	normal_cbs,
+	HELP_NORMAL
 };
 
 const char delete_keys[] = "dw$";
@@ -835,7 +862,8 @@ const struct bindings DeleteBindings =
 {
 	"Delete",
 	delete_keys,
-	delete_cbs
+	delete_cbs,
+	HELP_DELETE
 };
 
 const char change_keys[] = "w$";
@@ -849,7 +877,8 @@ const struct bindings ChangeBindings =
 {
 	"Change",
 	change_keys,
-	change_cbs
+	change_cbs,
+	HELP_CHANGE
 };
 
 const char zed_keys[] = "ZQ";
@@ -863,7 +892,8 @@ const struct bindings ZedBindings =
 {
 	"Zed",
 	zed_keys,
-	zed_cbs
+	zed_cbs,
+	HELP_ZED
 };
 
 /* ======================================================================= */
@@ -883,6 +913,7 @@ void colon(uint16_t count)
 	l3_goto(0, HEIGHT);
 	l3_clear_to_eol();
 	l3_putc(':');
+	help_mode(HELP_COLON);
 
 	for(;;) {
 		c = l3_getc();
@@ -993,6 +1024,7 @@ void main(int argc, const char* argv[])
 		unsigned int c;
 
 		recompute_screen_position();
+		help_mode(bindings->help);
 
 		for (;;)
 		{
@@ -1026,6 +1058,8 @@ void main(int argc, const char* argv[])
 				else
 					count = 1;
 			}
+			count *= OperatorCount;
+			OperatorCount = 1;
 			CommandCount = 0;
 
 			bindings = &normal_bindings;
@@ -1040,6 +1074,7 @@ void main(int argc, const char* argv[])
 			_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,"Unknown key");
 			bindings = &normal_bindings;
 			CommandCount = 0;
+			OperatorCount = 1;
 		}
 	}
     exit(0);

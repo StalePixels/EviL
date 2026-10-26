@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #include "liblayer3.h"
+#include "../common/help.h"
 #include <input.h>
 #include <stdbool.h>
 
@@ -44,7 +45,7 @@ int8_t chricmp(unsigned char a, unsigned char b) {
     return a==b;
 }
 
-uint8_t l3_getc(void)
+static uint8_t l3_key(void)
 {
     // Stop holding the previous key
     while(chricmp(next_key, last_key)) {
@@ -84,4 +85,21 @@ get_next_key:
 	return next_key;
 }
 
+// BREAK is CAPS SHIFT + SPACE. in_inkey gives a space for it, as for SPACE, so CAPS SHIFT is read from the keyboard port
+uint8_t l3_getc(void)
+{
+	uint8_t c;
 
+	for (;;)
+	{
+		help_update();
+		c = l3_key();
+		if ((c != ' ') || (z80_inp(0xFEFE) & 1))
+			return c;
+
+		// Wait for BREAK to go up, so that it does not repeat
+		in_wait_nokey();
+		next_key = last_key = 0;
+		help_break();
+	}
+}

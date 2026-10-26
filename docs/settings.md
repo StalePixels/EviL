@@ -139,6 +139,11 @@ When referencing an external font file make sure to use the full path name, star
 **errors** disables error reporting while loading the run control file. This is useful for when sharing the same run control file between multiple editors, or using the same config files between different SD cards where fonts may not exist. 
 
 If invoked outside of the run control file it will suppress error reporting during subsequent error messages until re-enabled. 
+
+####```help```
+ ```default = on```
+
+**help** turns the help screen on or off. With **help** on, a window lists the keys of the current mode. It opens by itself at the `:` prompt and after `d`, `c`, `Z` and `r`, where EviL waits for the next key. It closes when EviL goes back to normal mode or into insert or replace mode. BREAK opens and closes it in any mode. The first help window after EviL starts says how to turn **help** off. While the window is open, the keys still work, and the window changes to match the mode. The window goes in the half of the screen that the cursor is not in. With **help** off, BREAK does nothing.
  
 Footnotes
 -

@@ -15,6 +15,7 @@
 #include "../BANK_spui/unknown_setting.h"
 #include "../BANK_system/palette_apply.h"
 #include "../BANK_system/palettes.h"
+#include "../common/help.h"
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "ini_common.h"
@@ -61,6 +62,21 @@ void settings_apply(char *Command) {
 			return;
 		}
 		// Load Font from file
+		else if (SettingsShowErrors) {
+			_farWithPointer(BANK_SPUI, (FarFnPointer)spui_bool_invalid, (void *)IniKey);
+		}
+		return;
+	} else
+	if(!stricmp(IniKey, "help")) {
+		/*
+		 * Help screen on BREAK
+		 */
+		if(string_is_false(IniValue)) {
+			HelpEnabled = false;
+		}
+		else if(string_is_true(IniValue)) {
+			HelpEnabled = true;
+		}
 		else if (SettingsShowErrors) {
 			_farWithPointer(BANK_SPUI, (FarFnPointer)spui_bool_invalid, (void *)IniKey);
 		}

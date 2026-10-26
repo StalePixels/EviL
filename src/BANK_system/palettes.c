@@ -16,8 +16,10 @@ uint8_t SystemTilemapPalette[512] = {
 	    // DEFAULT STATUS BAR
 		0xFF, 0x01,		/* Bright White */		0x01, 0x01,     /* Default Blue */
 		0x01, 0x01,     /* Default Blue */		0xFF, 0x01,		/* Bright White */
-		0x01, 0x01,     /* Default Blue */		0xFF, 0x01,		/* Bright White */
-		0x01, 0x01,     /* Default Blue */		0xFF, 0x01,		/* Bright White */
+	    // HELP SCREEN TEXT (BANK_spui/help.c)
+		0xFF, 0x01,		/* Bright White */		0x00, 0x00,		/* Black */
+	    // HELP SCREEN KEYS (BANK_spui/help.c)
+		0xFF, 0x01,		/* Bright White */		0xE0, 0x00,     /* Bright Red */
 		0x01, 0x01,     /* Default Blue */		0xFF, 0x01,		/* Bright White */
 		0x01, 0x01,     /* Default Blue */		0xFF, 0x01,		/* Bright White */
 		0x01, 0x01,     /* Default Blue */		0xFF, 0x01,		/* Bright White */

@@ -107,7 +107,7 @@ incs: dirs
 	echo "\"" >> src/common/build.h
 
 	$(CAT) templates/build_ver.h >> src/common/build.h
-	$(CAT) VERSION >> src/common/build.h
+	@tr -d "\n" < VERSION >> src/common/build.h
 	echo "\"" >> src/common/build.h
 
 	$(CAT) templates/build_bottom.h >> src/common/build.h
