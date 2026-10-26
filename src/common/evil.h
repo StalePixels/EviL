@@ -8,8 +8,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define cpm_default_dma     (uint8_t*) Buffer
-
 #define WIDTH LIBLAYER3_SCREENWIDTH
 #define HEIGHT (LIBLAYER3_SCREENHEIGHT-1)
 
@@ -29,17 +27,9 @@ extern bool EvilDirtyFlag;
 extern uint8_t CommandPending;
 extern char* CommandArg;
 
-extern uint8_t* BufferStart;
-extern uint8_t* GapStart;
-extern uint8_t* GapEnd;
-extern uint8_t* BufferEnd;
-
 extern char Buffer[128];
 extern char MessageBuffer[128];
 
-
-extern uint8_t* FirstLine; /* <= GapStart */
-extern uint8_t* CurrentLine; /* <= GapStart */
 
 extern uint8_t OriginalMMU6, OriginalMMU7, FileHandle;
 
@@ -48,8 +38,6 @@ void at_exit(void);
 
 // TODO - Migrate these to BANK_command
 void quit(void);
-void insert_file(void);
-void load_file(void);
-void load_file(void);
+bool load_file(void);
 
 #endif//EVIL_EVIL_H

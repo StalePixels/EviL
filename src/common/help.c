@@ -6,6 +6,7 @@
 #include "help.h"
 #include "evil.h"
 #include "memory.h"
+#include "text.h"
 #include "../liblayer3/liblayer3.h"
 #include "../BANK_spui/help.h"
 
@@ -16,7 +17,7 @@ bool HelpFooter = true;
 // true while the window is open because a mode opened it, not BREAK
 static bool HelpAuto = false;
 
-extern void render_screen(uint8_t* inp);
+extern void render_screen(const struct TextPos* start);
 
 // The help goes in the half of the screen the cursor is not in
 static uint8_t help_top(void)
@@ -24,7 +25,7 @@ static uint8_t help_top(void)
 	return (L3ScreenY < (LIBLAYER3_SCREENHEIGHT/2)) ? HELP_ROWS : 0;
 }
 
-// The text is drawn here, in main: BANK_SPUI and the text buffer both use 0xC000
+// The text is drawn here, in main
 static void help_close(void)
 {
 	uint8_t x = L3ScreenX, y = L3ScreenY;
@@ -33,7 +34,7 @@ static void help_close(void)
 	HelpTop = HELP_CLOSED;
 	HelpFooter = false;
 	l3_goto(0, 0);
-	render_screen(FirstLine);
+	render_screen(&FirstLine);
 	l3_goto(x, y);
 }
 

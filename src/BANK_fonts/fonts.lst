@@ -2,6 +2,7 @@ set.c
 get.c
 library.c
 picker.c
+load.c
 
 cinema.asm
 courier.asm

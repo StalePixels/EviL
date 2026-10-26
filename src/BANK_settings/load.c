@@ -16,6 +16,8 @@
 
 const char settings_filename[] = "/SYS/EviL.RC";
 
+bool SettingsLoading = false;
+
 void settings_load(void) {
 	IniValue = 0;
 	errno = 0;
@@ -28,9 +30,11 @@ void settings_load(void) {
 		return;
 	}
 
+	SettingsLoading = true;
 	while(ini_get_line(false)) {
 		settings_apply(IniLine);
 	}
+	SettingsLoading = false;
 
 	esxdos_f_close(IniIn);
 }

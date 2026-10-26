@@ -11,6 +11,8 @@ evil.c
 common/memory.c
 common/file.c
 common/help.c
+common/text.c
+common/text_blocks.asm
 
 liblayer3/clear.c
 liblayer3/cleareol.c

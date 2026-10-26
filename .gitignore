@@ -15,3 +15,4 @@ bin/
 RELEASE-EviL
 scratchpad/
 scratchpad
+src/common/build.h

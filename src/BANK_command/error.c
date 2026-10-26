@@ -21,3 +21,10 @@ void command_error_document_not_saved(void)
 
 	_far(BANK_SYSTEM, system_beep);
 }
+
+void command_error_file_exists(void)
+{
+	command_status_print("File exists (use ! to overwrite)");
+
+	_far(BANK_SYSTEM, system_beep);
+}

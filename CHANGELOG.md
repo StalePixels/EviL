@@ -4,16 +4,21 @@
 
 ### New
 
-- A help screen lists the keys of the current mode, with the keys in red. It opens by itself at the `:` prompt and after `d`, `c`, `Z` and `r`, and closes when EviL goes back to normal mode or into insert mode. BREAK opens and closes it in any mode. The `help` setting turns it off.
-- In insert and replace mode, the cursor keys move the cursor.
+- A help screen shows the keys you can press in the current mode. It opens by itself at the `:` prompt and after `d`, `c`, `Z` and `r`. BREAK opens and closes it at any time, and `:set help=off` turns it off.
+- Large files. EviL uses all the free RAM for text, and the first status message shows how much space there is.
+- A file that does not fit is refused with "File too big", and the text you have stays as it is. If the file named on the command line is too big, EviL starts with no file name, so `:w` cannot write empty text over it.
+- The cursor keys work in insert and replace mode.
+- Messages from `:` commands stay on screen.
+- A NextGuide manual, `evil.gde`.
 
 ### Fonts
 
-- New bundled fonts: Envious, Envious Bold, Envious Italic, Envious Serif, Envious Serif Bold, Magic 5, Magic 5 Bold, Plotter, Plotter Bold and Plotter Condensed.
-- The 60s font is now named `Computing60s`. `60s` still works as an alias.
-- New font aliases: `ROM` for the Sinclair font, `QE` for Cinema (the font QE uses), `OCRA` and `OCRB`.
-- Font names in settings are case insensitive.
-- `font` with no value is accepted. It does nothing yet.
+- New fonts: Envious, Envious Bold, Envious Italic, Envious Serif, Envious Serif Bold, Magic 5, Magic 5 Bold, Plotter, Plotter Bold and Plotter Condensed.
+- `:set font` on its own opens a font picker. The screen changes as you move through the list. ENTER keeps the font, BREAK goes back to the old one.
+- `font = /path/file.ch8` loads your own 768-byte CH8 font.
+- `60s` is now called `Computing60s`. The old name still works.
+- New short names: `ROM` (Sinclair), `QE` (Cinema), `OCRA` and `OCRB`.
+- Font names ignore case.
 
 ### Fixes
 
@@ -24,24 +29,28 @@
 - The error beep is shorter and flashes the border magenta.
 - Corrections to `docs/settings.md`.
 - `:w` and `:wq` actually save the text now, instead of random bytes of my own code...
+- `:w NAME` and `:wq NAME` save the text as NAME, as in vi. Before, they only set the file name. When NAME is a different file that exists, EviL asks for `:w! NAME`.
+- `ZZ` on text with no file name shows "No filename set". Before, the message was cleared at once.
+- `d2w` deletes 2 words, not 12. Counts multiply, so `2d3w` deletes 6.
+- `dw` and `cw` delete the whole word when the cursor is at its start.
+- `dd` on an empty line and `d$` at the end of a line no longer delete the next line too.
+- `r` then ENTER puts a line break in place of the character.
+- Changes made with `r` count as changes, so `ZZ` saves them.
+- Colour settings use all 9 bits.
+- `cursor_flash` works for every blink, not only the first.
+- `EviL.RC` files with Windows line ends, no newline at the end, very long lines or settings with no value now load correctly.
+- `:set` on its own, an empty `:` command and very long `:` commands no longer corrupt memory.
+- An unknown font name shows an error only when `errors` is on.
+- Error windows replace the help window instead of drawing on top of it.
 - The border no longer stays red after a save.
-- Colour settings set the 9th colour bit.
-- `cursor_flash` sets the time for every blink of the cursor, not only for the first.
-- `EviL.RC` reads files with CRLF line ends, a last line with no newline, and settings with no value. A line longer than 511 characters is cut short; before, it overwrote memory.
-- `:set` with no setting, an empty `:` command and a command longer than 125 characters no longer write to memory outside their buffers.
-- EviL no longer allocates two 16K banks that it does not use.
-- A count typed after `d` or `c` sets the count for that command: `d2w` deletes 2 words. Before, `d2w` deleted 12. Counts before and after multiply, so `2d3w` deletes 6 words.
-- `dw` and `cw` delete up to the start of the next word. Before, at the start of a word they deleted one character.
-- `dd` on an empty line and `d$` at the end of a line no longer also delete the next line.
-- `r` then ENTER replaces the character with a line break. Before, ENTER did nothing and the DOWN key put the line break.
-- A change made with `r` is saved by `ZZ`, and `:q` asks for `!`. Before, `r` did not mark the text as changed.
-- The bottom text row is cleared when the text ends above it.
-- In insert mode, control keys other than the cursor keys no longer insert control characters.
+- Old characters no longer stay on the bottom rows of the screen.
+- Control keys no longer type control characters in insert mode.
 
 ### Build
 
 - Builds with zsdcc in z88dk's Docker image, `z88dk/z88dk:latest`.
-- `make zip` builds EviL and makes `RELEASE-EviL/EviL-<VERSION>.zip` for SPUN, with `EviL.DOT`, `evil.rc` and `settings.md`.
+- The build fails if BANK_COMMAND grows past 8K.
+- `make zip` builds EviL and makes `RELEASE-EviL/EviL-<VERSION>.zip` for SPUN, with `EviL.DOT`, `evil.rc`, `settings.md` and `evil.gde`.
 - The development workflow moved to Linux, and `make emulate` runs MAME.
 
 ## v0.1-pr2 (2020-11-20)

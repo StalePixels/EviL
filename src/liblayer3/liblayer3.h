@@ -9,6 +9,7 @@
 #ifndef LIBLAYER3_H
 #define LIBLAYER3_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include "../BANK_system/system.h"
 #include "textmode.h"
@@ -24,6 +25,9 @@ extern uint8_t L3CursorFlashRate;
 
 extern uint8_t L3RepeatStart;
 extern uint8_t L3RepeatKey;
+
+// While true, l3_getc does not show the help, and returns LIBLAYER3_KEY_BREAK for BREAK
+extern bool L3Modal;
 
 extern void l3_goto(uint16_t x, uint16_t y);
 extern void l3_clear(void);
@@ -49,5 +53,7 @@ extern void l3_revoff(void);
 #define LIBLAYER3_KEY_UP "\013"
 //#define LIBLAYER3_KEY_RIGHT "\014"
 #define LIBLAYER3_KEY_RIGHT "\011"
+// in_inkey never gives this code
+#define LIBLAYER3_KEY_BREAK 0x88
 
 #endif // #LIBLAYER3_H

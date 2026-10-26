@@ -12,6 +12,7 @@ Current differences to QE[^1]:
  * Key repeat with configurable initial, and subsequent repeat rates
  * Configurable flashing cursor speed
  * Configurable colours for most of text canvas
+ * Edits files as big as the RAM that NextZXOS has free, not only 16K
 
 Requirements:
  * Docker, with the z88dk image `z88dk/z88dk:latest`. The Makefile runs zsdcc in it.

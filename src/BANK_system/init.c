@@ -82,10 +82,6 @@ void system_init(void) {
 	// Setup the ULA for overlay UI
     zx_cls(INK_MAGENTA|PAPER_MAGENTA|BRIGHT);
 
-	// Establish the memory buffer constraints
-	BufferStart = (void *) 0xC000;
-	BufferEnd = (void *) 0xFFFE;
-
 	// Even if errors were
 	_farWithUChar(BANK_SETTINGS, (FarFnUChar)settings_show_errors, true);
 }

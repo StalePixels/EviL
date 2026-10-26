@@ -15,8 +15,6 @@ void l3_clear_to_eol(void)
             return;
 
     uint16_t i = LIBLAYER3_SCREENWIDTH - L3ScreenX;
-    if ((i != 0) && (L3ScreenY == (LIBLAYER3_SCREENHEIGHT -1)))
-        i--;
 
     while (i--) {
         tilemap[L3ScreenY][LIBLAYER3_SCREENWIDTH -i-1].tile = ' ';

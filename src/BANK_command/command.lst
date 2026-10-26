@@ -2,3 +2,5 @@ parse.c
 error.c
 status.c
 file_name_set.c
+load_save.c
+text_file.c

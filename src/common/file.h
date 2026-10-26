@@ -9,7 +9,5 @@
 
 extern char* FileName;
 
-bool really_save_file(const char* fcb);
-
 void file_new(void);
 #endif//EVIL_FILE_H

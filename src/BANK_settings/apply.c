@@ -6,6 +6,7 @@
 #include "apply.h"
 #include "../BANK_fonts/get.h"
 #include "../BANK_fonts/library.h"
+#include "../BANK_fonts/load.h"
 #include "../BANK_fonts/picker.h"
 #include "../BANK_fonts/set.h"
 #include "../BANK_spui/bool_invalid.h"
@@ -19,6 +20,7 @@
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "ini_common.h"
+#include "load.h"
 #include "show_errors.h"
 #include "string_is_false.h"
 #include "string_is_true.h"
@@ -95,15 +97,23 @@ void settings_apply(char *Command) {
 					_farWithUChar(BANK_FONTS, (FarFnUChar)font_set, SettingsTempValue);
 					return;
 				} else {
-					// ERROR
-					_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_invalid, IniValue);
+					if (SettingsShowErrors)
+						_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_invalid, IniValue);
 					return;
 				}
 
-			} else if (SettingsShowErrors) {
-				_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_not_found, IniValue);
 			}
-		} else {
+			// Load font from file
+			SettingsTempValue = (uint8_t)(uint16_t)_farWithPointer(BANK_FONTS, (FarFnPointer)font_load, IniValue);
+			if (!SettingsShowErrors)
+				return;
+			if (SettingsTempValue == FONT_LOAD_NOT_READ) {
+				_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_not_found, IniValue);
+			} else if (SettingsTempValue == FONT_LOAD_WRONG_SIZE) {
+				_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_wrong_size, IniValue);
+			}
+		} else if (!SettingsLoading) {
+			// The picker opens from :set font. In EviL.RC, font with no value does nothing.
 			_far(BANK_FONTS, (FarFn)font_picker);
 		}
 		return;

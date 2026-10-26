@@ -9,6 +9,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include <arch/zxn.h>
+#include <arch/zx/esxdos.h>
+#include <arch/zxn/esxdos.h>
+#include <errno.h>
 
 #include "../BANK_settings/apply.h"
 #include "../common/evil.h"
@@ -40,12 +43,18 @@ void command_parse(void) {
 		case 'w':
 		{
 			bool quitting = (w[1] == 'q');
-			if (arg) {
-				command_file_name_set(arg);
+			// :w NAME does not write over another file that exists, unless :w! NAME
+			if (arg && w[quitting ? 2 : 1] != '!' && (!FileName || stricmp(arg, FileName))) {
+				errno = 0;
+				unsigned char handle = esxdos_f_open(arg, ESXDOS_MODE_R);
+				if (!errno) {
+					esxdos_f_close(handle);
+					command_error_file_exists();
+					break;
+				}
 			}
-			else {
-				CommandPending = quitting ? COMMAND_SAVE_QUIT : COMMAND_SAVE;
-			}
+			CommandPending = quitting ? COMMAND_SAVE_QUIT : COMMAND_SAVE;
+			CommandArg = arg;
 			break;
 		}
 
@@ -68,8 +77,9 @@ void command_parse(void) {
 				command_error_document_not_saved();
 			else
 			{
-				command_file_name_set(arg);
+				// colon() loads the file, and sets the name if it fits
 				CommandPending = COMMAND_LOAD;
+				CommandArg = arg;
 			}
 			break;
 		}

@@ -16,20 +16,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// ULA cells: column x is tilemap columns 8 + 2x and 9 + 2x, row y is tilemap row 4 + y
-#define SPUI_HELP_LEFT			1
-#define SPUI_HELP_RIGHT			30
-#define SPUI_HELP_WIDTH			(SPUI_HELP_RIGHT - SPUI_HELP_LEFT + 1)
-#define SPUI_HELP_TILE_ROW		4
-#define SPUI_HELP_TILE_COL		(8 + 2 * SPUI_HELP_LEFT)
-#define SPUI_HELP_COLUMNS		(2 * SPUI_HELP_WIDTH)
-#define SPUI_HELP_TEXT_COL		(SPUI_HELP_TILE_COL + 2)
-#define SPUI_HELP_TEXT_WIDTH	(SPUI_HELP_COLUMNS - 4)
-#define SPUI_HELP_LINES			9
-
-// Tilemap palette entries 6 and 7 are black on white, 8 and 9 red on white (BANK_system/palettes.c)
-#define SPUI_HELP_ATTR			(6 | TEXTMODE_ULA_FRONT)
-#define SPUI_HELP_KEY_ATTR		(8 | TEXTMODE_ULA_FRONT)
 // In the page text, \001 switches between the text and the key colour, and takes no space
 #define SPUI_HELP_KEY			'\001'
 
@@ -143,14 +129,14 @@ static const struct SpuiHelpPage SpuiHelpPages[] = {
 		"Command prompt",
 		{
 			"\001ENTER\001 runs the command. \001DELETE\001 deletes left.",
-			"\001set a=b\001         change setting a to b",
-			"\001w\001               save",
-			"\001w name\001          set the file name; it does not save",
-			"\001wq\001              save, then quit",
-			"\001r name\001          read a file in at the cursor",
-			"\001e name\001          edit a file; e! name loses changes",
-			"\001n\001               new, empty text; n! loses changes",
-			"\001q\001               quit; q! loses changes",
+			"\001set a=b\001   change setting a to b",
+			"\001set font\001  choose a font from a list",
+			"\001set font=NAME\001 or \001set font=/file.ch8\001 use that font",
+			"\001w\001         save              \001wq\001  save, then quit",
+			"\001w name\001    save as name. w! writes over a file",
+			"\001r name\001    read a file in at the cursor",
+			"\001e name\001    edit a file. e! n! q! lose changes",
+			"\001n\001         new, empty text   \001q\001   quit",
 		}
 	},
 };
@@ -223,7 +209,7 @@ static void spui_help_frame(const char *Title) {
 
 void spui_help(uint8_t Mode) {
 	const struct SpuiHelpPage *Page = &SpuiHelpPages[Mode];
-	uint8_t Row = HelpTop + SPUI_HELP_TILE_ROW + 1;
+	uint8_t Row = HelpTop + SPUI_HELP_TEXT_ROW;
 	uint8_t Line;
 
 	spui_help_blank(SPUI_HELP_ATTR);
@@ -236,6 +222,19 @@ void spui_help(uint8_t Mode) {
 		spui_help_text(Row, SPUI_HELP_TEXT_COL + (SPUI_HELP_TEXT_WIDTH - strlen(Footer)) / 2, Footer);
 	}
 	spui_help_frame(Page->title);
+}
+
+// The font picker uses the help window. BANK_FONTS writes the font names in it.
+static const char SpuiFontPickerKeys[] = "\001Cursor keys\001  choose a font, the screen changes to it";
+static const char SpuiFontPickerKeys2[] = "\001ENTER\001          use it         \001BREAK\001  keep the old font";
+
+void spui_font_picker(void) {
+	uint8_t Row = HelpTop + SPUI_HELP_TEXT_ROW + SPUI_HELP_LINES - 1;
+
+	spui_help_blank(SPUI_HELP_ATTR);
+	spui_help_text(Row, SPUI_HELP_TEXT_COL, SpuiFontPickerKeys);
+	spui_help_text(Row + 1, SPUI_HELP_TEXT_COL, SpuiFontPickerKeys2);
+	spui_help_frame("Font");
 }
 
 void spui_help_erase(void) {

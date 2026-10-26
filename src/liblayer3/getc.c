@@ -85,14 +85,19 @@ get_next_key:
 	return next_key;
 }
 
-// BREAK is CAPS SHIFT + SPACE. in_inkey gives a space for it, as for SPACE, so CAPS SHIFT is read from the keyboard port
+// true while a modal window, such as the font picker, reads the keys
+bool L3Modal = false;
+
+// BREAK is CAPS SHIFT + SPACE. in_inkey gives a space for it, as for SPACE, so CAPS SHIFT is read from the keyboard port.
+// BREAK opens and closes the help. While L3Modal is true, the help is left alone and BREAK returns LIBLAYER3_KEY_BREAK.
 uint8_t l3_getc(void)
 {
 	uint8_t c;
 
 	for (;;)
 	{
-		help_update();
+		if (!L3Modal)
+			help_update();
 		c = l3_key();
 		if ((c != ' ') || (z80_inp(0xFEFE) & 1))
 			return c;
@@ -100,6 +105,8 @@ uint8_t l3_getc(void)
 		// Wait for BREAK to go up, so that it does not repeat
 		in_wait_nokey();
 		next_key = last_key = 0;
+		if (L3Modal)
+			return LIBLAYER3_KEY_BREAK;
 		help_break();
 	}
 }

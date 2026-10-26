@@ -168,6 +168,10 @@ $(BUILD_DIR)/$(NAME): $(call lst_files,src/$(NAME).lst) $(BANK_OBJS) $(DEPS) src
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) \
 		-subtype=dotn $(CZFLAGS) -create-app
 	$(MV) EVIL $@
+	@# BANK_COMMAND uses the text, which goes in at 0xE000: the bank must end below it
+	@tail=$$(sed -n 's/^__BANK_46_tail *= *\$$\([0-9A-F]*\).*/\1/p' $(NAME).map); \
+		if [ -z "$$tail" ] || [ $$((0x$$tail)) -gt $$((0xE000)) ]; then \
+			echo "BANK_COMMAND (46) must fit in 8K at 0xC000, its tail is 0x$$tail"; exit 1; fi
 
 assemble: $(BUILD_DIR)/$(NAME)
 
@@ -207,7 +211,7 @@ zip: dotn
 	$(RM) $(SPUN_STAGE) $(SPUN_ZIP)
 	$(MKDIR) $(SPUN_STAGE) $(RELEASE_DIR)
 	$(CP) $(BUILD_DIR)/$(NAME) $(SPUN_STAGE)/$(NAME).DOT
-	$(CP) $(DOCS_DIR)/evil.rc $(DOCS_DIR)/settings.md $(SPUN_STAGE)/
+	$(CP) $(DOCS_DIR)/evil.rc $(DOCS_DIR)/settings.md $(DOCS_DIR)/evil.gde $(SPUN_STAGE)/
 	$(CD) $(SPUN_STAGE) && zip -r -X $(PWD)/$(SPUN_ZIP) . -x '*.DS_Store' '*__MACOSX*' '._*' '*/._*'
 	@unzip -l $(SPUN_ZIP)
 
