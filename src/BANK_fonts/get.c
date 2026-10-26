@@ -8,7 +8,7 @@
 
 #include "library.h"
 
-uint8_t font_get(const char* font_name[]) {
+uint8_t font_get(const char* font_name) {
 	uint8_t font_id = FONT_COUNT;
 	while(font_id--) {
 		if(!stricmp(font_names[font_id], font_name))

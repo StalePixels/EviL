@@ -6,6 +6,6 @@
 #define EVIL_GET_H
 
 #include <stdint.h>
-uint8_t font_get(const char* font_name[]);
+uint8_t font_get(const char* font_name);
 
 #endif//EVIL_GET_H

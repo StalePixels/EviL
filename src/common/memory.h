@@ -16,8 +16,13 @@
 extern unsigned char _z_page_table[];
 extern char Buff512[512];
 
-void *_far(uint8_t BANK, void *(*FnPtr)(void));
-void *_farWithPointer(uint8_t BANK, void *(*FnPtr)(void *), void *DataAddr);
-void *_farWithUChar(uint8_t BANK, void *(*FnPtr)(uint8_t), uint8_t Data);
+// zsdcc needs a typedef: it reads an inline cast such as (void *(*)(void *)) as a data pointer
+typedef void *(*FarFn)(void);
+typedef void *(*FarFnPointer)(void *);
+typedef void *(*FarFnUChar)(uint8_t);
+
+void *_far(uint8_t BANK, FarFn FnPtr);
+void *_farWithPointer(uint8_t BANK, FarFnPointer FnPtr, void *DataAddr);
+void *_farWithUChar(uint8_t BANK, FarFnUChar FnPtr, uint8_t Data);
 
 #endif//EVIL_MEMORY_H

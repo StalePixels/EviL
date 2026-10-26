@@ -19,7 +19,7 @@
 #include "file_name_set.h"
 #include "file_save.h"
 
-void command_parse() {
+void command_parse(void) {
 	// Get the first part of the command (we space delimit parameters)
 	char* w = strtok(Buffer, " ");
 	if (!*w) {
@@ -33,7 +33,7 @@ void command_parse() {
 		{
 			if(!stricmp(w, "set")) {
 				strcat(arg, "\n");
-				_farWithPointer(BANK_SETTINGS, (void *(*)(void *))settings_apply, arg);
+				_farWithPointer(BANK_SETTINGS, (FarFnPointer)settings_apply, arg);
 			}
 			break;
 		}
@@ -101,6 +101,6 @@ void command_parse() {
 		}
 
 		default:
-			_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, "Unknown Command");
+			_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, "Unknown Command");
 	}
 }

@@ -45,7 +45,7 @@ bool really_save_file(const char* fcb)
 
 	strcpy(MessageBuffer, "Writing ");
 	strcat(MessageBuffer, fcb);
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
 	errno = 0;
 	FileHandle = esxdos_f_open(fcb, ESXDOS_MODE_W | ESXDOS_MODE_CT);
@@ -110,7 +110,7 @@ bool really_save_file(const char* fcb)
 	strcpy(MessageBuffer, "Failed to save file (errno:");
 	itoa(errno, MessageBuffer + strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 

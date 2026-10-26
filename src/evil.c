@@ -258,7 +258,7 @@ void insert_file(void)
 {
 	strcpy(MessageBuffer, "Reading ");
     strcat(MessageBuffer, FileName);
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
     errno = 0;
 	FileHandle = esxdos_f_open(FileName, ESXDOS_MODE_R);
@@ -283,7 +283,7 @@ void insert_file(void)
 			{
 				if (GapStart == GapEnd)
 				{
-					_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, "Out of memory");
+					_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, "Out of memory");
 					goto done;
 				}
 				*GapStart++ = c;
@@ -297,7 +297,7 @@ error:
     strcat(MessageBuffer, " (errno:");
     itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
     strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 done:
 	esxdos_f_close(FileHandle);
 	EvilDirtyFlag = true;
@@ -316,7 +316,7 @@ void load_file(void)
 bool save_file(void)
 {
 	if (!FileName) {
-		_far(BANK_COMMAND,(void *)command_error_no_filename);
+		_far(BANK_COMMAND, (FarFn)command_error_no_filename);
 		return false;
 	}
 
@@ -340,7 +340,7 @@ bool save_file(void)
     strcpy(MessageBuffer, "Failed to save file (errno:");
     itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
     strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
     _far(BANK_SYSTEM,system_beep);
 
@@ -357,7 +357,7 @@ file_exists:
     strcat(MessageBuffer, tempfcb);
   	strcat(MessageBuffer, " to ");
     strcat(MessageBuffer, FileName);
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
     errno = 0;
 	esxdos_f_unlink(FileName);
@@ -373,7 +373,7 @@ tempfile:
     strcpy(MessageBuffer, "Cannot create EVILTEMP.$$$ file - it may exist (errno:");
     itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
     strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
     _far(BANK_SYSTEM,system_beep);
 	return false;
 
@@ -381,7 +381,7 @@ commit:
     strcpy(MessageBuffer, "Cannot commit file; your data may be in EVILTEMP.$$$ (errno:");
     itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
     strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
     _far(BANK_SYSTEM,system_beep);
 	return false;
 }
@@ -528,7 +528,7 @@ void insert_newline(void)
 
 void insert_mode(bool replacing)
 {
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set,
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,
 					(replacing ? "Replace mode" : "Insert mode"));
 
 	for (;;)
@@ -564,7 +564,7 @@ void insert_mode(bool replacing)
 		redraw_current_line();
 	}
 
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set,"");
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,"");
 }
 
 void insert_text(uint16_t count)
@@ -899,7 +899,7 @@ void colon(uint16_t count)
 		}
 	}
 
-	_far(BANK_COMMAND, command_parse);
+	_far(BANK_COMMAND, (FarFn)command_parse);
 
 	l3_clear();
 	print_status = command_status_set;
@@ -922,7 +922,7 @@ void main(int argc, const char* argv[])
     /*
      * Initalise the hardware
      */
-    _far(BANK_SYSTEM,system_init);
+    _far(BANK_SYSTEM, (FarFn)system_init);
 
     l3_clear();
 
@@ -930,7 +930,7 @@ void main(int argc, const char* argv[])
 
 	itoa((uint16_t)(BufferEnd - BufferStart), MessageBuffer, 10);
 	strcat(MessageBuffer, " bytes free");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
 	if(argc>1) {
 		FileName = malloc(strlen(argv[1])+1);
@@ -943,7 +943,7 @@ void main(int argc, const char* argv[])
 	bindings = &normal_bindings;
 
     if(!FileName) {
-        _far(BANK_SYSTEM,system_splash);
+        _far(BANK_SYSTEM, (FarFn)system_splash);
     }
 
 //	zx_border(INK_GREEN);  while(1);
@@ -965,12 +965,12 @@ void main(int argc, const char* argv[])
                 itoa(CommandCount, Buffer, 10);
                 strcat(Buffer, " repeat");
 
-				_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set, Buffer);
+				_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set, Buffer);
             }
             else
             {
 
-				_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set,"");
+				_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,"");
                 break;
             }
 		}
@@ -991,14 +991,14 @@ void main(int argc, const char* argv[])
 
 			bindings = &normal_bindings;
 
-			_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set,"");
+			_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,"");
 			cmd(count);
 			if (bindings->name)
-				_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set,bindings->name);
+				_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,bindings->name);
 		}
 		else
 		{
-			_farWithPointer(BANK_COMMAND, (void *(*)(void *))command_status_set,"Unknown key");
+			_farWithPointer(BANK_COMMAND, (FarFnPointer)command_status_set,"Unknown key");
 			bindings = &normal_bindings;
 			CommandCount = 0;
 		}
@@ -1010,7 +1010,7 @@ void at_exit(void) {
     /*
      * Shutdown gracefully
      */
-    _far(BANK_SYSTEM,system_exit);
+    _far(BANK_SYSTEM, (FarFn)system_exit);
 
     /*
      * Restore original paging configuration

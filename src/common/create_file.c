@@ -30,4 +30,3 @@ unsigned char command_create_file(char *pathname) {
     }
     return (file_out);
 }
-`

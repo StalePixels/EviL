@@ -13,8 +13,8 @@ Current differences to QE[^1]:
  * Configurable flashing cursor speed
  * Configurable colours for most of text canvas
 
-Requirements (and only tested with):
- * Z88dk v2.3 
+Requirements:
+ * Docker, with the z88dk image `z88dk/z88dk:latest`. The Makefile runs zsdcc in it.
 
 [^1]: https://github.com/StalePixels/cpmish/blob/ESXDOS/cpmtools/qe.c
 [^2]: https://github.com/StalePixels/EviL/blob/main/docs/settings.md

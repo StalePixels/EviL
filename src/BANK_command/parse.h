@@ -5,6 +5,6 @@
 #ifndef EVIL_COMMAND_PARSE_H
 #define EVIL_COMMAND_PARSE_H
 
-void command_parse();
+void command_parse(void);
 
 #endif//EVIL_COMMAND_PARSE_H

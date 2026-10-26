@@ -7,7 +7,7 @@
 #include "palettes.h"
 #include <string.h>
 
-void system_textmode_restore() {
+void system_textmode_restore(void) {
 	memcpy(tiles, SystemShadowTiles, sizeof(tiles));
 	memcpy(tilemap, SystemShadowTilemap, sizeof(tilemap));
 }

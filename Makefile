@@ -6,23 +6,57 @@ DOCS_DIR ?= ./docs
 FILES_DIR ?= ./dist
 RELEASE_DIR ?= ./RELEASE-$(NAME)
 
-INSTALL_BASE ?= /mnt/devnext
-INSTALL_DIR ?= $(INSTALL_BASE)/$(NAME)
+INSTALL_BASE ?= /mnt/devnext.xalior.com
+INSTALL_DIR ?= $(INSTALL_BASE)/DOT
 
-EMU ?= ./EMU
-EMU_BASE ?= $(EMU)/mount
+EMU ?= /u/ZX/mame
+EMU_BASE ?= /Volumes/MAME-HARD1
 EMU_DIR ?= $(EMU_BASE)/DOT
 
 PWD = $(shell pwd)
 
+#-startup=0 (crt0)
+# built-in 32x24 mode, no control code support
+#
+#-startup=1 (crt1)
+# built-in 32x24 mode, control codes supported
+#
+#-startup=4 (crt4)
+# built-in 64x24 mode, no control code support
+#
+#-startup=5 (crt5)
+# built-in 64x24 mode, control codes supported
+#
+#-startup=31 (crt31)
+# stdio not supported at all
+#
+#-startup=8 (crt8)
+# fzx proportional fonts, no control code support
+#
+#-startup=9 (crt9)
+# fzx proportional fonts, control codes supported (with attribute clash)
+#
+#-startup=30 (crt30)
+# ROM based 32x24 mode, no scanf (much smaller than most other crts)
+
+# crt1, not crt30: the SPUI windows print INK, PAPER and AT codes with ASCII-digit
+# arguments (common/ula.h), which the ROM's print routine rejects
 Z88DK_CRT = 1
 #DEBUGFLAGS := --list --c-code-in-asm
 DEBUGFLAGS =
 
-CC=zcc
-CCFLAGS=+zxn -vn -O3 -startup=$(Z88DK_CRT) -clib=new -pragma-include:zpragma.inc
-CZFLAGS=-Cz="--fullsize --main-fence 0xC000"
-LDFLAGS=-m -lm
+# z88dk runs in its Docker image, with this directory mounted at the same path
+Z88DK_IMAGE ?= z88dk/z88dk:latest
+Z88DK_RUN = docker run --rm --user $(shell id -u):$(shell id -g) -e HOME=/tmp -v $(CURDIR):$(CURDIR) -w $(CURDIR) $(Z88DK_IMAGE)
+
+# For quicker builds during development: make ZOPT=
+ZOPT ?= --max-allocs-per-node200000
+CC=$(Z88DK_RUN) zcc
+CCFLAGS=+zxn -vn -startup=$(Z88DK_CRT) -clib=sdcc_iy -SO3 $(ZOPT) --opt-code-size -pragma-include:zpragma.inc
+# The stack starts at 0xBFE0 (zpragma.inc); the fence keeps 1K below it for the stack.
+# appmake fails the build if code, data or BSS reaches the fence.
+CZFLAGS=-Cz"--fullsize --main-fence 0xBBE0"
+LDFLAGS=-m
 INCFLAGS=
 
 SH := /bin/sh
@@ -51,10 +85,10 @@ clean:
 	$(RM) $(NAME)_*.bin
 	$(RM) cmake-build-debug
 	$(RM) RELEASE/*
+	$(RM) $(RELEASE_DIR)
 	$(RM) NAME
 
 incs: dirs
-	$(ECHO) $(ZCCCFG)
 	$(ECHO) $(NAME) > NAME
 
 	$(ECHO) `git rev-list --all --count` > $(TMP_DIR)/BUILD
@@ -90,49 +124,52 @@ dirs:
 	$(MKDIR) $(FILES_DIR)/dot
 	$(MKDIR) $(FILES_DIR)/docs
 
-# BANK_FONTS
-bank_40:
-	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
-		--codesegBANK_40 --constsegBANK_40 \
-		--datasegBANK_40 --bsssegBANK_40   \
-		@src/BANK_fonts/fonts.lst -o$(TMP_DIR)/BANK_fonts.o
+# make compiles a bank again only when a file it is built from is newer than its object.
+# Any header, the build settings or this Makefile make every bank compile again.
+# build.h is left out: incs writes it on every build, and no source includes it.
+lst_files = $(1) $(addprefix $(dir $(1)),$(shell grep -v '^\#' $(1)))
+HEADERS := $(filter-out src/common/build.h,$(wildcard src/*/*.h))
+DEPS := $(HEADERS) zpragma.inc Makefile
 
+# $(call bank_obj,object,bank number,list file)
+define bank_obj
+$(TMP_DIR)/$(1).o: $(call lst_files,$(3)) $(DEPS) | dirs
+	$$(CC) $$(CCFLAGS) -c $$(DEBUG) $$(INCFLAGS) $$(BUILDFLAGS) \
+		--codesegBANK_$(2) --constsegBANK_$(2) \
+		--datasegBANK_$(2) --bsssegBANK_$(2)   \
+		@$(3) -o$$@
+endef
+
+# BANK_FONTS: the .zx7 fonts the .asm files include are prerequisites too
+$(eval $(call bank_obj,BANK_fonts,40,src/BANK_fonts/fonts.lst))
+$(TMP_DIR)/BANK_fonts.o: $(shell ls src/BANK_fonts/*.zx7 | sed 's/ /\\ /g')
 # BANK_SETTINGS
-bank_44:
-	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
-		--codesegBANK_44 --constsegBANK_44 \
-		--datasegBANK_44 --bsssegBANK_44   \
-		@src/BANK_settings/settings.lst -o$(TMP_DIR)/BANK_settings.o
-
+$(eval $(call bank_obj,BANK_settings,44,src/BANK_settings/settings.lst))
 # BANK_SPUI
-bank_45:
-	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
-		--codesegBANK_45 --constsegBANK_45 \
-		--datasegBANK_45 --bsssegBANK_45   \
-		@src/BANK_spui/spui.lst -o$(TMP_DIR)/BANK_spui.o
+$(eval $(call bank_obj,BANK_spui,45,src/BANK_spui/spui.lst))
 # BANK_COMMAND
-bank_46:
-	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
-		--codesegBANK_46 --constsegBANK_46 \
-		--datasegBANK_46 --bsssegBANK_46   \
-		@src/BANK_command/command.lst -o$(TMP_DIR)/BANK_command.o
-
+$(eval $(call bank_obj,BANK_command,46,src/BANK_command/command.lst))
 # BANK_SYSTEM
-bank_47:
-	$(CC) $(CCFLAGS) -c $(DEBUG) $(INCFLAGS) $(BUILDFLAGS) \
-		--codesegBANK_47 --constsegBANK_47 \
-		--datasegBANK_47 --bsssegBANK_47   \
-		@src/BANK_system/system.lst -o$(TMP_DIR)/BANK_system.o
+$(eval $(call bank_obj,BANK_system,47,src/BANK_system/system.lst))
+
+bank_40: $(TMP_DIR)/BANK_fonts.o
+bank_44: $(TMP_DIR)/BANK_settings.o
+bank_45: $(TMP_DIR)/BANK_spui.o
+bank_46: $(TMP_DIR)/BANK_command.o
+bank_47: $(TMP_DIR)/BANK_system.o
 
 banks: bank_47 bank_46 bank_45 bank_44 bank_40
 
 all_banks: dirs deps banks
 
-assemble:
-	ls -l src/$(NAME).lst
+BANK_OBJS := $(addprefix $(TMP_DIR)/BANK_,fonts.o settings.o spui.o command.o system.o)
+
+$(BUILD_DIR)/$(NAME): $(call lst_files,src/$(NAME).lst) $(BANK_OBJS) $(DEPS) | dirs
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) \
 		-subtype=dotn $(CZFLAGS) -create-app
-	$(MV) EVIL $(BUILD_DIR)/$(NAME)
+	$(MV) EVIL $@
+
+assemble: $(BUILD_DIR)/$(NAME)
 
 dotn: all_banks assemble
 
@@ -146,31 +183,34 @@ install: install-dir update
 
 deploy: all install
 
-q: banks assemble
-	$(CP) $(BUILD_DIR)/$(NAME) $(INSTALL_BASE)/DOT/$(NAME)
-
 report:
 	$(CLOC) src > docs/cloc.txt
 	$(CAT) docs/cloc.txt
 
-install_emulator:
-	$(CP) $(BUILD_DIR)/$(NAME) $(EMU_BASE)/dot/$(NAME)
+mame:
+	$(PWD)/bin/mame
 
-mount-setup:
-	udisksctl loop-setup --file ./EMU/tbblue.mmc
+emulate: mame
 
-mount-emulator:
-	mount -u -o sync,noasync ./EMU/tbblue.emu ./EMU/MOUNT
-
-emulate:
-	$(PWD)/bin/zenext --noconfigfile --nosplash --quickexit --def-f-function f4 reset \
-		--disablerealjoystick --no-native-linux-realjoy --joystickemulated kempston \
-		--ao null --frameskip 1 \
-		--enable-divmmc-ports --enable-mmc --mmc-file $(EMU)/tbblue.mmc
-
-debug:
-	$(PWD)/bin/zenext --noconfigfile --disablemultitaskmenu --nosplash --forcevisiblehotkeys --enable-breakpoints --enable-divmmc-ports --enablekempstonmouse --enable-mmc --mmc-file $(EMU_DIR)/tbblue.mmc --ao null
+q: banks assemble emulate
 
 release: dotn report
 	$(CP) docs/* $(FILES_DIR)/docs/.
 	$(CP) BUILD-EviL/EviL $(FILES_DIR)/dot/EviL.DOT
+
+SPUN_VERSION := $(shell cat VERSION)
+SPUN_STAGE := $(TMP_DIR)/spun
+SPUN_ZIP := $(RELEASE_DIR)/$(NAME)-$(SPUN_VERSION).zip
+
+# SPUN zip: files at the root, no macOS files, so the Next's unzipper takes it
+zip: dotn
+	$(RM) $(SPUN_STAGE) $(SPUN_ZIP)
+	$(MKDIR) $(SPUN_STAGE) $(RELEASE_DIR)
+	$(CP) $(BUILD_DIR)/$(NAME) $(SPUN_STAGE)/$(NAME).DOT
+	$(CP) $(DOCS_DIR)/evil.rc $(DOCS_DIR)/settings.md $(SPUN_STAGE)/
+	$(CD) $(SPUN_STAGE) && zip -r -X $(PWD)/$(SPUN_ZIP) . -x '*.DS_Store' '*__MACOSX*' '._*' '*/._*'
+	@unzip -l $(SPUN_ZIP)
+
+.DELETE_ON_ERROR:
+
+.PHONY: all clean incs deps dirs banks all_banks bank_40 bank_44 bank_45 bank_46 bank_47 assemble dotn install-dir update install deploy report mame emulate q release zip

@@ -53,7 +53,7 @@ void settings_apply(char *Command) {
 		}
 		// Load Font from file
 		else if (SettingsShowErrors) {
-			_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_bool_invalid, (void *)IniKey);
+			_farWithPointer(BANK_SPUI, (FarFnPointer)spui_bool_invalid, (void *)IniKey);
 		}
 		return;
 	} else
@@ -64,22 +64,22 @@ void settings_apply(char *Command) {
 		// Use bundled font
 		if(IniValue) {
 			if (IniValue[0] != '/') {
-				SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
-				// -1 means we did not find a font
+				SettingsTempValue = (uint8_t)(uint16_t)_farWithPointer(BANK_FONTS, (FarFnPointer)font_get, IniValue);
+				// font_get returns a byte; 255 (-1) means we did not find a font
 				if (SettingsTempValue < FONT_COUNT) {
-					_farWithUChar(BANK_FONTS, font_set, SettingsTempValue);
+					_farWithUChar(BANK_FONTS, (FarFnUChar)font_set, SettingsTempValue);
 					return;
 				} else {
 					// ERROR
-					_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_font_invalid, IniValue);
+					_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_invalid, IniValue);
 					return;
 				}
 
 			} else if (SettingsShowErrors) {
-				_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_font_not_found, IniValue);
+				_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_not_found, IniValue);
 			}
 		} else {
-			_far(BANK_FONTS, (void *)font_picker);
+			_far(BANK_FONTS, (FarFn)font_picker);
 		}
 		return;
 	} else
@@ -92,7 +92,7 @@ void settings_apply(char *Command) {
 			L3RepeatStart = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, (void *)spui_not_zero);
+			_far(BANK_SPUI, (FarFn)spui_not_zero);
 		}
 		return;
 	} else
@@ -105,7 +105,7 @@ void settings_apply(char *Command) {
 			L3RepeatKey = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, (void *)spui_not_zero);
+			_far(BANK_SPUI, (FarFn)spui_not_zero);
 		}
 		return;
 	} else
@@ -118,7 +118,7 @@ void settings_apply(char *Command) {
 			L3CursorFlashRate = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, spui_not_zero);
+			_far(BANK_SPUI, (FarFn)spui_not_zero);
 		}
 		return;
 	} else
@@ -131,7 +131,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -144,7 +144,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -157,7 +157,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -170,7 +170,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -183,7 +183,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -196,7 +196,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -209,7 +209,7 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -222,12 +222,12 @@ void settings_apply(char *Command) {
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
 	if (SettingsShowErrors) {
-		_farWithPointer(BANK_SPUI, spui_unknown_setting, IniKey);
+		_farWithPointer(BANK_SPUI, (FarFnPointer)spui_unknown_setting, IniKey);
 	}
 	return;
 }

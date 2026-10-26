@@ -28,7 +28,7 @@ void spui_error(const char* Title) {
 }
 
 
-void spui_error_end() {
+void spui_error_end(void) {
 	in_wait_nokey();
 	SpuiWindowRow = SpuiWindowRow + 2;
 	printAtStr(SpuiWindowRow,SpuiWindowCol, " Any key to continue! ");

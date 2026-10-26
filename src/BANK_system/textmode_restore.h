@@ -5,6 +5,6 @@
 #ifndef EVIL_TEXTMODE_RESTORE_H
 #define EVIL_TEXTMODE_RESTORE_H
 
-void system_textmode_restore();
+void system_textmode_restore(void);
 
 #endif//EVIL_TEXTMODE_RESTORE_H

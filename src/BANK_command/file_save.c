@@ -22,6 +22,9 @@
 #include <errno.h>
 
 #include "error.h"
+#include "file_name_set.h"
+
+#include "../BANK_system/beep.h"
 
 #include "../common/file.h"
 #include "../common/evil.h"
@@ -52,7 +55,7 @@ bool command_file_save(void)
 	strcpy(MessageBuffer, "Failed to save file (errno:");
 	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
 	_far(BANK_SYSTEM,system_beep);
 
@@ -69,7 +72,7 @@ bool command_file_save(void)
 	strcat(MessageBuffer, FileNameTemp);
 	strcat(MessageBuffer, " to ");
 	strcat(MessageBuffer, FileName);
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
 	errno = 0;
 	esxdos_f_unlink(FileName);
@@ -85,7 +88,7 @@ bool command_file_save(void)
 	strcpy(MessageBuffer, "Cannot create EviLtemp.$$$ file - it may exist (errno:");
 	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 
@@ -93,7 +96,7 @@ bool command_file_save(void)
 	strcpy(MessageBuffer, "Cannot commit file; your data may be in EviLtemp.$$$ (errno:");
 	itoa(errno, MessageBuffer +strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
-	_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, MessageBuffer);
+	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 	_far(BANK_SYSTEM,system_beep);
 	return false;
 }

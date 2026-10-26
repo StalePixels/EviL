@@ -26,6 +26,6 @@ bool ini_get_one(const char *Filename, const char *Key);
 bool ini_get_line(bool IncComments);
 bool ini_set_one(const char *Filename, const char *Key, const char *Value);
 
-void ini_file_close();
+void ini_file_close(void);
 
 #endif //D3_INI_COMMON_H

@@ -28,7 +28,7 @@ static bool	key_repeating = false;
 
 uint8_t L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
 
-void l3_cursor() {
+void l3_cursor(void) {
 	L3CursorFlashRate--;
     WAIT_FOR_SCANLINE(239);
     if(L3CursorFlashRate ==0) {
