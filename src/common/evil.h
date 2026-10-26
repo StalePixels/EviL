@@ -20,6 +20,15 @@ extern uint8_t FileHandle;							// File Ops
 
 extern bool EvilDirtyFlag;
 
+#define COMMAND_NONE			0
+#define COMMAND_SAVE			1
+#define COMMAND_SAVE_QUIT		2
+#define COMMAND_READ			3
+#define COMMAND_LOAD			4
+
+extern uint8_t CommandPending;
+extern char* CommandArg;
+
 extern uint8_t* BufferStart;
 extern uint8_t* GapStart;
 extern uint8_t* GapEnd;

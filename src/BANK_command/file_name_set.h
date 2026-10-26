@@ -7,7 +7,5 @@
 
 #include <stdbool.h>
 
-extern const char FileNameTemp[];
-
 void command_file_name_set(const char* f);
 #endif//EVIL_COMMAND_FILE_H

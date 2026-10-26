@@ -70,6 +70,9 @@ extern const struct bindings ChangeBindings;
 char Buffer[128];
 char MessageBuffer[128];
 
+uint8_t CommandPending;
+char* CommandArg;
+
 extern void colon(uint16_t count);
 extern void goto_line(uint16_t lineno);
 
@@ -899,7 +902,38 @@ void colon(uint16_t count)
 		}
 	}
 
+	CommandPending = COMMAND_NONE;
 	_far(BANK_COMMAND, (FarFn)command_parse);
+
+	switch (CommandPending)
+	{
+		case COMMAND_SAVE:
+			save_file();
+			break;
+
+		case COMMAND_SAVE_QUIT:
+			if (save_file())
+				quit();
+			break;
+
+		case COMMAND_READ:
+		{
+			// The name is in Buffer, which insert_file reads the file into
+			char *fileName = FileName;
+			FileName = malloc(strlen(CommandArg)+1);
+			if (FileName) {
+				strcpy(FileName, CommandArg);
+				insert_file();
+				free(FileName);
+			}
+			FileName = fileName;
+			break;
+		}
+
+		case COMMAND_LOAD:
+			load_file();
+			break;
+	}
 
 	l3_clear();
 	print_status = command_status_set;
