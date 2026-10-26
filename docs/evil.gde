@@ -1,0 +1,281 @@
+@TITLE EviL
+@AUTHOR D. Rimron-Soutter
+@VERSION 0.2.0
+@COPYRIGHT Copyright (c)2020-2026 D. Rimron, 2019 David Given
+@DATE 2026-10-26
+
+@INDEX INDEX
+@-------------------------------------------------------------------------------
+@node INTRODUCTION
+@next INDEX
+
+@{c}EviL Manual
+
+@{c}Version 0.2.0
+
+@{c}Written by D. 'Xalior' Rimron-Soutter
+
+@{h1}Overview
+
+EviL, short for "Essentially vi Lite", is a modal text editor in the style of
+Vi on *nix platforms.
+
+EviL is a fork of QE, which began as part of David Given's CPMish. EviL
+edits files as large as the Next's free memory, shows the keys you can press
+as you work, and lets you change the font and colours.
+
+The home of EviL is https://github.com/StalePixels/EviL.
+
+@-------------------------------------------------------------------------------
+@NODE INDEX
+@NEXT LOAD
+@{r}EviL Manual
+@{c}@{h1}EviL Documentation Index
+
+ @{" Loading and exiting EviL " LINK LOAD}
+ @{" Getting started " LINK BASICS}
+ @{" Key bindings " LINK KEYS}
+ @{" Colon commands " LINK COLON}
+ @{" Help screen " LINK HELP}
+ @{" Settings " LINK SETTINGS}
+ @{" Fonts " LINK FONTS}
+ @{" Error codes " LINK ERRORS}
+
+@-------------------------------------------------------------------------------
+@NODE LOAD
+@NEXT BASICS
+@{r}EviL Manual
+@{c}@{h1}Loading and exiting EviL
+
+Start EviL by typing @{b}.evil@{ub} on the command line. The command is not
+case sensitive, and works from a NextBASIC program too.
+
+To open a file at startup, give its path, relative or absolute. For example:
+@{b}.evil /nextzxos/browser.cfg@{ub}.
+
+     EviL edits plain text files only. To edit NextBASIC programs, convert
+     them with the .BAS2TXT and .TXT2BAS commands, which are part of
+     NextZXOS.
+
+EviL uses all the free memory for text. The first message on the status
+row shows how much space there is. When files do not fit, EviL shows
+"File too big" and keeps the text you already have.
+
+To leave EviL, go to normal mode and press capital @{b}Z@{ub} twice.
+@{"The next chapter" LINK BASICS} explains the modes. If there are changes,
+@{b}ZZ@{ub} saves them first. To quit without saving, type @{b}:q!@{ub} and press ENTER.
+
+@-------------------------------------------------------------------------------
+@NODE BASICS
+@NEXT KEYS
+@{r}EviL Manual
+@{c}@{h1}Getting started
+
+If you have used Vi, you already know most of the keys. If you have not,
+learn this first. EviL has modes, and a key does different things in each
+mode.
+
+@{b}Normal mode@{ub} is where EviL starts. Keys move the cursor and run
+commands; they do not type text.
+
+@{b}Insert mode@{ub} types text. Press @{b}i@{ub} in normal mode to start
+typing at the cursor, and @{b}EDIT@{ub} to go back to normal mode.
+
+@{b}Colon mode@{ub} runs file commands and settings. Press @{b}:@{ub} in
+normal mode, type the command, and press ENTER. See
+@{"Colon commands" LINK COLON}.
+
+Because of the modes, every function works on any Next keyboard, including
+the 48K style keyboards on the original devkits.
+
+To write your first file:
+
+ 1. Start EviL and press @{b}i@{ub}.
+ 2. Type your text, then press @{b}EDIT@{ub}.
+ 3. Type @{b}:w NAME@{ub} and press ENTER to save it as NAME.
+
+@{b}:wq@{ub} saves and quits.
+
+While you learn, the @{"help screen" LINK HELP} shows the keys you can press.
+@-------------------------------------------------------------------------------
+@NODE KEYS
+@NEXT COLON
+@{r}EviL Manual
+@{c}@{h1}Key bindings
+
+@{h2}Normal mode
+
+@{b}CURSOR KEYS@{ub} or @{b}hjkl@{ub} Move the cursor
+@{b}SYM+H@{ub} Jump to START of line
+@{b}$@{ub} Jump to END of line
+@{b}w@{ub} Next word
+@{b}b@{ub} Word back
+@{b}G@{ub} GOTO line: 25G goes to line 25, G alone to the last line
+@{b}0-9@{ub} Count: 3x deletes 3 characters
+@{b}i@{ub} INSERT text at the cursor
+@{b}A@{ub} APPEND text at the end of the line
+@{b}o@{ub} OPEN a line below
+@{b}O@{ub} OPEN a line above
+@{b}R@{ub} OVERWRITE mode
+@{b}r@{ub} REPLACE one character
+@{b}x@{ub} DELETE the character at the cursor
+@{b}J@{ub} JOIN this line and the next
+@{b}EXT+R@{ub} REDRAW the screen
+@{b}:@{ub} COLON mode
+
+@{b}d@{ub} DELETE: @{b}dd@{ub} the line, @{b}dw@{ub} to the next word,
+  @{b}d$@{ub} to the end of the line
+@{b}c@{ub} CHANGE: @{b}cw@{ub} and @{b}c$@{ub} delete as dw and d$, then insert
+@{b}Z@{ub} QUIT: @{b}ZZ@{ub} saves if changed, then quits; @{b}ZQ@{ub} quits
+  without saving
+
+A count before or after @{b}d@{ub} or @{b}c@{ub} repeats it: @{b}3dd@{ub}
+deletes 3 lines, @{b}d2w@{ub} deletes 2 words.
+
+@{h2}Insert and overwrite mode
+
+@{b}EDIT@{ub} Back to normal mode
+@{b}DELETE@{ub} Delete left, as far as the start of the line
+@{b}ENTER@{ub} New line
+@{b}CURSOR KEYS@{ub} Move the cursor
+
+@{b}BREAK@{ub} opens and closes the @{"help screen" LINK HELP} in any mode.
+@-------------------------------------------------------------------------------
+@NODE COLON
+@NEXT HELP
+@{r}EviL Manual
+@{c}@{h1}Colon commands
+
+Press @{b}:@{ub} in normal mode, type the command, and press ENTER.
+@{b}DELETE@{ub} deletes the last character typed.
+
+@{b}:w@{ub} Save
+@{b}:w NAME@{ub} Save as NAME. When NAME exists, EviL asks for @{b}:w! NAME@{ub}
+@{b}:wq@{ub} Save, then quit
+@{b}:r NAME@{ub} Read a file in at the cursor
+@{b}:e NAME@{ub} Edit another file
+@{b}:n@{ub} New, empty text
+@{b}:q@{ub} Quit
+@{b}:set NAME=VALUE@{ub} Change a setting, see @{"Settings" LINK SETTINGS}
+
+@{b}:e!@{ub}, @{b}:n!@{ub} and @{b}:q!@{ub} discard unsaved changes. Without the @{b}!@{ub}, EviL refuses and says "Document not saved".
+@-------------------------------------------------------------------------------
+@NODE HELP
+@NEXT SETTINGS
+@{r}EviL Manual
+@{c}@{h1}Help screen
+
+The help screen shows the keys you can press in the current mode, with the
+keys in red.
+
+It opens by itself at the @{b}:@{ub} prompt and after @{b}d@{ub},
+@{b}c@{ub}, @{b}Z@{ub} and @{b}r@{ub}, when EviL is waiting for your next
+key. It closes when you go back to normal mode or start typing.
+@{b}BREAK@{ub} opens or closes it at any time.
+
+Keys still work while it is open, and it sits in the half of the screen the
+cursor is not in.
+
+@{b}:set help=off@{ub} turns it off. Put @{b}help = off@{ub} in /SYS/EviL.RC
+to keep it off.
+@-------------------------------------------------------------------------------
+@NODE SETTINGS
+@NEXT FONTS
+@{r}EviL Manual
+@{c}@{h1}Settings
+
+Settings come from two places:
+
+@{b}/SYS/EviL.RC@{ub} is read every time EviL starts. One setting per line,
+for example:
+
+     errors = true
+     font = cinema
+     repeat_key = 10
+
+EviL ignores lines that start with ;.
+
+@{b}:set@{ub} changes a setting until you quit, for example
+@{b}:set font=sinclair@{ub}. It does not change EviL.RC.
+
+@{b}help@{ub} on or off, default on. See @{"Help screen" LINK HELP}.
+@{b}errors@{ub} on or off, default on. Off hides the error windows for
+  settings. Use it when you copy one EviL.RC to several SD cards.
+@{b}font@{ub} the font, default Sinclair. See @{"Fonts" LINK FONTS}.
+@{b}repeat_start@{ub} screen refreshes before a held key repeats, default 25
+@{b}repeat_key@{ub} screen refreshes between repeats, default 15
+@{b}cursor_flash@{ub} screen refreshes between cursor blinks, default 10
+
+Colours take a 9-bit value, 0 to 511:
+
+@{b}colour_default_background@{ub} text background, default 257
+@{b}colour_default_foreground@{ub} text, default 511
+@{b}colour_cursor_background@{ub} cursor, default 287
+@{b}colour_cursor_foreground@{ub} character under the cursor, default 252
+
+The full list, with the colour format, is in settings.md, which comes with
+EviL.
+@-------------------------------------------------------------------------------
+@NODE FONTS
+@NEXT ERRORS
+@{r}EviL Manual
+@{c}@{h1}Fonts
+
+@{b}:set font@{ub} on its own opens the font picker. Move through the list
+with the cursor keys, and the screen changes to each font as you go.
+@{b}ENTER@{ub} keeps it, @{b}BREAK@{ub} puts back the font you had.
+
+@{b}:set font=NAME@{ub} or @{b}font = NAME@{ub} in EviL.RC picks a font by
+name. Names are not case sensitive.
+
+Sinclair, Cinema, Courier, Envious, EnviousBold, EnviousItalic,
+EnviousSerif, EnviousSerifBold, Magic5, Magic5Bold, Magnetic, Minecraft,
+OCR-A, OCR-B, Plotter, PlotterBold, PlotterCondensed, Computing60s
+
+Short names: ROM (Sinclair), QE (Cinema), 60s (Computing60s), OCRA, OCRB.
+
+@{b}font = /PATH/FILE.CH8@{ub} loads your own font: a CH8 file of 768
+bytes, characters 32 to 127.
+
+Sinclair is the ZX ROM font. Minecraft is Mojang's font, converted by Damien
+Guard. The others are from zx-origins by Damien Guard.
+@-------------------------------------------------------------------------------
+
+@NODE ERRORS
+@{r}EviL Manual
+@{c}@{h1}Error codes
+
+EviL shows file errors with an error number. The numbers are the ESXDOS
+error numbers:
+
+1 O.K. ESXDOS
+2 Nonsense in ESXDOS
+3 Statement END error
+4 Wrong file TYPE
+5 No such FILE or DIR
+6 I/O ERROR
+7 Invalid FILENAME
+8 Access DENIED
+9 Drive FULL
+10 Invalid I/O REQUEST
+11 No such DRIVE
+12 Too many OPEN FILES
+13 Bad file DESCRIPTON
+14 No such DEVICE
+15 File pointer OVERFLOW
+16 Is a DIRECTORY
+17 Not a DIRECTORY
+18 File already EXISTS
+19 Invalid PATH
+20 No SYS
+21 Path too LONG
+22 No such COMMAND
+23 File in USE
+24 File is READ ONLY
+25 Verify FAILED
+26 Loading .KO FAILED
+27 Directory NOT EMPTY
+28 MAPRAM is ACTIVE
+29 Drive is BUSY
+30 Unknown FILESYSTEM
+31 Device is BUSY
