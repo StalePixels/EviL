@@ -10,3 +10,4 @@ font_invalid.c
 font_not_found.c
 bool_invalid.c
 unknown_setting.c
+help.c

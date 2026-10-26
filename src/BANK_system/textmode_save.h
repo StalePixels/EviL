@@ -5,6 +5,6 @@
 #ifndef EVIL_TEXTMODE_SAVE_H
 #define EVIL_TEXTMODE_SAVE_H
 
-void system_textmode_save();
+void system_textmode_save(void);
 
 #endif//EVIL_TEXTMODE_SAVE_H

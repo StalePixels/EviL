@@ -41,15 +41,11 @@ void system_init(void) {
     // Ensure we clean up as we shut down...
     atexit(at_exit);
 
-    // Get 16k of scratch RAM for text editing
-	EvilBufferBank0 = esx_ide_bank_alloc(0);
-	EvilBufferBank1 = esx_ide_bank_alloc(0);
-
     // We're going to trash this area for the Editor canvas, so let's back it up so we can restore it
     system_textmode_save();
 
-	_farWithUChar(BANK_FONTS,font_set, 0);
-	memset(0x5C00, 0, 8);               // Make val 0 also blank
+	_farWithUChar(BANK_FONTS, (FarFnUChar)font_set, 0);
+	memset((void *)0x5C00, 0, 8);               // Make val 0 also blank
 
 	// 0x6E (110) R/W =>  Tilemap Base Address
     //  bits 7-6 = Read back as zero, write values ignored
@@ -66,7 +62,7 @@ void system_init(void) {
     ZXN_NEXTREG(REG_FALLBACK_COLOR, 0x00);
 
 	// Load the preferences
-	_far(BANK_SETTINGS,settings_load);
+	_far(BANK_SETTINGS, (FarFn)settings_load);
 
 	system_palette_save(RPC_SELECT_TILEMAP_PALETTE_0, SystemBackupTilemapPalette);
 	system_palette_restore(RPC_SELECT_TILEMAP_PALETTE_0, SystemTilemapPalette);
@@ -86,12 +82,7 @@ void system_init(void) {
 	// Setup the ULA for overlay UI
     zx_cls(INK_MAGENTA|PAPER_MAGENTA|BRIGHT);
 
-	// Establish the memory buffer constraints
-	BufferStart = (void *) 0xC000;
-	BufferEnd = (void *) 0xFFFE;
-	*BufferEnd = '\n';
-
 	// Even if errors were
-	_farWithUChar(BANK_SETTINGS, settings_show_errors, true);
+	_farWithUChar(BANK_SETTINGS, (FarFnUChar)settings_show_errors, true);
 }
 

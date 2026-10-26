@@ -15,10 +15,6 @@ void system_exit(void) {
 	// Files
 	esxdos_f_close(FileHandle);
 
-	// Free buffers
-	esx_ide_bank_free(0, EvilBufferBank1);
-	esx_ide_bank_free(0, EvilBufferBank0);
-
 	// Restore Palettes
 	system_palette_restore(RPC_SELECT_TILEMAP_PALETTE_0, SystemBackupTilemapPalette);
 	system_palette_restore(RPC_SELECT_ULA_PALETTE_0, SystemBackupULAPalette);

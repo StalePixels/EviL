@@ -9,6 +9,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include <arch/zxn.h>
+#include <arch/zx/esxdos.h>
+#include <arch/zxn/esxdos.h>
+#include <errno.h>
 
 #include "../BANK_settings/apply.h"
 #include "../common/evil.h"
@@ -17,12 +20,11 @@
 #include "../BANK_system/system.h"
 #include "error.h"
 #include "file_name_set.h"
-#include "file_save.h"
 
-void command_parse() {
+void command_parse(void) {
 	// Get the first part of the command (we space delimit parameters)
 	char* w = strtok(Buffer, " ");
-	if (!*w) {
+	if (!w) {
 		return;
 	}
 
@@ -31,9 +33,9 @@ void command_parse() {
 	{
 		case 's':		// S is for SETTINGS, or SET ;-)
 		{
-			if(!stricmp(w, "set")) {
+			if(arg && !stricmp(w, "set")) {
 				strcat(arg, "\n");
-				_farWithPointer(BANK_SETTINGS, (void *(*)(void *))settings_apply, arg);
+				_farWithPointer(BANK_SETTINGS, (FarFnPointer)settings_apply, arg);
 			}
 			break;
 		}
@@ -41,14 +43,18 @@ void command_parse() {
 		case 'w':
 		{
 			bool quitting = (w[1] == 'q');
-			if (arg) {
-				command_file_name_set(arg);
+			// :w NAME does not write over another file that exists, unless :w! NAME
+			if (arg && w[quitting ? 2 : 1] != '!' && (!FileName || stricmp(arg, FileName))) {
+				errno = 0;
+				unsigned char handle = esxdos_f_open(arg, ESXDOS_MODE_R);
+				if (!errno) {
+					esxdos_f_close(handle);
+					command_error_file_exists();
+					break;
+				}
 			}
-			else if (command_file_save())
-			{
-				if (quitting)
-					quit();
-			}
+			CommandPending = quitting ? COMMAND_SAVE_QUIT : COMMAND_SAVE;
+			CommandArg = arg;
 			break;
 		}
 
@@ -56,12 +62,8 @@ void command_parse() {
 		{
 			if (arg)
 			{
-				char *backupfcb = malloc(sizeof(FileName));
-				memcpy(&backupfcb, &FileName, sizeof(backupfcb));
-				FileName = arg;
-				insert_file();
-				memcpy(&FileName, &backupfcb, sizeof(backupfcb));
-				free(backupfcb);
+				CommandPending = COMMAND_READ;
+				CommandArg = arg;
 			}
 			else
 				command_error_no_filename();
@@ -75,8 +77,9 @@ void command_parse() {
 				command_error_document_not_saved();
 			else
 			{
-				command_file_name_set(arg);
-				load_file();
+				// colon() loads the file, and sets the name if it fits
+				CommandPending = COMMAND_LOAD;
+				CommandArg = arg;
 			}
 			break;
 		}
@@ -101,6 +104,6 @@ void command_parse() {
 		}
 
 		default:
-			_farWithPointer(BANK_COMMAND, (void *(*)(void *))print_status, "Unknown Command");
+			_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, "Unknown Command");
 	}
 }

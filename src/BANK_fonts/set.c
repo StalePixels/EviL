@@ -16,6 +16,10 @@
 #include "set.h"
 #include "library.h"
 
+uint8_t FontCurrent;
+uint8_t FontBackup[FONT_SIZE];
+
 void font_set(const uint8_t embedded_font_id) {
-	dzx7_standard(font_library[embedded_font_id], ((unsigned char *)0x5D00));
+	dzx7_standard(font_library[embedded_font_id], FONT_DEFINITIONS);
+	FontCurrent = embedded_font_id;
 }

@@ -7,8 +7,9 @@
 
 #include <stdlib.h>
 
-//					  FONTS+ALIASES
-#define FONT_COUNT 		(18+5)
+// The fonts come first in font_library and font_names, then the aliases
+#define FONT_FACES		18
+#define FONT_COUNT 		(FONT_FACES+5)
 extern const uint8_t* font_library[];
 extern const char* font_names[];
 

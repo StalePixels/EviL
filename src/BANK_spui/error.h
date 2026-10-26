@@ -15,6 +15,6 @@
 extern const char *SpuiErrorTitleValue;
 
 void spui_error(const char* FontName);
-void spui_error_end();
+void spui_error_end(void);
 
 #endif//EVIL_SPUI_ERROR_H

@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #include "liblayer3.h"
+#include "../common/help.h"
 #include <input.h>
 #include <stdbool.h>
 
@@ -27,13 +28,14 @@ static bool	key_repeating = false;
 
 
 uint8_t L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
+static uint8_t cursor_flash_count = LIBLAYER3_CURSOR_FLASH_RATE;
 
-void l3_cursor() {
-	L3CursorFlashRate--;
+void l3_cursor(void) {
+	cursor_flash_count--;
     WAIT_FOR_SCANLINE(239);
-    if(L3CursorFlashRate ==0) {
+    if(cursor_flash_count ==0) {
         tilemap[L3ScreenY][L3ScreenX].flags = tilemap[L3ScreenY][L3ScreenX].flags + 128;
-		L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
+		cursor_flash_count = L3CursorFlashRate;
     }
 }
 
@@ -43,7 +45,7 @@ int8_t chricmp(unsigned char a, unsigned char b) {
     return a==b;
 }
 
-uint8_t l3_getc(void)
+static uint8_t l3_key(void)
 {
     // Stop holding the previous key
     while(chricmp(next_key, last_key)) {
@@ -79,8 +81,32 @@ get_next_key:
     last_key = next_key;
 
     tilemap[L3ScreenY][L3ScreenX].flags = L3ScreenColour;
-	L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
+	cursor_flash_count = L3CursorFlashRate;
 	return next_key;
 }
 
+// true while a modal window, such as the font picker, reads the keys
+bool L3Modal = false;
 
+// BREAK is CAPS SHIFT + SPACE. in_inkey gives a space for it, as for SPACE, so CAPS SHIFT is read from the keyboard port.
+// BREAK opens and closes the help. While L3Modal is true, the help is left alone and BREAK returns LIBLAYER3_KEY_BREAK.
+uint8_t l3_getc(void)
+{
+	uint8_t c;
+
+	for (;;)
+	{
+		if (!L3Modal)
+			help_update();
+		c = l3_key();
+		if ((c != ' ') || (z80_inp(0xFEFE) & 1))
+			return c;
+
+		// Wait for BREAK to go up, so that it does not repeat
+		in_wait_nokey();
+		next_key = last_key = 0;
+		if (L3Modal)
+			return LIBLAYER3_KEY_BREAK;
+		help_break();
+	}
+}

@@ -5,9 +5,7 @@
 #include <stdio.h>
 //#include <stdlib.h>
 
-unsigned char IniIn, IniOut;
+unsigned char IniIn;
 
 char *IniKey;
 char *IniValue;
-uint32_t IniChar;
-uint8_t *errno_filter;

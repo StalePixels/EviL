@@ -8,7 +8,8 @@
 #include <string.h>
 
 
-// Return the next line in the open ini. Max Len 512char
+// Return the next line in the open ini. Max Len 511 chars, the rest of a longer line is dropped.
+// CR is dropped, so CRLF files read the same as LF files.
 bool ini_get_line(bool IncComments) {
     char C;                     // Current char in line
     uint8_t R;                  // Number of chars read
@@ -31,9 +32,16 @@ bool ini_get_line(bool IncComments) {
             }
             goto start_line;
         }
-        IniLine[IniChar++] = C;
+        if(C != 13 && IniChar < sizeof(Buff512) - 1)
+            IniLine[IniChar++] = C;
 
 		R = esxdos_f_read(IniIn, &C, 1);
+    }
+
+    // The last line, if the file does not end with a newline
+    if (IniChar) {
+        IniLine[IniChar] = 0;
+        return true;
     }
 
     return false;

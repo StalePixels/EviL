@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(EVIL C)
 
+add_compile_definitions(__ZXNEXT)
+
 include_directories(
         /u/ZX/z88dk-v2.3/include/
         /u/ZX/z88dk-v2.3/include/_DEVELOPMENT/sccz80/

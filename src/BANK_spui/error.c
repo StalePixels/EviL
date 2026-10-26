@@ -6,6 +6,8 @@
 #include "../common/ula.h"
 #include "common.h"
 #include "window.h"
+#include "help.h"
+#include "../common/help.h"
 #include <arch/zxn.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,9 +16,13 @@
 const char *SpuiErrorTitleValue = {"Value Error"};
 
 void spui_error(const char* Title) {
+	// The error window takes the screen: the help comes back by itself on the next key
+	if(HelpTop != HELP_CLOSED)
+		spui_help_erase();
+
 	struct SPUIWindow *WindowArgs = malloc(sizeof (struct SPUIWindow));
 //	if(window_args) exit(0);
-	WindowArgs->title = malloc(*Title);
+	WindowArgs->title = malloc(strlen(Title)+1);
 	strcpy(WindowArgs->title, Title);
 	WindowArgs->row = SPUI_ERROR_ROW;
 	WindowArgs->col = SPUI_ERROR_COL;
@@ -28,7 +34,7 @@ void spui_error(const char* Title) {
 }
 
 
-void spui_error_end() {
+void spui_error_end(void) {
 	in_wait_nokey();
 	SpuiWindowRow = SpuiWindowRow + 2;
 	printAtStr(SpuiWindowRow,SpuiWindowCol, " Any key to continue! ");

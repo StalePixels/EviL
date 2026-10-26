@@ -6,6 +6,7 @@
 #include "apply.h"
 #include "../BANK_fonts/get.h"
 #include "../BANK_fonts/library.h"
+#include "../BANK_fonts/load.h"
 #include "../BANK_fonts/picker.h"
 #include "../BANK_fonts/set.h"
 #include "../BANK_spui/bool_invalid.h"
@@ -15,9 +16,11 @@
 #include "../BANK_spui/unknown_setting.h"
 #include "../BANK_system/palette_apply.h"
 #include "../BANK_system/palettes.h"
+#include "../common/help.h"
 #include "../common/memory.h"
 #include "../liblayer3/liblayer3.h"
 #include "ini_common.h"
+#include "load.h"
 #include "show_errors.h"
 #include "string_is_false.h"
 #include "string_is_true.h"
@@ -27,16 +30,25 @@
 #include <string.h>
 
 int16_t SettingsTempValue;
+
+// A setting with no value counts as 0
+static int16_t settings_number(void) {
+	return IniValue ? atoi(IniValue) : 0;
+}
+
 void settings_apply(char *Command) {
 	// not all settings are KV pairs
-	IniKey = 0;
-	IniKey = trim_whitespace(strtok(Command, "="));
+	IniKey = strtok(Command, "=");
+	if(!IniKey) return;
+	IniKey = trim_whitespace(IniKey);
+	if(!*IniKey) return;
 	if(IniKey[strlen(IniKey)-1]=='\n') {
 		IniKey[strlen(IniKey)-1] = 0;
 		IniValue = 0;
 	}
 	else {
-		IniValue = trim_whitespace(strtok(NULL, "\n"));
+		IniValue = strtok(NULL, "\n");
+		if(IniValue) IniValue = trim_whitespace(IniValue);
 	}
 
 	if(!stricmp(IniKey, "errors")) {
@@ -53,7 +65,22 @@ void settings_apply(char *Command) {
 		}
 		// Load Font from file
 		else if (SettingsShowErrors) {
-			_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_bool_invalid, (void *)IniKey);
+			_farWithPointer(BANK_SPUI, (FarFnPointer)spui_bool_invalid, (void *)IniKey);
+		}
+		return;
+	} else
+	if(!stricmp(IniKey, "help")) {
+		/*
+		 * Help screen on BREAK
+		 */
+		if(string_is_false(IniValue)) {
+			HelpEnabled = false;
+		}
+		else if(string_is_true(IniValue)) {
+			HelpEnabled = true;
+		}
+		else if (SettingsShowErrors) {
+			_farWithPointer(BANK_SPUI, (FarFnPointer)spui_bool_invalid, (void *)IniKey);
 		}
 		return;
 	} else
@@ -64,22 +91,30 @@ void settings_apply(char *Command) {
 		// Use bundled font
 		if(IniValue) {
 			if (IniValue[0] != '/') {
-				SettingsTempValue = _farWithPointer(BANK_FONTS, font_get, IniValue);
-				// -1 means we did not find a font
+				SettingsTempValue = (uint8_t)(uint16_t)_farWithPointer(BANK_FONTS, (FarFnPointer)font_get, IniValue);
+				// font_get returns a byte; 255 (-1) means we did not find a font
 				if (SettingsTempValue < FONT_COUNT) {
-					_farWithUChar(BANK_FONTS, font_set, SettingsTempValue);
+					_farWithUChar(BANK_FONTS, (FarFnUChar)font_set, SettingsTempValue);
 					return;
 				} else {
-					// ERROR
-					_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_font_invalid, IniValue);
+					if (SettingsShowErrors)
+						_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_invalid, IniValue);
 					return;
 				}
 
-			} else if (SettingsShowErrors) {
-				_farWithPointer(BANK_SPUI, (void *(*)(void *))spui_font_not_found, IniValue);
 			}
-		} else {
-			_far(BANK_FONTS, (void *)font_picker);
+			// Load font from file
+			SettingsTempValue = (uint8_t)(uint16_t)_farWithPointer(BANK_FONTS, (FarFnPointer)font_load, IniValue);
+			if (!SettingsShowErrors)
+				return;
+			if (SettingsTempValue == FONT_LOAD_NOT_READ) {
+				_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_not_found, IniValue);
+			} else if (SettingsTempValue == FONT_LOAD_WRONG_SIZE) {
+				_farWithPointer(BANK_SPUI, (FarFnPointer)spui_font_wrong_size, IniValue);
+			}
+		} else if (!SettingsLoading) {
+			// The picker opens from :set font. In EviL.RC, font with no value does nothing.
+			_far(BANK_FONTS, (FarFn)font_picker);
 		}
 		return;
 	} else
@@ -87,12 +122,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Key Initial Repeat
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		if(SettingsTempValue) {
 			L3RepeatStart = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, (void *)spui_not_zero);
+			_far(BANK_SPUI, (FarFn)spui_not_zero);
 		}
 		return;
 	} else
@@ -100,12 +135,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Key Subsiquent Repeat
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		if(SettingsTempValue) {
 			L3RepeatKey = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, (void *)spui_not_zero);
+			_far(BANK_SPUI, (FarFn)spui_not_zero);
 		}
 		return;
 	} else
@@ -113,12 +148,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Cursor Flash Rate
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		if(SettingsTempValue) {
 			L3CursorFlashRate = SettingsTempValue;
 		}
 		else if (SettingsShowErrors) {
-			_far(BANK_SPUI, spui_not_zero);
+			_far(BANK_SPUI, (FarFn)spui_not_zero);
 		}
 		return;
 	} else
@@ -126,12 +161,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Default / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_DEFAULT_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -139,12 +174,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Default / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_DEFAULT_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -152,12 +187,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Cursor / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_CURSOR_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -165,12 +200,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Cursor / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_CURSOR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -178,12 +213,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Status / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_STATUS_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -191,12 +226,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Status / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_STATUS_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -204,12 +239,12 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Error / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_ERROR_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
@@ -217,17 +252,17 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Error / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_ERROR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
 
-		_farWithPointer(BANK_SYSTEM, palette_apply, Command);
+		_farWithPointer(BANK_SYSTEM, (FarFnPointer)palette_apply, Command);
 
 		return;
 	} else
 	if (SettingsShowErrors) {
-		_farWithPointer(BANK_SPUI, spui_unknown_setting, IniKey);
+		_farWithPointer(BANK_SPUI, (FarFnPointer)spui_unknown_setting, IniKey);
 	}
 	return;
 }

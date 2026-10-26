@@ -130,7 +130,13 @@ There are also several shorthand font aliases which are also valid settings - th
 3) **60s**, which is a shorthand for the Computing60s, and
 4) & 5. **OCRA**, & **OCRB** - handling the oft'forgetten hyphen.
 
-When referencing an external font file make sure to use the full path name, starting with / <sup>[*2](#footnote2)</sup>
+**font** can also be a font file. Give the full path:
+
+    font = /fonts/myfont.ch8
+
+The file must be a CH8 font: 768 bytes, characters 32 to 127. If the file is the wrong size or cannot be read, EviL shows an error and keeps the font it has.
+
+**:set font** on its own opens a font picker. Move through the list with the cursor keys (or h, j, k and l), and the screen switches to each font as you go. ENTER keeps it, BREAK puts back the font you had. In EviL.RC, **font** with no value is ignored.
 
 ### EviL Control ###
 ####```errors```
@@ -139,9 +145,13 @@ When referencing an external font file make sure to use the full path name, star
 **errors** disables error reporting while loading the run control file. This is useful for when sharing the same run control file between multiple editors, or using the same config files between different SD cards where fonts may not exist. 
 
 If invoked outside of the run control file it will suppress error reporting during subsequent error messages until re-enabled. 
+
+####```help```
+ ```default = on```
+
+**help** shows a window with the keys you can press in the current mode. It opens by itself at the `:` prompt and after `d`, `c`, `Z` and `r`, when EviL is waiting for your next key, and closes when you go back to normal mode or start typing. BREAK opens or closes it at any time. Keys still work while it is open, and it sits in the half of the screen the cursor is not in. With **help** off, BREAK does nothing.
  
 Footnotes
 -
  <a name="footnote1">*1</a>: Intervals measured in screen refreshes will be variable dependent upon the machines video speed, not CPU speed.
  
- <a name="footnote2">*2</a>: While the loading of external font files is referenced in several places it's not yet complete, so the setting will warn you if you try to reference an external font file. When implemented external font files will need to be valid 768byte files in the "CH8" format
