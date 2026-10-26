@@ -19,6 +19,7 @@ const char *spui_words_false[] = {
 
 bool string_is_false(const char *value) {
 	uint8_t terms = SPUI_FALSE_WORDCOUNT;
+	if(!value) return false;
 	while(terms)
 		if(!stricmp(value, spui_words_false[--terms])) {
 			return true;

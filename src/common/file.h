@@ -8,7 +8,6 @@
 #include <stdbool.h>
 
 extern char* FileName;
-extern const char *tmp_filename;
 
 bool really_save_file(const char* fcb);
 

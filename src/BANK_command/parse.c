@@ -21,7 +21,7 @@
 void command_parse(void) {
 	// Get the first part of the command (we space delimit parameters)
 	char* w = strtok(Buffer, " ");
-	if (!*w) {
+	if (!w) {
 		return;
 	}
 
@@ -30,7 +30,7 @@ void command_parse(void) {
 	{
 		case 's':		// S is for SETTINGS, or SET ;-)
 		{
-			if(!stricmp(w, "set")) {
+			if(arg && !stricmp(w, "set")) {
 				strcat(arg, "\n");
 				_farWithPointer(BANK_SETTINGS, (FarFnPointer)settings_apply, arg);
 			}

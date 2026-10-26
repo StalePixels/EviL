@@ -14,18 +14,12 @@
 #include "../common/memory.h"
 #include "../common/file.h"
 
-extern unsigned char IniIn, IniOut;
+extern unsigned char IniIn;
 #define IniLine Buff512
 extern char *IniKey;
 extern char *IniValue;
-extern uint8_t *errno_filter;
-extern uint32_t IniChar;
 
-bool ini_get_one(const char *Filename, const char *Key);
 // returns if managed to get a line
 bool ini_get_line(bool IncComments);
-bool ini_set_one(const char *Filename, const char *Key, const char *Value);
-
-void ini_file_close(void);
 
 #endif //D3_INI_COMMON_H

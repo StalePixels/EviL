@@ -1,9 +1,7 @@
 load.c
 apply.c
 ini_get_line.c
-ini_get_one.c
 ini_common.c
-ini_set_one.c
 trim_whitespace.c
 string_is_true.c
 string_is_false.c

@@ -24,6 +24,7 @@
 #include <arch/zxn/esxdos.h>
 #include <errno.h>
 
+#include "common/build.h"
 #include "common/evil.h"
 #include "common/memory.h"
 #include "common/file.h"
@@ -35,7 +36,7 @@
 #include "BANK_system/system.h"
 
 uint8_t L3ScreenX = 0, L3ScreenY = 0;
-uint8_t EvilBufferBank1, EvilBufferBank0, OriginalMMU6, OriginalMMU7, FileHandle;
+uint8_t OriginalMMU6, OriginalMMU7, FileHandle;
 
 void (*print_status)(const char*);
 
@@ -895,7 +896,7 @@ void colon(uint16_t count)
 			--L3ScreenX;
 			--w;
 		}
-		else if(c>31) {
+		else if(c>31 && (w - Buffer) < (sizeof(Buffer) - 2)) {
 			l3_putc(c);
 			*w = c;
 			w++;
@@ -958,11 +959,15 @@ void main(int argc, const char* argv[])
      */
     _far(BANK_SYSTEM, (FarFn)system_init);
 
+    // The buffer is paged in only here, not in BANK_SYSTEM
+    *BufferEnd = '\n';
+
     l3_clear();
 
 	print_status = command_status_set;
 
-	itoa((uint16_t)(BufferEnd - BufferStart), MessageBuffer, 10);
+	strcpy(MessageBuffer, "EviL " EVIL_VER " (" EVIL_BUILD "), ");
+	itoa((uint16_t)(BufferEnd - BufferStart), MessageBuffer + strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, " bytes free");
 	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 

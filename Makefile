@@ -6,7 +6,7 @@ DOCS_DIR ?= ./docs
 FILES_DIR ?= ./dist
 RELEASE_DIR ?= ./RELEASE-$(NAME)
 
-INSTALL_BASE ?= /mnt/devnext.xalior.com
+INSTALL_BASE ?= /Volumes/devnext.xalior.com
 INSTALL_DIR ?= $(INSTALL_BASE)/DOT
 
 EMU ?= /u/ZX/mame
@@ -126,7 +126,7 @@ dirs:
 
 # make compiles a bank again only when a file it is built from is newer than its object.
 # Any header, the build settings or this Makefile make every bank compile again.
-# build.h is left out: incs writes it on every build, and no source includes it.
+# build.h is left out: incs writes it on every build, and only evil.c (main) includes it.
 lst_files = $(1) $(addprefix $(dir $(1)),$(shell grep -v '^\#' $(1)))
 HEADERS := $(filter-out src/common/build.h,$(wildcard src/*/*.h))
 DEPS := $(HEADERS) zpragma.inc Makefile
@@ -164,7 +164,7 @@ all_banks: dirs deps banks
 
 BANK_OBJS := $(addprefix $(TMP_DIR)/BANK_,fonts.o settings.o spui.o command.o system.o)
 
-$(BUILD_DIR)/$(NAME): $(call lst_files,src/$(NAME).lst) $(BANK_OBJS) $(DEPS) | dirs
+$(BUILD_DIR)/$(NAME): $(call lst_files,src/$(NAME).lst) $(BANK_OBJS) $(DEPS) src/common/build.h | dirs
 	$(CC) $(CCFLAGS) $(LDFLAGS) @src/$(NAME).lst -o$(NAME) \
 		-subtype=dotn $(CZFLAGS) -create-app
 	$(MV) EVIL $@

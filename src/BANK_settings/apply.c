@@ -27,16 +27,25 @@
 #include <string.h>
 
 int16_t SettingsTempValue;
+
+// A setting with no value counts as 0
+static int16_t settings_number(void) {
+	return IniValue ? atoi(IniValue) : 0;
+}
+
 void settings_apply(char *Command) {
 	// not all settings are KV pairs
-	IniKey = 0;
-	IniKey = trim_whitespace(strtok(Command, "="));
+	IniKey = strtok(Command, "=");
+	if(!IniKey) return;
+	IniKey = trim_whitespace(IniKey);
+	if(!*IniKey) return;
 	if(IniKey[strlen(IniKey)-1]=='\n') {
 		IniKey[strlen(IniKey)-1] = 0;
 		IniValue = 0;
 	}
 	else {
-		IniValue = trim_whitespace(strtok(NULL, "\n"));
+		IniValue = strtok(NULL, "\n");
+		if(IniValue) IniValue = trim_whitespace(IniValue);
 	}
 
 	if(!stricmp(IniKey, "errors")) {
@@ -87,7 +96,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Key Initial Repeat
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		if(SettingsTempValue) {
 			L3RepeatStart = SettingsTempValue;
 		}
@@ -100,7 +109,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Key Subsiquent Repeat
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		if(SettingsTempValue) {
 			L3RepeatKey = SettingsTempValue;
 		}
@@ -113,7 +122,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Cursor Flash Rate
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		if(SettingsTempValue) {
 			L3CursorFlashRate = SettingsTempValue;
 		}
@@ -126,7 +135,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Default / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_DEFAULT_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -139,7 +148,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Default / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_DEFAULT_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -152,7 +161,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Cursor / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_CURSOR_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -165,7 +174,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Cursor / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_CURSOR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -178,7 +187,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Status / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_STATUS_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -191,7 +200,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Status / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_STATUS_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -204,7 +213,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Error / Background
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_ERROR_BACKGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;
@@ -217,7 +226,7 @@ void settings_apply(char *Command) {
 		/*
 		 * Colour: Error / Foreground
 		 */
-		SettingsTempValue = (atoi)(IniValue);
+		SettingsTempValue = settings_number();
 		Command[0] = SYSTEM_PALETTE_ERROR_FOREGROUND;
 		Command[1] = (SettingsTempValue) & 255;
 		Command[2] = (SettingsTempValue>>8) & 1;

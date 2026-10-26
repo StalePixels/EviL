@@ -10,8 +10,6 @@ evil.c
 
 common/memory.c
 common/file.c
-common/create_file.c
-common/create_dir.c
 
 liblayer3/clear.c
 liblayer3/cleareol.c

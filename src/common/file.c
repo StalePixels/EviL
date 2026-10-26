@@ -26,8 +26,6 @@
 #include "../common/memory.h"
 char* FileName = 0;
 
-const char *tmp_filename = "EVILTEMP.$$$";
-
 void file_new(void)
 {
 	GapStart = BufferStart;
@@ -47,12 +45,15 @@ bool really_save_file(const char* fcb)
 	strcat(MessageBuffer, fcb);
 	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 
+	bool opened = false;
+
 	errno = 0;
 	FileHandle = esxdos_f_open(fcb, ESXDOS_MODE_W | ESXDOS_MODE_CT);
 	if (errno) {
 		goto error;
 
 	}
+	opened = true;
 
 	inp = BufferStart;
 	outp = cpm_default_dma;
@@ -81,7 +82,6 @@ bool really_save_file(const char* fcb)
 
 		if(c) *outp++ = c;
 
-		zx_border(0);
 		if (outp == (cpm_default_dma+128))
 		{
 			esx_f_write(FileHandle, cpm_default_dma, 128);
@@ -90,7 +90,6 @@ bool really_save_file(const char* fcb)
 			outp = cpm_default_dma;
 		}
 
-		zx_border(2);
 		// special case to get around CPMs 128b block
 		if ((inp == BufferEnd) && !pushed && (outp != cpm_default_dma)) {
 			uint8_t b = outp - cpm_default_dma;
@@ -110,11 +109,9 @@ bool really_save_file(const char* fcb)
 	strcpy(MessageBuffer, "Failed to save file (errno:");
 	itoa(errno, MessageBuffer + strlen(MessageBuffer), 10);
 	strcat(MessageBuffer, ")");
+	if (opened)
+		esxdos_f_close(FileHandle);
 	_farWithPointer(BANK_COMMAND, (FarFnPointer)print_status, MessageBuffer);
 	_far(BANK_SYSTEM,system_beep);
-	return false;
-
-	esxdos_f_close(FileHandle);
-
 	return false;
 }

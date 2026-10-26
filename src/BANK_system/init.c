@@ -41,10 +41,6 @@ void system_init(void) {
     // Ensure we clean up as we shut down...
     atexit(at_exit);
 
-    // Get 16k of scratch RAM for text editing
-	EvilBufferBank0 = esx_ide_bank_alloc(0);
-	EvilBufferBank1 = esx_ide_bank_alloc(0);
-
     // We're going to trash this area for the Editor canvas, so let's back it up so we can restore it
     system_textmode_save();
 
@@ -89,7 +85,6 @@ void system_init(void) {
 	// Establish the memory buffer constraints
 	BufferStart = (void *) 0xC000;
 	BufferEnd = (void *) 0xFFFE;
-	*BufferEnd = '\n';
 
 	// Even if errors were
 	_farWithUChar(BANK_SETTINGS, (FarFnUChar)settings_show_errors, true);

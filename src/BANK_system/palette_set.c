@@ -10,5 +10,5 @@ void system_palette_set(uint8_t PaletteType, uint8_t PaletteIndex, uint8_t *Pale
 	ZXN_NEXTREGA(REG_PALETTE_CONTROL,  PaletteType);              		// 0x43 (67) => Palette Control
 	ZXN_NEXTREGA(REG_PALETTE_INDEX,    PaletteIndex);					// 0x40 (64) => Palette Index
 	ZXN_NEXTREGA(REG_PALETTE_VALUE_16, *PaletteValues);       			// 0x44 (68) => Palette Value (9 bit colour)
-	ZXN_NEXTREGA(REG_PALETTE_VALUE_16, *(PaletteValues++));       		// 0x44 (68) => Palette Value (9 bit colour)
+	ZXN_NEXTREGA(REG_PALETTE_VALUE_16, PaletteValues[1]);       		// 0x44 (68) => Palette Value (9 bit colour)
 }

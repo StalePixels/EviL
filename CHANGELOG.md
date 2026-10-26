@@ -19,6 +19,12 @@
 - The error beep is shorter and flashes the border magenta.
 - Corrections to `docs/settings.md`.
 - `:w` and `:wq` actually save the text now, instead of random bytes of my own code...
+- The border no longer stays red after a save.
+- Colour settings set the 9th colour bit.
+- `cursor_flash` sets the time for every blink of the cursor, not only for the first.
+- `EviL.RC` reads files with CRLF line ends, a last line with no newline, and settings with no value. A line longer than 511 characters is cut short; before, it overwrote memory.
+- `:set` with no setting, an empty `:` command and a command longer than 125 characters no longer write to memory outside their buffers.
+- EviL no longer allocates two 16K banks that it does not use.
 
 ### Build
 

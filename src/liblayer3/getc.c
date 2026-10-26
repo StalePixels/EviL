@@ -27,13 +27,14 @@ static bool	key_repeating = false;
 
 
 uint8_t L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
+static uint8_t cursor_flash_count = LIBLAYER3_CURSOR_FLASH_RATE;
 
 void l3_cursor(void) {
-	L3CursorFlashRate--;
+	cursor_flash_count--;
     WAIT_FOR_SCANLINE(239);
-    if(L3CursorFlashRate ==0) {
+    if(cursor_flash_count ==0) {
         tilemap[L3ScreenY][L3ScreenX].flags = tilemap[L3ScreenY][L3ScreenX].flags + 128;
-		L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
+		cursor_flash_count = L3CursorFlashRate;
     }
 }
 
@@ -79,7 +80,7 @@ get_next_key:
     last_key = next_key;
 
     tilemap[L3ScreenY][L3ScreenX].flags = L3ScreenColour;
-	L3CursorFlashRate = LIBLAYER3_CURSOR_FLASH_RATE;
+	cursor_flash_count = L3CursorFlashRate;
 	return next_key;
 }
 

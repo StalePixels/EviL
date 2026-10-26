@@ -16,7 +16,7 @@ const char *SpuiErrorTitleValue = {"Value Error"};
 void spui_error(const char* Title) {
 	struct SPUIWindow *WindowArgs = malloc(sizeof (struct SPUIWindow));
 //	if(window_args) exit(0);
-	WindowArgs->title = malloc(*Title);
+	WindowArgs->title = malloc(strlen(Title)+1);
 	strcpy(WindowArgs->title, Title);
 	WindowArgs->row = SPUI_ERROR_ROW;
 	WindowArgs->col = SPUI_ERROR_COL;
